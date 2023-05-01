@@ -1,0 +1,42 @@
+name: BasicHomes
+version: '${project.version}'
+main: fr.gamecreep.basichomes.BasicHomes
+api-version: 1.19
+load: STARTUP
+authors: [GameCreep35#1564]
+description: Basic Minecraft Paper plugin to use homes !
+website: https://github.com/iGameCreep
+prefix: '[BasicHomes] '
+prefix-e:
+commands:
+  homes:
+    description: Show all of your homes !
+    usage: /homes
+
+  sethome:
+    description: Create a home at your position !
+    usage: /sethome (name)
+
+  delhome:
+    description: Delete a home by it name !
+    usage: /deletehome (home-name)
+
+  home:
+    description: Teleport to one of your homes !
+    usage: /home (home-name)
+
+  setup:
+    permission: basichomes.setup
+    permission-message: §cYou don't have the permission to execute this command !
+    description: Setup the database for the homes
+    usage: /setup
+
+permissions:
+  basichomes.setup:
+    description: Allows setup command
+    default: op
+  basichomes.*:
+    description: Wildcard permission
+    default: op
+    children:
+      basichomes.setup: true
