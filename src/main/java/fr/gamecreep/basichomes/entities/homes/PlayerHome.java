@@ -18,17 +18,6 @@ public class PlayerHome {
     private String homeName;
     private String uuid;
 
-    public PlayerHome(@NonNull String name, String uuid, @NonNull Location loc) {
-        setX(loc.getX());
-        setY(loc.getY());
-        setZ(loc.getZ());
-        setPitch(loc.getPitch());
-        setYaw(loc.getYaw());
-        setWorld(loc.getWorld().getName());
-        setHomeName(name);
-        setUuid(uuid);
-    }
-
     public PlayerHome(@NonNull String name, @NonNull Player player, @NonNull Location loc) {
         setX(loc.getX());
         setY(loc.getY());
@@ -42,7 +31,7 @@ public class PlayerHome {
 
     public Location getLocation() {
         World homeWorld = Bukkit.getWorld(this.world);
-        Location location = new Location(homeWorld, this.x, this.y, this.z);
-        return location;
+        Location loc = new Location(homeWorld, this.x, this.y, this.z);
+        return loc;
     }
 }

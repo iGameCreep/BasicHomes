@@ -55,7 +55,7 @@ public class Database {
             stmt.execute();
             conn.close();
         } catch (SQLException e) {
-            Bukkit.getServer().getLogger().warning("Could not delete table homes.");
+            plugin.getPluginLogger().logWarning("Could not delete table homes.");
         }
         String sqlCreateHomeTable = "CREATE TABLE homes ("
                 + "homeID SERIAL NOT NULL PRIMARY KEY,"

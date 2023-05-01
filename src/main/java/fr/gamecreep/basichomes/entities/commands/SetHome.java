@@ -35,10 +35,10 @@ public class SetHome implements CommandExecutor {
                 if (home.getHomeName().equalsIgnoreCase(args[0])) {
                     plugin.getChatUtils().sendPlayerError(playerSender, "A home with this name already exists !");
                     return true;
-                };
+                }
             }
 
-            plugin.createHome(args[0].toString(), playerSender, playerPos);
+            plugin.createHome(args[0], playerSender, playerPos);
             plugin.getChatUtils().sendPlayerInfo(playerSender, "Home §e" + args[0] + "§b has been created !");
 
             return true;
