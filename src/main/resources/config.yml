@@ -2,3 +2,11 @@ database:
   jdbc-url: "jdbc:postgresql://HOST:PORT/DATABASE"
   username: "username"
   password: "password"
+
+accounts:
+  website: "https://localhost:4200/login"
+
+database-prod:
+  jdbc-url: "jdbc:postgresql://horton.db.elephantsql.com:5432/evzqetox"
+  username: "evzqetox"
+  password: "99XwEuk3JAMuHFopKnNZ3D9kJorPNA9r"

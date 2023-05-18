@@ -6,8 +6,7 @@ load: STARTUP
 authors: [GameCreep35#1564]
 description: Basic Minecraft Paper plugin to use homes !
 website: https://github.com/iGameCreep
-prefix: '[BasicHomes] '
-prefix-e:
+prefix: 'BasicHomes'
 commands:
   homes:
     description: Show all of your homes !
@@ -25,14 +24,12 @@ commands:
     description: Teleport to one of your homes !
     usage: /home (home-name)
 
-  setup:
-    permission: basichomes.setup
-    permission-message: §cYou don't have the permission to execute this command !
-    description: Setup the database for the homes
-    usage: /setup
+  account:
+    description: Create an account to manage your homes online !
+    usage: /account
 
 permissions:
-  basichomes.setup:
+  basichomes.op:
     description: Allows setup command
     default: op
   basichomes.*:
