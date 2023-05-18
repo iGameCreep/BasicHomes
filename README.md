@@ -18,10 +18,25 @@
 
 Here are all the commands available at the moment !
 
-| Command | Usage | Description |
-| ------ | ------ | ------ |
-| /setup | /setup | Create the homes table in your database (required for saving the player homes) ! |
-| /home | /home (name) | Teleport to a home by it's name ! |
-| /homes | /homes | Get all of your homes ! |
+| Command  | Usage           | Description |
+|----------|-----------------| ------ |
+| /home    | /home (name)    | Teleport to a home by it's name ! |
+| /homes   | /homes          | Get all of your homes ! |
 | /sethome | /sethome (name) | Create a home and give it a name ! |
 | /delhome | /delhome (name) | Delete a home by it's name ! |
+| /account | /account        | Create your account to manage your homes online ! |
+
+
+#### Account Commands
+
+| Command                 | Usage                   | Description |
+|-------------------------|-------------------------| ------ |
+| /account                | /account                | Create your account to manage your homes online ! |
+| /account id             | /account id             | Retrieve your account ID ! |
+| /account add-server     | /account add-server     | Add a new Minecraft server using BasicHomes to your account ! |
+| /account reset-password | /account reset-password | Reset the password of your account ! |
+| /account delete         | /account delete         | Delete your account ! |
+
+# Online Dashboard
+
+The online dashboard is available [here](https://github.com/iGameCreep/BasicHomes-Dashboard) !
