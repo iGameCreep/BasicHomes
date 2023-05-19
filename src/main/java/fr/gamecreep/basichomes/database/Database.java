@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -201,7 +202,7 @@ public class Database {
         String hashedPassword = hashPassword(password);
         String rank;
 
-        if (player.hasPermission("basichomes.op")) rank = "admin";
+        if (player.hasPermission(new Permission("basichomes.op"))) rank = "admin";
         else rank = "user";
 
         PreparedStatement stmt = conn.prepareStatement(String.format("UPDATE accounts SET password = '%s' RETURNING accountId", hashedPassword));
