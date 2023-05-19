@@ -185,8 +185,41 @@ public class Database {
     }
 
     public void deleteAccount(Player player) throws SQLException {
-        Connection conn = getConnection();
         String uuid = player.getUniqueId().toString();
+
+        deleteAccountServersDB(uuid);
+        deleteSessionsDB(uuid);
+        deleteAccountDB(uuid);
+    }
+
+    public void deleteAccountServersDB(String uuid) throws SQLException {
+        Connection conn = getConnection();
+        int accountId = getAccountIdFromUUID(uuid);
+
+        String sql = String.format("DELETE FROM account_servers WHERE account_id = '%s'", accountId);
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.execute();
+
+        stmt.close();
+
+        conn.close();
+    }
+
+    public void deleteSessionsDB(String uuid) throws SQLException {
+        Connection conn = getConnection();
+        int accountId = getAccountIdFromUUID(uuid);
+
+        String sql = String.format("DELETE FROM sessions WHERE user_id = '%s'", accountId);
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.execute();
+
+        stmt.close();
+
+        conn.close();
+    }
+
+    public void deleteAccountDB(String uuid) throws SQLException {
+        Connection conn = getConnection();
 
         String sql = String.format("DELETE FROM accounts WHERE userId = '%s'", uuid);
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -251,8 +284,7 @@ public class Database {
             rowCount++;
         }
 
-        if (rowCount == 0) return false;
-        return true;
+        return rowCount != 0;
     }
 
     public int getAccountIdFromUUID(String uuid) throws SQLException {
