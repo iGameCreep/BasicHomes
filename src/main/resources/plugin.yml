@@ -35,5 +35,3 @@ permissions:
   basichomes.*:
     description: Wildcard permission
     default: op
-    children:
-      basichomes.setup: true
