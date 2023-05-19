@@ -250,7 +250,8 @@ public class Database {
             rowCount++;
         }
 
-        return rowCount == 0;
+        if (rowCount == 0) return false;
+        return true;
     }
 
     public int getAccountIdFromUUID(String uuid) throws SQLException {
