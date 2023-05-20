@@ -227,8 +227,9 @@ public class Database {
         Connection conn = getConnection();
         String password = PasswordUtils.generatePassword();
         String hashedPassword = hashPassword(password);
+        String uuid = player.getUniqueId().toString();
 
-        PreparedStatement stmt = conn.prepareStatement(String.format("UPDATE accounts SET password = '%s' RETURNING accountID", hashedPassword));
+        PreparedStatement stmt = conn.prepareStatement(String.format("UPDATE accounts SET password = '%s' WHERE userID = '%s' RETURNING accountID", hashedPassword, uuid));
         int accountId;
 
         try (ResultSet rs = stmt.executeQuery()) {
