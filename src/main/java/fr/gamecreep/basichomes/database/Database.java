@@ -137,15 +137,10 @@ public class Database {
         Connection conn = getConnection();
         String password = PasswordUtils.generatePassword();
         String hashedPassword = hashPassword(password);
-        String rank;
 
-        if (player.hasPermission("basichomes.op")) rank = "admin";
-        else rank = "user";
-
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO accounts (userId, password, rank) VALUES (?, ?, ?) RETURNING accountId");
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO accounts (userID, password) VALUES (?, ?) RETURNING accountId");
         stmt.setString(1, player.getUniqueId().toString());
         stmt.setString(2, hashedPassword);
-        stmt.setString(3, rank);
 
         int accountId;
 
@@ -159,7 +154,7 @@ public class Database {
 
         addServerToPlayer(player);
 
-        PlayerAccount acc = new PlayerAccount(accountId, password, rank);
+        PlayerAccount acc = new PlayerAccount(accountId, password);
         stmt.close();
         conn.close();
         return acc;
@@ -170,7 +165,7 @@ public class Database {
         String uuid = player.getUniqueId().toString();
         PlayerAccount acc;
 
-        String sql = String.format("SELECT * FROM accounts WHERE userId = '%s'", uuid);
+        String sql = String.format("SELECT * FROM accounts WHERE userID = '%s'", uuid);
         PreparedStatement stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
 
@@ -196,12 +191,11 @@ public class Database {
         Connection conn = getConnection();
         int accountId = getAccountIdFromUUID(uuid);
 
-        String sql = String.format("DELETE FROM account_servers WHERE account_id = '%s'", accountId);
+        String sql = String.format("DELETE FROM account_servers WHERE accountID = '%s'", accountId);
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.execute();
 
         stmt.close();
-
         conn.close();
     }
 
@@ -209,7 +203,7 @@ public class Database {
         Connection conn = getConnection();
         int accountId = getAccountIdFromUUID(uuid);
 
-        String sql = String.format("DELETE FROM sessions WHERE user_id = '%s'", accountId);
+        String sql = String.format("DELETE FROM sessions WHERE accountID = '%s'", accountId);
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.execute();
 
@@ -221,7 +215,7 @@ public class Database {
     public void deleteAccountDB(String uuid) throws SQLException {
         Connection conn = getConnection();
 
-        String sql = String.format("DELETE FROM accounts WHERE userId = '%s'", uuid);
+        String sql = String.format("DELETE FROM accounts WHERE userID = '%s'", uuid);
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.execute();
 
@@ -233,12 +227,8 @@ public class Database {
         Connection conn = getConnection();
         String password = PasswordUtils.generatePassword();
         String hashedPassword = hashPassword(password);
-        String rank;
 
-        if (player.hasPermission(new Permission("basichomes.op"))) rank = "admin";
-        else rank = "user";
-
-        PreparedStatement stmt = conn.prepareStatement(String.format("UPDATE accounts SET password = '%s' RETURNING accountId", hashedPassword));
+        PreparedStatement stmt = conn.prepareStatement(String.format("UPDATE accounts SET password = '%s' RETURNING accountID", hashedPassword));
         int accountId;
 
         try (ResultSet rs = stmt.executeQuery()) {
@@ -249,7 +239,7 @@ public class Database {
             }
         }
 
-        PlayerAccount acc = new PlayerAccount(accountId, password, rank);
+        PlayerAccount acc = new PlayerAccount(accountId, password);
         stmt.close();
         conn.close();
         return acc;
@@ -260,11 +250,17 @@ public class Database {
         String uuid = player.getUniqueId().toString();
         int accountId = getAccountIdFromUUID(uuid);
         String serverId = plugin.generateServerUUID().toString();
+        String rank;
 
-        String sql = "INSERT INTO account_servers (account_id, server_id) VALUES (?, ?) ON CONFLICT DO NOTHING;";
+        if (player.hasPermission(new Permission(("basichomes.op")))) rank = "admin";
+        else rank = "user";
+
+        String sql = "INSERT INTO account_servers (accountID, serverID, serverName, rank) VALUES (?, ?, ?, ?)";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, accountId);
         stmt.setString(2, serverId);
+        stmt.setString(3, "server");
+        stmt.setString(4, rank);
 
         stmt.execute();
         stmt.close();
@@ -276,7 +272,7 @@ public class Database {
         String uuid = player.getUniqueId().toString();
         int rowCount = 0;
 
-        String sql = String.format("SELECT * FROM account_servers WHERE account_id = %s AND server_id = '%s'", getAccountIdFromUUID(uuid), plugin.generateServerUUID());
+        String sql = String.format("SELECT * FROM account_servers WHERE accountID = %s AND serverID = '%s'", getAccountIdFromUUID(uuid), plugin.generateServerUUID());
         PreparedStatement stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
 
@@ -291,12 +287,12 @@ public class Database {
         Connection conn = getConnection();
         int accountId;
 
-        String sql = String.format("SELECT accountid FROM accounts WHERE userid = '%s'", uuid);
+        String sql = String.format("SELECT accountID FROM accounts WHERE userID = '%s'", uuid);
         PreparedStatement stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
-            accountId = rs.getInt("accountid");
+            accountId = rs.getInt("accountID");
         } else {
             throw new SQLException("Could not get account ID");
         }
