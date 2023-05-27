@@ -43,6 +43,7 @@ public class Home implements CommandExecutor, TabCompleter {
 
             Location location = home.getLocation();
             playerSender.teleport(location);
+            plugin.getChatUtils().sendPlayerInfo(playerSender, "Teleporting you to §e" + args[0] + "§b...");
 
             return true;
         }

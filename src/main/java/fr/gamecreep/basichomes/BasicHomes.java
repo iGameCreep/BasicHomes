@@ -3,8 +3,10 @@ package fr.gamecreep.basichomes;
 import fr.gamecreep.basichomes.entities.accounts.PlayerAccount;
 import fr.gamecreep.basichomes.entities.commands.*;
 import fr.gamecreep.basichomes.database.Database;
+import fr.gamecreep.basichomes.entities.events.MenuEvents;
 import fr.gamecreep.basichomes.entities.homes.PlayerHome;
 import fr.gamecreep.basichomes.utils.ChatUtils;
+import fr.gamecreep.basichomes.utils.HomesUtils;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
 import lombok.Getter;
 import lombok.NonNull;
@@ -28,10 +30,12 @@ public final class BasicHomes extends JavaPlugin {
     private Database db;
     private final LoggerUtils pluginLogger = new LoggerUtils("[" + getDescription().getPrefix() + "] " );
     private final ChatUtils chatUtils = new ChatUtils();
+    private final HomesUtils homesUtils = new HomesUtils(this);
 
     @Override
     public void onEnable() {
         loadCommands();
+        loadEvents();
         loadConfig();
         generateServerUUID();
         loadTables();
@@ -83,6 +87,12 @@ public final class BasicHomes extends JavaPlugin {
         Objects.requireNonNull(getCommand("account")).setExecutor(new Account(this));
 
         pluginLogger.logInfo("Commands loaded !");
+    }
+
+    public void loadEvents() {
+        getServer().getPluginManager().registerEvents(new MenuEvents(this), this);
+
+        pluginLogger.logInfo("Events loaded !");
     }
 
     public void loadDatabase(String db_jdbc, String db_user, String db_password) {
