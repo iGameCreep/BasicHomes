@@ -105,9 +105,9 @@ public final class BasicHomes extends JavaPlugin {
         saveDefaultConfig();
         FileConfiguration config = getConfig();
 
-        String db_jdbc = config.getString("database-prod.jdbc-url");
-        String db_user = config.getString("database-prod.username");
-        String db_password = config.getString("database-prod.password");
+        String db_jdbc = config.getString("database.jdbc-url");
+        String db_user = config.getString("database.username");
+        String db_password = config.getString("database.password");
 
         loadDatabase(db_jdbc, db_user, db_password);
     }
