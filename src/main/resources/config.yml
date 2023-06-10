@@ -4,4 +4,4 @@ database:
   password: "password"
 
 accounts:
-  website: "https://localhost:4200/login"
+  website: "https://basichomes.netlify.app/"
