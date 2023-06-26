@@ -1,7 +1,7 @@
 database:
-  jdbc-url: "jdbc:postgresql://horton.db.elephantsql.com:5432/evzqetox"
-  username: "evzqetox"
-  password: "JH1geGq6ctkG6bqbhNG_azMOQfMDbKV1"
+  jdbc-url: "jdbc:postgresql://HOST:PORT/DATABASE"
+  username: "USERNAME"
+  password: "PASSWORD"
 
 accounts:
-  website: "https://basichomes.netlify.app/"
+  website: "Your dashboard website (if enabled)"

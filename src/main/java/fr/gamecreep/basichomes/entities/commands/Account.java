@@ -1,125 +1,171 @@
 package fr.gamecreep.basichomes.entities.commands;
 
-import fr.gamecreep.basichomes.BasicHomes;
+import java.util.Map;
+import java.util.Hashtable;
+
+import lombok.NonNull;
+import java.util.ArrayList;
+import java.util.List;
+import net.md_5.bungee.api.chat.TextComponent;
 import fr.gamecreep.basichomes.entities.accounts.PlayerAccount;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import fr.gamecreep.basichomes.BasicHomes;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.command.CommandExecutor;
 
-import java.util.*;
+import javax.annotation.Nullable;
 
-public class Account implements CommandExecutor, TabCompleter {
+public class Account implements CommandExecutor, TabCompleter
+{
     private final BasicHomes plugin;
 
-    public Account(BasicHomes plugin) {
+    public Account(final BasicHomes plugin) {
         this.plugin = plugin;
     }
 
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-
-        if (commandSender instanceof Player) {
-            Player playerSender = (Player) commandSender;
-            PlayerAccount acc = plugin.getPlayerAccount(playerSender);
-            String accountWebsite = plugin.getConfig().getString("accounts.website");
-
-            if (args.length == 0) { // /account
+    public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final Command command, @NonNull final String label, @NonNull final String[] args) {
+        if (!(commandSender instanceof Player)) {
+            return false;
+        }
+        final Player playerSender = (Player)commandSender;
+        PlayerAccount acc = this.plugin.getPlayerAccount(playerSender);
+        final String accountWebsite = this.plugin.getConfig().getString("accounts.website");
+        final TextComponent websiteComponent = this.plugin.getChatUtils().generateLinkComponent(accountWebsite, accountWebsite, true, ChatColor.YELLOW);
+        final TextComponent websiteText = this.plugin.getChatUtils().textToComponent("Head over to ", ChatColor.AQUA);
+        websiteText.addExtra(websiteComponent);
+        websiteText.addExtra(this.plugin.getChatUtils().textToComponent(" to login !", ChatColor.AQUA));
+        if (args.length == 0) {
+            return this.sendPlayerHelpMessage(playerSender);
+        }
+        final String s = args[0];
+        switch (s) {
+            case "create": {
                 if (acc == null) {
-                    acc = plugin.createPlayerAccount(playerSender);
-                    plugin.addServerToPlayer(playerSender);
-                    plugin.getChatUtils().sendPlayerInfo(playerSender, String.format(
-                            "Successfully created your account ! Head over to§e %s §bto connect !" +
-                                    " Username:§e %s §bPassword:§e %s", accountWebsite,  acc.getUserId(), acc.getPassword()));
+                    acc = this.plugin.createPlayerAccount(playerSender);
+                    this.plugin.addServerToPlayer(playerSender);
+                    final TextComponent message = this.plugin.getChatUtils().textToComponent("Successfully created your account ! ", ChatColor.AQUA);
+                    message.addExtra(websiteText);
+                    final TextComponent loginsMessage = this.plugin.getChatUtils().textToComponent("User ID: ", ChatColor.AQUA);
+                    loginsMessage.addExtra(this.getAccIdComponent(acc));
+                    loginsMessage.addExtra(this.plugin.getChatUtils().textToComponent(" | Password: ", ChatColor.AQUA));
+                    loginsMessage.addExtra(this.getAccPasswordComponent(acc));
+                    playerSender.spigot().sendMessage(message);
+                    playerSender.spigot().sendMessage(loginsMessage);
                     return true;
                 }
-
-                plugin.getChatUtils().sendPlayerInfo(playerSender, "It seems like you already have an account !" +
-                        "Use §e/account help §bto get all of the account-related commands !");
+                final TextComponent accAlreadyExists = this.plugin.getChatUtils().textToComponent("It seems like you already have an account ! Use ", ChatColor.AQUA);
+                accAlreadyExists.addExtra(this.plugin.getChatUtils().generateCommandComponent("/account help", "/account help", true, ChatColor.YELLOW));
+                accAlreadyExists.addExtra(this.plugin.getChatUtils().textToComponent(" to get all of the account-related commands !", ChatColor.AQUA));
+                playerSender.spigot().sendMessage(accAlreadyExists);
                 return true;
             }
-
-            switch (args[0]) {
-                case "id": // /account id
-                    if (acc == null) {
-                        noAccount(playerSender);
-                        return true;
-                    }
-                    int accountId = acc.getUserId();
-
-                    plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Your account ID is §e%s§b ! Head over to §e%s§b to login !", accountId, accountWebsite));
+            case "id": {
+                if (acc == null) {
+                    this.noAccount(playerSender);
                     return true;
-
-                case "reset-password":// /account reset-password
-                    if (acc == null) {
-                        noAccount(playerSender);
-                        return true;
-                    }
-                    PlayerAccount newAcc = plugin.resetAccountPassword(playerSender);
-                    plugin.getChatUtils().sendPlayerInfo(playerSender, String.format(
-                            "Successfully reset your account's password ! Head over to§e %s §bto connect !" +
-                                    " Username:§e %s §bPassword:§e %s", accountWebsite, newAcc.getUserId(), newAcc.getPassword()));
+                }
+                final TextComponent idMsgComponent = this.plugin.getChatUtils().textToComponent("Your account ID is ", ChatColor.AQUA);
+                idMsgComponent.addExtra(this.getAccIdComponent(acc));
+                idMsgComponent.addExtra(this.plugin.getChatUtils().textToComponent(" !", ChatColor.AQUA));
+                playerSender.spigot().sendMessage(idMsgComponent);
+                playerSender.spigot().sendMessage(websiteText);
+                return true;
+            }
+            case "reset-password": {
+                if (acc == null) {
+                    this.noAccount(playerSender);
                     return true;
-
-                case "add-server": // /account add-server
-                    if (acc == null) {
-                        noAccount(playerSender);
-                        return true;
-                    }
-                    if (plugin.serverAlreadyRegistered(playerSender)) {
-                        plugin.getChatUtils().sendPlayerError(playerSender, "This server is already registered !");
-                        return true;
-                    }
-                    plugin.addServerToPlayer(playerSender);
-                    plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Successfully added this server to your account ! Head over to §e%s§b to manage it !", accountWebsite));
+                }
+                final PlayerAccount newAcc = this.plugin.resetAccountPassword(playerSender);
+                final TextComponent message2 = this.plugin.getChatUtils().textToComponent("Successfully reset your account ! ", ChatColor.AQUA);
+                message2.addExtra(websiteText);
+                final TextComponent loginsMessage2 = this.plugin.getChatUtils().textToComponent("User ID: ", ChatColor.AQUA);
+                loginsMessage2.addExtra(this.getAccIdComponent(newAcc));
+                loginsMessage2.addExtra(this.plugin.getChatUtils().textToComponent(" | Password: ", ChatColor.AQUA));
+                loginsMessage2.addExtra(this.getAccPasswordComponent(newAcc));
+                playerSender.spigot().sendMessage(message2);
+                playerSender.spigot().sendMessage(loginsMessage2);
+                return true;
+            }
+            case "add-server": {
+                if (acc == null) {
+                    this.noAccount(playerSender);
                     return true;
-
-                case "delete": // /account delete
-                    if (acc == null) {
-                        noAccount(playerSender);
-                        return true;
-                    }
-                    plugin.deletePlayerAccount(playerSender);
-                    plugin.getChatUtils().sendPlayerInfo(playerSender, "Successfully deleted your account !");
+                }
+                if (this.plugin.serverAlreadyRegistered(playerSender)) {
+                    this.plugin.getChatUtils().sendPlayerError(playerSender, "This server is already registered !");
                     return true;
-
-                default: // /account help & misspelled
-                    Hashtable<String, String> cmdList = new Hashtable();
-                    cmdList.put("/account", "Create your account to manage your homes online !");
-                    cmdList.put("/account id", "Retrieve your account ID !");
-                    cmdList.put("/account add-server", "Add a new Minecraft server using BasicHomes to your account !");
-                    cmdList.put("/account reset-password", "Reset the password of your account !");
-                    cmdList.put("/account delete", "Delete your account !");
-
-                    plugin.getChatUtils().sendPlayerInfo(playerSender, "Here are all of the account commands !");
-                    for (Map.Entry<String, String> entry : cmdList.entrySet()) {
-                        plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Command: §e%s§b | Description: §e%s§b", entry.getKey(), entry.getValue()));
-                    }
+                }
+                this.plugin.addServerToPlayer(playerSender);
+                final TextComponent msg = this.plugin.getChatUtils().textToComponent("Successfully added this server to your account ! ", ChatColor.AQUA);
+                msg.addExtra(websiteText);
+                playerSender.spigot().sendMessage(msg);
+                return true;
+            }
+            case "delete": {
+                if (acc == null) {
+                    this.noAccount(playerSender);
                     return true;
+                }
+                this.plugin.deletePlayerAccount(playerSender);
+                this.plugin.getChatUtils().sendPlayerInfo(playerSender, "Successfully deleted your account !");
+                return true;
+            }
+            default: {
+                return this.sendPlayerHelpMessage(playerSender);
             }
         }
-        return false;
     }
 
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    @Nullable
+    public List<String> onTabComplete(@NonNull final CommandSender commandSender, @NonNull final Command command, @NonNull final String s, @NonNull final String[] strings) {
         if (commandSender instanceof Player) {
-            List<String> optionsList = new ArrayList<>();
+            final List<String> optionsList = new ArrayList<>();
+            optionsList.add("help");
+            optionsList.add("create");
             optionsList.add("id");
             optionsList.add("reset-password");
             optionsList.add("add-server");
             optionsList.add("delete");
-
             return optionsList;
         }
         return null;
     }
 
-    private void noAccount(Player player) {
-        plugin.getChatUtils().sendPlayerInfo(player, "You don't have an account ! Use §e/account §bto create an account !");
+    private void noAccount(final Player player) {
+        final TextComponent cmdComponent = this.plugin.getChatUtils().generateCommandComponent("/account create", "/account create", true, ChatColor.YELLOW);
+        final TextComponent endComponent = new TextComponent(" to create an account !");
+        final TextComponent component = new TextComponent("You don't have an account ! Use ");
+        component.setColor(ChatColor.RED);
+        component.addExtra(cmdComponent);
+        component.addExtra(endComponent);
+        player.spigot().sendMessage(component);
+    }
+
+    private TextComponent getAccIdComponent(final PlayerAccount acc) {
+        return this.plugin.getChatUtils().generateClipboardComponent(String.valueOf(acc.getUserId()), String.valueOf(acc.getUserId()), true, ChatColor.YELLOW);
+    }
+
+    private TextComponent getAccPasswordComponent(final PlayerAccount acc) {
+        return this.plugin.getChatUtils().generateClipboardComponent(acc.getPassword(), acc.getPassword(), true, ChatColor.YELLOW);
+    }
+
+    private boolean sendPlayerHelpMessage(final Player player) {
+        final Hashtable<String, String> cmdList = new Hashtable<>();
+        cmdList.put("/account create", "Create your account to manage your homes online !");
+        cmdList.put("/account id", "Retrieve your account ID !");
+        cmdList.put("/account add-server", "Add this server to your account !");
+        cmdList.put("/account reset-password", "Reset the password of your account !");
+        cmdList.put("/account delete", "Delete your account !");
+        this.plugin.getChatUtils().sendPlayerInfo(player, "Here are all of the account commands !");
+        for (final Map.Entry<String, String> entry : cmdList.entrySet()) {
+            final TextComponent component = this.plugin.getChatUtils().generateCommandComponent(entry.getKey(), entry.getKey(), true, ChatColor.YELLOW);
+            component.addExtra(this.plugin.getChatUtils().textToComponent(" | " + entry.getValue(), ChatColor.AQUA));
+            player.spigot().sendMessage(component);
+        }
+        return true;
     }
 }
