@@ -2,6 +2,7 @@ package fr.gamecreep.basichomes.entities.events;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.homes.PlayerHome;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,12 +25,13 @@ public class MenuEvents implements Listener {
         Player player = (Player) event.getWhoClicked();
         Inventory inv = event.getClickedInventory();
         ItemStack item = event.getCurrentItem();
-        int page = Integer.parseInt(inv.getItem(49).getItemMeta().getDisplayName().replaceAll("[^0-9/]+", "").split("/")[0]);
+        assert inv != null;
+        int page = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(inv.getItem(49)).getItemMeta()).getDisplayName().replaceAll("[^0-9/]+", "").split("/")[0]);
 
         // The inventory is the homes menu
         if (event.getView().getTitle().equals("§bMy Homes")) {
             player.closeInventory();
-            switch (Objects.requireNonNull(item).getItemMeta().getDisplayName()) {
+            switch (Objects.requireNonNull(Objects.requireNonNull(item).getItemMeta()).getDisplayName()) {
                 case "§6<-- Previous Page":
                     plugin.getHomesUtils().openHomeInventory(player, page - 1);
                     break;
@@ -37,7 +39,7 @@ public class MenuEvents implements Listener {
                     plugin.getHomesUtils().openHomeInventory(player, page + 1);
                     break;
                 case "§cDelete this home":
-                    String home_name = item.getItemMeta().getLore().get(0);
+                    String home_name = Objects.requireNonNull(item.getItemMeta().getLore()).get(0);
                     PlayerHome home;
                     try {
                         home = plugin.getHomeByName(player, home_name);
@@ -63,7 +65,10 @@ public class MenuEvents implements Listener {
                         plugin.getChatUtils().sendPlayerError(player, "Could not get the home.");
                         break;
                     }
-                    player.teleport(playerHome.getLocation());
+                    Location loc = playerHome.getLocation();
+                    loc.setPitch(player.getLocation().getPitch());
+                    loc.setYaw(player.getLocation().getYaw());
+                    player.teleport(loc);
                     plugin.getChatUtils().sendPlayerInfo(player, "Teleporting you to §e" + playerHome.getHomeName() + "§b...");
 			        break;
             }
