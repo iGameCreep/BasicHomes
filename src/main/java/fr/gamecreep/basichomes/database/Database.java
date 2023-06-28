@@ -54,16 +54,43 @@ public class Database {
         return connection;
     }
 
-    public String getHomesTableName() {
-        String tableName = "homes_" + plugin.generateServerUUID().toString().replace("-", "");
-        return tableName;
+    public void createSessionsTableIfNotExists() throws SQLException {
+        Connection conn = getConnection();
+
+        String sql = "CREATE TABLE IF NOT EXISTS sessions (" +
+                "accountID INT NOT NULL," +
+                "token TEXT NOT NULL UNIQUE," +
+                "createdAt TIMESTAMP WITH TIME ZONE DEFAULT NOW()," +
+                "expireAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() + INTERVAL '30 minutes'" +
+                ");";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.executeUpdate();
+            statement.close();
+            conn.close();
+        }
+    }
+
+    public void createAccountsTableIfNotExists() throws SQLException {
+        Connection conn = getConnection();
+
+        String sql = "CREATE TABLE IF NOT EXISTS accounts (" +
+                "accountID SERIAL PRIMARY KEY," +
+                "userID TEXT NOT NULL," +
+                "password TEXT NOT NULL" +
+                ");";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.executeUpdate();
+            statement.close();
+            conn.close();
+        }
     }
 
     public void createHomesTableIfNotExists() throws SQLException {
         Connection conn = getConnection();
 
-        String tableName = getHomesTableName();
-        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + "("
+        String sql = "CREATE TABLE IF NOT EXISTS homes ("
                 + "homeID SERIAL NOT NULL PRIMARY KEY,"
                 + "uuid TEXT NOT NULL,"
                 + "homename TEXT NOT NULL,"
@@ -81,7 +108,7 @@ public class Database {
     }
     public List<PlayerHome> getAllPlayerHomes(@NonNull Player player) throws SQLException {
         String uuid = player.getUniqueId().toString();
-        String sql = "SELECT * FROM " + getHomesTableName() + " WHERE uuid = '" + uuid + "'";
+        String sql = "SELECT * FROM homes WHERE uuid = '" + uuid + "'";
         ResultSet resultSet;
         Connection connection = getConnection();
 
@@ -109,7 +136,7 @@ public class Database {
     }
 
     public void addHome(@NonNull PlayerHome home) throws SQLException {
-       String sql = "INSERT INTO " + getHomesTableName() + " (uuid, homename, x, y, z, world) VALUES ("
+       String sql = "INSERT INTO homes (uuid, homename, x, y, z, world) VALUES ("
                + "'" + home.getUuid() + "',"
                + "'" + home.getHomeName() + "',"
                + "'" + home.getX() + "',"
@@ -124,7 +151,7 @@ public class Database {
     }
 
     public void removeHome(@NonNull PlayerHome home) throws SQLException {
-        String sql = "DELETE FROM " + getHomesTableName() + " WHERE "
+        String sql = "DELETE FROM homes WHERE "
                 + "uuid = '" + home.getUuid() + "' AND "
                 + "homename = '" + home.getHomeName() + "'";
         Connection connection = getConnection();
@@ -151,8 +178,6 @@ public class Database {
                 throw new SQLException("Insert failed, no rows affected.");
             }
         }
-
-        addServerToPlayer(player);
 
         PlayerAccount acc = new PlayerAccount(accountId, password);
         stmt.close();
@@ -182,21 +207,8 @@ public class Database {
     public void deleteAccount(Player player) throws SQLException {
         String uuid = player.getUniqueId().toString();
 
-        deleteAccountServersDB(uuid);
         deleteSessionsDB(uuid);
         deleteAccountDB(uuid);
-    }
-
-    public void deleteAccountServersDB(String uuid) throws SQLException {
-        Connection conn = getConnection();
-        int accountId = getAccountIdFromUUID(uuid);
-
-        String sql = String.format("DELETE FROM account_servers WHERE accountID = '%s'", accountId);
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.execute();
-
-        stmt.close();
-        conn.close();
     }
 
     public void deleteSessionsDB(String uuid) throws SQLException {
@@ -244,44 +256,6 @@ public class Database {
         stmt.close();
         conn.close();
         return acc;
-    }
-
-    public void addServerToPlayer(Player player) throws SQLException {
-        Connection conn = getConnection();
-        String uuid = player.getUniqueId().toString();
-        int accountId = getAccountIdFromUUID(uuid);
-        String serverId = plugin.generateServerUUID().toString();
-        String rank;
-
-        if (player.hasPermission(new Permission(("basichomes.op")))) rank = "admin";
-        else rank = "user";
-
-        String sql = "INSERT INTO account_servers (accountID, serverID, serverName, rank) VALUES (?, ?, ?, ?)";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, accountId);
-        stmt.setString(2, serverId);
-        stmt.setString(3, "server");
-        stmt.setString(4, rank);
-
-        stmt.execute();
-        stmt.close();
-        conn.close();
-    }
-
-    public boolean serverAlreadyRegistered(Player player) throws SQLException {
-        Connection conn = getConnection();
-        String uuid = player.getUniqueId().toString();
-        int rowCount = 0;
-
-        String sql = String.format("SELECT * FROM account_servers WHERE accountID = %s AND serverID = '%s'", getAccountIdFromUUID(uuid), plugin.generateServerUUID());
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery();
-
-        while (rs.next()) {
-            rowCount++;
-        }
-
-        return rowCount != 0;
     }
 
     public int getAccountIdFromUUID(String uuid) throws SQLException {
