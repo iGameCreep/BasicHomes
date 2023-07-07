@@ -26,11 +26,15 @@ public class MenuEvents implements Listener {
         Inventory inv = event.getClickedInventory();
         ItemStack item = event.getCurrentItem();
         assert inv != null;
-        int page = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(inv.getItem(49)).getItemMeta()).getDisplayName().replaceAll("[^0-9/]+", "").split("/")[0]);
 
         // The inventory is the homes menu
         if (event.getView().getTitle().equals("§bMy Homes")) {
+            int page = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(inv.getItem(49)).getItemMeta()).getDisplayName().replaceAll("[^0-9/]+", "").split("/")[0]);
             player.closeInventory();
+            if (item == null) {
+                plugin.getHomesUtils().openHomeInventory(player, page);
+                return;
+            }
             switch (Objects.requireNonNull(Objects.requireNonNull(item).getItemMeta()).getDisplayName()) {
                 case "§6<-- Previous Page":
                     plugin.getHomesUtils().openHomeInventory(player, page - 1);
