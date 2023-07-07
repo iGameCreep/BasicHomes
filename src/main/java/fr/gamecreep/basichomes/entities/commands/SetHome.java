@@ -2,12 +2,12 @@ package fr.gamecreep.basichomes.entities.commands;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.homes.PlayerHome;
+import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class SetHome implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
 
         if (commandSender instanceof Player) {
             Player playerSender = (Player) commandSender;
