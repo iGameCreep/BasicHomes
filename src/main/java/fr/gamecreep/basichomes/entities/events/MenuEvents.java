@@ -24,12 +24,17 @@ public class MenuEvents implements Listener {
         Player player = (Player) event.getWhoClicked();
         Inventory inv = event.getClickedInventory();
         ItemStack item = event.getCurrentItem();
-        int page = Integer.parseInt(inv.getItem(49).getItemMeta().getDisplayName().replaceAll("[^0-9/]+", "").split("/")[0]);
+        assert inv != null;
 
         // The inventory is the homes menu
         if (event.getView().getTitle().equals("§bMy Homes")) {
+            int page = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(inv.getItem(49)).getItemMeta()).getDisplayName().replaceAll("[^0-9/]+", "").split("/")[0]);
             player.closeInventory();
-            switch (Objects.requireNonNull(item).getItemMeta().getDisplayName()) {
+            if (item == null) {
+                plugin.getHomesUtils().openHomeInventory(player, page);
+                return;
+            }
+            switch (Objects.requireNonNull(Objects.requireNonNull(item).getItemMeta()).getDisplayName()) {
                 case "§6<-- Previous Page":
                     plugin.getHomesUtils().openHomeInventory(player, page - 1);
                     break;
@@ -37,7 +42,7 @@ public class MenuEvents implements Listener {
                     plugin.getHomesUtils().openHomeInventory(player, page + 1);
                     break;
                 case "§cDelete this home":
-                    String home_name = item.getItemMeta().getLore().get(0);
+                    String home_name = Objects.requireNonNull(item.getItemMeta().getLore()).get(0);
                     PlayerHome home;
                     try {
                         home = plugin.getHomeByName(player, home_name);
