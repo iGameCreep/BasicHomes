@@ -14,15 +14,11 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Getter
 public final class BasicHomes extends JavaPlugin {
@@ -37,7 +33,6 @@ public final class BasicHomes extends JavaPlugin {
         loadCommands();
         loadEvents();
         loadConfig();
-        generateServerUUID();
         loadTables();
 
         pluginLogger.logInfo("Plugin successfully loaded !");
@@ -50,33 +45,13 @@ public final class BasicHomes extends JavaPlugin {
 
     public void loadTables() {
         try {
-            getDb().createHomesTableIfNotExists();
+            db.createHomesTableIfNotExists();
+            db.createAccountsTableIfNotExists();
+            db.createSessionsTableIfNotExists();
         } catch (SQLException e) {
             getLogger().warning("Could not load the database tables.");
             throw new RuntimeException(e);
         }
-    }
-
-    public UUID generateServerUUID() {
-        File configFile = new File(getDataFolder(), "server.yml");
-        UUID serverUUID;
-
-        if (configFile.exists()) {
-            FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-            String idInConfig = config.getString("server-id");
-            serverUUID = UUID.fromString(idInConfig);
-        } else {
-            // Generate a new UUID if the configuration file doesn't exist
-            serverUUID = UUID.randomUUID();
-            FileConfiguration config = new YamlConfiguration();
-            config.set("server-id", serverUUID.toString());
-            try {
-                config.save(configFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return serverUUID;
     }
 
     public void loadCommands() {
@@ -154,7 +129,7 @@ public final class BasicHomes extends JavaPlugin {
     public PlayerAccount createPlayerAccount(@NonNull Player player) {
         PlayerAccount acc;
         try {
-            acc = getDb().createPlayerAccount(player);
+            acc = db.createPlayerAccount(player);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -165,25 +140,17 @@ public final class BasicHomes extends JavaPlugin {
     public PlayerAccount getPlayerAccount(@NonNull Player player) {
         PlayerAccount acc;
         try {
-            acc = getDb().getPlayerAccount(player);
+            acc = db.getPlayerAccount(player);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return acc;
     }
 
-    public void addServerToPlayer(Player player) {
-        try {
-            getDb().addServerToPlayer(player);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public PlayerAccount resetAccountPassword(Player player) {
         PlayerAccount acc;
         try {
-            acc = getDb().resetAccountPassword(player);
+            acc = db.resetAccountPassword(player);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -192,19 +159,9 @@ public final class BasicHomes extends JavaPlugin {
 
     public void deletePlayerAccount(Player player) {
         try {
-            getDb().deleteAccount(player);
+            db.deleteAccount(player);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public boolean serverAlreadyRegistered(Player player) {
-        boolean registered;
-        try {
-            registered = this.getDb().serverAlreadyRegistered(player);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return registered;
     }
 }

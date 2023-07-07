@@ -45,7 +45,7 @@ public class Account implements CommandExecutor, TabCompleter
             case "create": {
                 if (acc == null) {
                     acc = this.plugin.createPlayerAccount(playerSender);
-                    this.plugin.addServerToPlayer(playerSender);
+
                     final TextComponent message = this.plugin.getChatUtils().textToComponent("Successfully created your account ! ", ChatColor.AQUA);
                     message.addExtra(websiteText);
                     final TextComponent loginsMessage = this.plugin.getChatUtils().textToComponent("User ID: ", ChatColor.AQUA);
@@ -90,21 +90,6 @@ public class Account implements CommandExecutor, TabCompleter
                 playerSender.spigot().sendMessage(loginsMessage2);
                 return true;
             }
-            case "add-server": {
-                if (acc == null) {
-                    this.noAccount(playerSender);
-                    return true;
-                }
-                if (this.plugin.serverAlreadyRegistered(playerSender)) {
-                    this.plugin.getChatUtils().sendPlayerError(playerSender, "This server is already registered !");
-                    return true;
-                }
-                this.plugin.addServerToPlayer(playerSender);
-                final TextComponent msg = this.plugin.getChatUtils().textToComponent("Successfully added this server to your account ! ", ChatColor.AQUA);
-                msg.addExtra(websiteText);
-                playerSender.spigot().sendMessage(msg);
-                return true;
-            }
             case "delete": {
                 if (acc == null) {
                     this.noAccount(playerSender);
@@ -128,7 +113,6 @@ public class Account implements CommandExecutor, TabCompleter
             optionsList.add("create");
             optionsList.add("id");
             optionsList.add("reset-password");
-            optionsList.add("add-server");
             optionsList.add("delete");
             return optionsList;
         }
@@ -157,7 +141,6 @@ public class Account implements CommandExecutor, TabCompleter
         final Hashtable<String, String> cmdList = new Hashtable<>();
         cmdList.put("/account create", "Create your account to manage your homes online !");
         cmdList.put("/account id", "Retrieve your account ID !");
-        cmdList.put("/account add-server", "Add this server to your account !");
         cmdList.put("/account reset-password", "Reset the password of your account !");
         cmdList.put("/account delete", "Delete your account !");
         this.plugin.getChatUtils().sendPlayerInfo(player, "Here are all of the account commands !");
