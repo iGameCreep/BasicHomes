@@ -6,12 +6,12 @@
 
     <groupId>fr.gamecreep</groupId>
     <artifactId>BasicHomes</artifactId>
-    <version>1.4.1-RELEASE</version>
+    <version>1.5-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>BasicHomes</name>
 
-    <description>Basic Minecraft Paper plugin to use homes !</description>
+    <description>Basic Minecraft Spigot plugin to use homes !</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

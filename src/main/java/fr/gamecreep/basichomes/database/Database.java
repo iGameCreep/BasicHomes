@@ -18,13 +18,11 @@ import java.util.List;
 import static fr.gamecreep.basichomes.utils.PasswordUtils.hashPassword;
 
 public class Database {
-    private final BasicHomes plugin;
     private final String url;
     private final String username;
     private final String password;
 
     public Database(BasicHomes plugin, String jdbc, String username, String password) {
-        this.plugin = plugin;
         this.url = jdbc;
         this.username = username;
         this.password = password;
@@ -77,7 +75,8 @@ public class Database {
         String sql = "CREATE TABLE IF NOT EXISTS accounts (" +
                 "accountID SERIAL PRIMARY KEY," +
                 "userID TEXT NOT NULL," +
-                "password TEXT NOT NULL" +
+                "password TEXT NOT NULL," +
+                "rank TEXT NOT NULL" +
                 ");";
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -136,18 +135,18 @@ public class Database {
     }
 
     public void addHome(@NonNull PlayerHome home) throws SQLException {
-       String sql = "INSERT INTO homes (uuid, homename, x, y, z, world) VALUES ("
-               + "'" + home.getUuid() + "',"
-               + "'" + home.getHomeName() + "',"
-               + "'" + home.getX() + "',"
-               + "'" + home.getY() + "',"
-               + "'" + home.getZ() + "',"
-               + "'" + home.getWorld() + "')";
+        String sql = "INSERT INTO homes (uuid, homename, x, y, z, world) VALUES ("
+                + "'" + home.getUuid() + "',"
+                + "'" + home.getHomeName() + "',"
+                + "'" + home.getX() + "',"
+                + "'" + home.getY() + "',"
+                + "'" + home.getZ() + "',"
+                + "'" + home.getWorld() + "')";
 
-       Connection connection = getConnection();
-       PreparedStatement statement = connection.prepareStatement(sql);
-       statement.execute();
-       connection.close();
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.execute();
+        connection.close();
     }
 
     public void removeHome(@NonNull PlayerHome home) throws SQLException {
@@ -164,10 +163,12 @@ public class Database {
         Connection conn = getConnection();
         String password = PasswordUtils.generatePassword();
         String hashedPassword = hashPassword(password);
+        String rank = (player.hasPermission(new Permission("basichomes.op"))) ? "admin" : "user";
 
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO accounts (userID, password) VALUES (?, ?) RETURNING accountId");
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO accounts (userID, password, rank) VALUES (?, ?, ?) RETURNING accountId");
         stmt.setString(1, player.getUniqueId().toString());
         stmt.setString(2, hashedPassword);
+        stmt.setString(3, rank);
 
         int accountId;
 
@@ -179,7 +180,7 @@ public class Database {
             }
         }
 
-        PlayerAccount acc = new PlayerAccount(accountId, password);
+        PlayerAccount acc = new PlayerAccount(accountId, password, rank);
         stmt.close();
         conn.close();
         return acc;
@@ -240,6 +241,7 @@ public class Database {
         String password = PasswordUtils.generatePassword();
         String hashedPassword = hashPassword(password);
         String uuid = player.getUniqueId().toString();
+        String rank = (player.hasPermission(new Permission("basichomes.op"))) ? "admin" : "user";
 
         PreparedStatement stmt = conn.prepareStatement(String.format("UPDATE accounts SET password = '%s' WHERE userID = '%s' RETURNING accountID", hashedPassword, uuid));
         int accountId;
@@ -252,7 +254,7 @@ public class Database {
             }
         }
 
-        PlayerAccount acc = new PlayerAccount(accountId, password);
+        PlayerAccount acc = new PlayerAccount(accountId, password, rank);
         stmt.close();
         conn.close();
         return acc;

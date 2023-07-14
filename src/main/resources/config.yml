@@ -4,4 +4,4 @@ database:
   password: "PASSWORD"
 
 accounts:
-  website: "Your dashboard website (if enabled)"
+  website: ""
