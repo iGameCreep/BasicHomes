@@ -18,19 +18,19 @@ import java.util.List;
 import static fr.gamecreep.basichomes.utils.PasswordUtils.hashPassword;
 
 public class Database {
-    private final String url;
-    private final String username;
-    private final String password;
+    private final String dbUrl;
+    private final String dbUsername;
+    private final String dbPassword;
 
     public Database(BasicHomes plugin, String jdbc, String username, String password) {
-        this.url = jdbc;
-        this.username = username;
-        this.password = password;
+        this.dbUrl = jdbc;
+        this.dbUsername = username;
+        this.dbPassword = password;
 
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            plugin.getPluginLogger().logWarning("Could not load postgresql driver. Contact developers.");
         }
         try {
             Connection connection = getConnection();
@@ -38,18 +38,11 @@ public class Database {
             connection.close();
         } catch (SQLException e) {
             plugin.getPluginLogger().logWarning("Could not connect to Database.");
-            throw new RuntimeException(e);
         }
     }
 
-    public Connection getConnection() {
-        Connection connection;
-        try {
-            connection = DriverManager.getConnection(url, username, password);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return connection;
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(this.dbUrl, this.dbUsername, this.dbPassword);
     }
 
     public void createSessionsTableIfNotExists() throws SQLException {
@@ -64,9 +57,8 @@ public class Database {
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.executeUpdate();
-            statement.close();
-            conn.close();
         }
+        conn.close();
     }
 
     public void createAccountsTableIfNotExists() throws SQLException {
@@ -81,9 +73,8 @@ public class Database {
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.executeUpdate();
-            statement.close();
-            conn.close();
         }
+        conn.close();
     }
 
     public void createHomesTableIfNotExists() throws SQLException {
@@ -101,36 +92,31 @@ public class Database {
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.executeUpdate();
-            statement.close();
-            conn.close();
         }
+        conn.close();
     }
     public List<PlayerHome> getAllPlayerHomes(@NonNull Player player) throws SQLException {
         String uuid = player.getUniqueId().toString();
         String sql = "SELECT * FROM homes WHERE uuid = '" + uuid + "'";
-        ResultSet resultSet;
-        Connection connection = getConnection();
-
-        Statement statement = connection.createStatement();
-        resultSet = statement.executeQuery(sql);
         List<PlayerHome> playerHomeList = new ArrayList<>();
 
-        while (resultSet.next()) {
-            String homename = resultSet.getString("homename");
-            double x = resultSet.getDouble("x");
-            double y = resultSet.getDouble("y");
-            double z = resultSet.getDouble("z");
-            String strWorld = resultSet.getString("world");
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery(sql);
 
-            World world = Bukkit.getWorld(strWorld);
-            Location loc = new Location(world, x, y, z);
+            while (resultSet.next()) {
+                String homeName = resultSet.getString("homename");
+                double x = resultSet.getDouble("x");
+                double y = resultSet.getDouble("y");
+                double z = resultSet.getDouble("z");
+                String strWorld = resultSet.getString("world");
 
-            PlayerHome home = new PlayerHome(homename, player, loc);
-            playerHomeList.add(home);
+                World world = Bukkit.getWorld(strWorld);
+                Location loc = new Location(world, x, y, z);
+
+                PlayerHome home = new PlayerHome(homeName, player, loc);
+                playerHomeList.add(home);
+            }
         }
-        resultSet.close();
-        statement.close();
-        connection.close();
         return playerHomeList;
     }
 
@@ -143,65 +129,59 @@ public class Database {
                 + "'" + home.getZ() + "',"
                 + "'" + home.getWorld() + "')";
 
-        Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.execute();
-        connection.close();
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.execute();
+        }
     }
 
     public void removeHome(@NonNull PlayerHome home) throws SQLException {
         String sql = "DELETE FROM homes WHERE "
                 + "uuid = '" + home.getUuid() + "' AND "
                 + "homename = '" + home.getHomeName() + "'";
-        Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.execute();
-        connection.close();
+
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.execute();
+        }
     }
 
     public PlayerAccount createPlayerAccount(Player player) throws SQLException {
-        Connection conn = getConnection();
         String password = PasswordUtils.generatePassword();
         String hashedPassword = hashPassword(password);
         String rank = (player.hasPermission(new Permission("basichomes.op"))) ? "admin" : "user";
 
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO accounts (userID, password, rank) VALUES (?, ?, ?) RETURNING accountId");
-        stmt.setString(1, player.getUniqueId().toString());
-        stmt.setString(2, hashedPassword);
-        stmt.setString(3, rank);
+        String sql = String.format(
+                "INSERT INTO accounts (userID, password, rank) VALUES (%s, %s, %S) RETURNING accountId",
+                player.getUniqueId(),
+                hashedPassword,
+                rank);
 
         int accountId;
 
-        try (ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                accountId = rs.getInt(1);
-            } else {
-                throw new SQLException("Insert failed, no rows affected.");
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    accountId = rs.getInt(1);
+                } else {
+                    throw new SQLException(String.format("Could not create an account for player %s (UUID: %s)", player.getName(), player.getUniqueId()));
+                }
             }
         }
-
-        PlayerAccount acc = new PlayerAccount(accountId, password, rank);
-        stmt.close();
-        conn.close();
-        return acc;
+        return new PlayerAccount(accountId, password, rank);
     }
 
     public PlayerAccount getPlayerAccount(Player player) throws SQLException {
-        Connection conn = getConnection();
         String uuid = player.getUniqueId().toString();
         PlayerAccount acc;
 
         String sql = String.format("SELECT * FROM accounts WHERE userID = '%s'", uuid);
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery();
-
-        if (rs.next()) {
-            acc = new PlayerAccount(rs.getInt(1));
-        } else {
-            acc = null;
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                acc = new PlayerAccount(rs.getInt(1));
+            } else {
+                acc = null;
+            }
         }
-        stmt.close();
-        conn.close();
         return acc;
     }
 
@@ -217,10 +197,9 @@ public class Database {
         int accountId = getAccountIdFromUUID(uuid);
 
         String sql = String.format("DELETE FROM sessions WHERE accountID = '%s'", accountId);
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.execute();
-
-        stmt.close();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.execute();
+        }
 
         conn.close();
     }
@@ -229,10 +208,10 @@ public class Database {
         Connection conn = getConnection();
 
         String sql = String.format("DELETE FROM accounts WHERE userID = '%s'", uuid);
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.execute();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.execute();
+        }
 
-        stmt.close();
         conn.close();
     }
 
@@ -265,15 +244,15 @@ public class Database {
         int accountId;
 
         String sql = String.format("SELECT accountID FROM accounts WHERE userID = '%s'", uuid);
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
 
-        if (rs.next()) {
-            accountId = rs.getInt("accountID");
-        } else {
-            throw new SQLException("Could not get account ID");
+            if (rs.next()) {
+                accountId = rs.getInt("accountID");
+            } else {
+                throw new SQLException("Could not get account ID");
+            }
         }
-        stmt.close();
         conn.close();
         return accountId;
     }
