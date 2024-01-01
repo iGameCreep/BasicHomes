@@ -46,8 +46,6 @@ public class Database {
     }
 
     public void createSessionsTableIfNotExists() throws SQLException {
-        Connection conn = getConnection();
-
         String sql = "CREATE TABLE IF NOT EXISTS sessions (" +
                 "accountID INT NOT NULL," +
                 "token TEXT NOT NULL UNIQUE," +
@@ -55,15 +53,12 @@ public class Database {
                 "expireAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() + INTERVAL '30 minutes'" +
                 ");";
 
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.executeUpdate();
+        try (Connection conn = getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.execute();
         }
-        conn.close();
     }
 
     public void createAccountsTableIfNotExists() throws SQLException {
-        Connection conn = getConnection();
-
         String sql = "CREATE TABLE IF NOT EXISTS accounts (" +
                 "accountID SERIAL PRIMARY KEY," +
                 "userID TEXT NOT NULL," +
@@ -71,15 +66,12 @@ public class Database {
                 "rank TEXT NOT NULL" +
                 ");";
 
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.executeUpdate();
+        try (Connection conn = getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.execute();
         }
-        conn.close();
     }
 
     public void createHomesTableIfNotExists() throws SQLException {
-        Connection conn = getConnection();
-
         String sql = "CREATE TABLE IF NOT EXISTS homes ("
                 + "homeID SERIAL NOT NULL PRIMARY KEY,"
                 + "uuid TEXT NOT NULL,"
@@ -90,18 +82,16 @@ public class Database {
                 + "world TEXT NOT NULL"
                 + ")";
 
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.executeUpdate();
+        try (Connection conn = getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.execute();
         }
-        conn.close();
     }
     public List<PlayerHome> getAllPlayerHomes(@NonNull Player player) throws SQLException {
-        String uuid = player.getUniqueId().toString();
-        String sql = "SELECT * FROM homes WHERE uuid = '" + uuid + "'";
+        String sql = String.format("SELECT * FROM homes WHERE uuid = '%s'", player.getUniqueId());
         List<PlayerHome> playerHomeList = new ArrayList<>();
 
         try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet resultSet = statement.executeQuery(sql);
+            ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
                 String homeName = resultSet.getString("homename");
@@ -150,7 +140,7 @@ public class Database {
         String rank = (player.hasPermission(new Permission("basichomes.op"))) ? "admin" : "user";
 
         String sql = String.format(
-                "INSERT INTO accounts (userID, password, rank) VALUES (%s, %s, %S) RETURNING accountId",
+                "INSERT INTO accounts (userID, password, rank) VALUES ('%s', '%s', '%s') RETURNING accountId",
                 player.getUniqueId(),
                 hashedPassword,
                 rank);
