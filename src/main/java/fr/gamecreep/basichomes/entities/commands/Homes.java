@@ -21,7 +21,7 @@ public class Homes implements CommandExecutor {
             Player playerSender = (Player) commandSender;
 
             int currentPage = 1;
-            plugin.getHomesUtils().openHomeInventory(playerSender, currentPage);
+            this.plugin.getHomesUtils().openHomeInventory(playerSender, currentPage);
             return true;
         }
 

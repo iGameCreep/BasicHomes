@@ -11,13 +11,13 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fr.gamecreep.basichomes.utils.PasswordUtils.hashPassword;
-
 public class Database {
+
     private final String dbUrl;
     private final String dbUsername;
     private final String dbPassword;
@@ -134,9 +134,9 @@ public class Database {
         }
     }
 
-    public PlayerAccount createPlayerAccount(Player player) throws SQLException {
+    public PlayerAccount createPlayerAccount(Player player) throws NoSuchAlgorithmException, SQLException {
         String password = PasswordUtils.generatePassword();
-        String hashedPassword = hashPassword(password);
+        String hashedPassword = PasswordUtils.hashPassword(password);
         String rank = (player.hasPermission(new Permission("basichomes.op"))) ? "admin" : "user";
 
         String sql = String.format(
@@ -205,10 +205,10 @@ public class Database {
         conn.close();
     }
 
-    public PlayerAccount resetAccountPassword(Player player) throws SQLException {
+    public PlayerAccount resetAccountPassword(Player player) throws SQLException, NoSuchAlgorithmException {
         Connection conn = getConnection();
         String password = PasswordUtils.generatePassword();
-        String hashedPassword = hashPassword(password);
+        String hashedPassword = PasswordUtils.hashPassword(password);
         String uuid = player.getUniqueId().toString();
         String rank = (player.hasPermission(new Permission("basichomes.op"))) ? "admin" : "user";
 
@@ -232,8 +232,8 @@ public class Database {
     public int getAccountIdFromUUID(String uuid) throws SQLException {
         Connection conn = getConnection();
         int accountId;
-
         String sql = String.format("SELECT accountID FROM accounts WHERE userID = '%s'", uuid);
+
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
 
@@ -243,6 +243,7 @@ public class Database {
                 throw new SQLException("Could not get account ID");
             }
         }
+
         conn.close();
         return accountId;
     }

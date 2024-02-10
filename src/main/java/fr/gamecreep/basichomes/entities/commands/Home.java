@@ -11,6 +11,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Home implements CommandExecutor, TabCompleter {
@@ -27,16 +28,13 @@ public class Home implements CommandExecutor, TabCompleter {
             Player playerSender = (Player) commandSender;
 
             if (args.length < 1) {
-                plugin.getChatUtils().sendPlayerError(playerSender, "Please add the name of the home to teleport to !");
+                this.plugin.getChatUtils().sendPlayerError(playerSender, "Please add the name of the home to teleport to !");
                 return true;
             }
 
-            PlayerHome home;
-
-            try {
-                home = plugin.getHomeByName(playerSender, args[0]);
-            } catch (Error err) {
-                plugin.getChatUtils().sendPlayerError(playerSender, "No home exists with that name !");
+            PlayerHome home = this.plugin.getHomeByName(playerSender, args[0]);
+            if (home == null) {
+                this.plugin.getChatUtils().sendPlayerError(playerSender, "No home exists with that name !");
                 return true;
             }
 
@@ -44,7 +42,8 @@ public class Home implements CommandExecutor, TabCompleter {
             location.setPitch(playerSender.getLocation().getPitch());
             location.setYaw(playerSender.getLocation().getYaw());
             playerSender.teleport(location);
-            plugin.getChatUtils().sendPlayerInfo(playerSender, "Teleporting you to §e" + args[0] + "§b...");
+
+            this.plugin.getChatUtils().sendPlayerInfo(playerSender, "Teleporting you to §e" + args[0] + "§b...");
 
             return true;
         }
@@ -58,13 +57,13 @@ public class Home implements CommandExecutor, TabCompleter {
             Player playerSender = (Player) commandSender;
 
             List<String> homeNameList = new ArrayList<>();
-            List<PlayerHome> homeList = plugin.getAllPlayerHomes(playerSender);
+            List<PlayerHome> homeList = this.plugin.getAllPlayerHomes(playerSender);
 
             for (PlayerHome home : homeList) {
                 homeNameList.add(home.getHomeName());
             }
             return homeNameList;
         }
-        return null;
+        return Collections.emptyList();
     }
 }

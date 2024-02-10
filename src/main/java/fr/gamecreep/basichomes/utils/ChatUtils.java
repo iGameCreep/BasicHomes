@@ -16,8 +16,8 @@ public class ChatUtils
         player.sendMessage(ChatColor.AQUA + message);
     }
 
-    public TextComponent generateCommandComponent(final String text, final String command, final boolean underlined, final net.md_5.bungee.api.ChatColor color) {
-        final TextComponent component = new TextComponent(text);
+    public TextComponent generateCommandComponent(final String command, final boolean underlined, final net.md_5.bungee.api.ChatColor color) {
+        final TextComponent component = new TextComponent(command);
         component.setColor(color);
         component.setUnderlined(underlined);
         component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));

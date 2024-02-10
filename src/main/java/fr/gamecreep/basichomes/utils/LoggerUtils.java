@@ -9,11 +9,13 @@ public class LoggerUtils {
         this.PREFIX = prefix;
     }
     public void logInfo(String message) {
-        Bukkit.getServer().getLogger().info(PREFIX + message);
+        String toLog = String.format("%s %s", PREFIX, message);
+        Bukkit.getServer().getLogger().info(toLog);
     }
 
     public void logWarning(String message) {
-        Bukkit.getServer().getLogger().warning(PREFIX + message);
+        String toLog = String.format("%s %s", PREFIX, message);
+        Bukkit.getServer().getLogger().warning(toLog);
     }
 
 

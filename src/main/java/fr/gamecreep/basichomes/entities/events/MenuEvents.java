@@ -26,7 +26,6 @@ public class MenuEvents implements Listener {
         ItemStack item = event.getCurrentItem();
         assert inv != null;
 
-        // The inventory is the homes menu
         if (event.getView().getTitle().equals("§bMy Homes")) {
             int page = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(inv.getItem(49)).getItemMeta()).getDisplayName().replaceAll("[^0-9/]+", "").split("/")[0]);
             player.closeInventory();
@@ -42,16 +41,14 @@ public class MenuEvents implements Listener {
                     plugin.getHomesUtils().openHomeInventory(player, page + 1);
                     break;
                 case "§cDelete this home":
-                    String home_name = Objects.requireNonNull(item.getItemMeta().getLore()).get(0);
-                    PlayerHome home;
-                    try {
-                        home = plugin.getHomeByName(player, home_name);
-                    } catch (Error err) {
+                    String homeName = Objects.requireNonNull(item.getItemMeta().getLore()).get(0);
+                    PlayerHome home = plugin.getHomeByName(player, homeName);
+                    if (home == null) {
                         plugin.getChatUtils().sendPlayerError(player, "Could not delete the home.");
-                        break;
+                        return;
                     }
                     plugin.removeHome(home);
-                    plugin.getChatUtils().sendPlayerInfo(player, "Home §e" + home_name + "§b has been removed !");
+                    plugin.getChatUtils().sendPlayerInfo(player, String.format("Home §e%s§b has been removed !", home.getHomeName()));
                     break;
                 default:
                     if (item.getType().equals(Material.ENDER_EYE)) {
@@ -61,12 +58,10 @@ public class MenuEvents implements Listener {
                     }
                     // Item clicked is a home
 			        String name = item.getItemMeta().getDisplayName();
-                    PlayerHome playerHome;
-                    try {
-                        playerHome = plugin.getHomeByName(player, name);
-                    } catch (Error err) {
+                    PlayerHome playerHome = plugin.getHomeByName(player, name);
+                    if (playerHome == null) {
                         plugin.getChatUtils().sendPlayerError(player, "Could not get the home.");
-                        break;
+                        return;
                     }
                     player.teleport(playerHome.getLocation());
                     plugin.getChatUtils().sendPlayerInfo(player, "Teleporting you to §e" + playerHome.getHomeName() + "§b...");

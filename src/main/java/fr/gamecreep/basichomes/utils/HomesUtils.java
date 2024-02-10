@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HomesUtils {
     private final BasicHomes plugin;
@@ -65,7 +66,7 @@ public class HomesUtils {
     private ItemStack createNavigationItem(String displayName) {
         ItemStack item = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(displayName);
+        Objects.requireNonNull(meta).setDisplayName(displayName);
         item.setItemMeta(meta);
         return item;
     }
@@ -73,7 +74,7 @@ public class HomesUtils {
     private ItemStack createPageIndicatorItem(int currentPage, int totalPages) {
         ItemStack item = new ItemStack(Material.ENDER_EYE);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("Page " + currentPage + "/" + totalPages);
+        Objects.requireNonNull(meta).setDisplayName("Page " + currentPage + "/" + totalPages);
         item.setItemMeta(meta);
         return item;
     }
@@ -100,7 +101,7 @@ public class HomesUtils {
         List<String> lore = new ArrayList<>();
 
         ItemMeta homeItemMeta = homeItem.getItemMeta();
-        homeItemMeta.setDisplayName(home.getHomeName());
+        Objects.requireNonNull(homeItemMeta).setDisplayName(home.getHomeName());
         lore.add("Click to teleport!");
         homeItemMeta.setLore(lore);
         homeItem.setItemMeta(homeItemMeta);
@@ -112,7 +113,7 @@ public class HomesUtils {
         List<String> lore = new ArrayList<>();
 
         ItemMeta delItemMeta = delItem.getItemMeta();
-        delItemMeta.setDisplayName("§cDelete this home");
+        Objects.requireNonNull(delItemMeta).setDisplayName("§cDelete this home");
         lore.add(home.getHomeName());
         delItemMeta.setLore(lore);
         delItem.setItemMeta(delItemMeta);

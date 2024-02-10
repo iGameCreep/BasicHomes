@@ -26,20 +26,20 @@ public class SetHome implements CommandExecutor {
             Location playerPos = playerSender.getLocation();
 
             if (args.length < 1) {
-                plugin.getChatUtils().sendPlayerError(playerSender, "Please add a home name !");
+                this.plugin.getChatUtils().sendPlayerError(playerSender, "Please add a home name !");
                 return false;
             }
 
-            List<PlayerHome> playerHomeList = plugin.getAllPlayerHomes(playerSender);
+            List<PlayerHome> playerHomeList = this.plugin.getAllPlayerHomes(playerSender);
             for (PlayerHome home : playerHomeList) {
                 if (home.getHomeName().equalsIgnoreCase(args[0])) {
-                    plugin.getChatUtils().sendPlayerError(playerSender, "A home with this name already exists !");
+                    this.plugin.getChatUtils().sendPlayerError(playerSender, "A home with this name already exists !");
                     return true;
                 }
             }
 
-            plugin.createHome(args[0], playerSender, playerPos);
-            plugin.getChatUtils().sendPlayerInfo(playerSender, "Home §e" + args[0] + "§b has been created !");
+            this.plugin.createHome(args[0], playerSender, playerPos);
+            this.plugin.getChatUtils().sendPlayerInfo(playerSender, "Home §e" + args[0] + "§b has been created !");
 
             return true;
         }

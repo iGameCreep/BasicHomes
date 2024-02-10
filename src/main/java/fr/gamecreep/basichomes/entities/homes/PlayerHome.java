@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 @Data
 public class PlayerHome {
     private double x;
@@ -24,14 +26,13 @@ public class PlayerHome {
         setZ(loc.getZ());
         setPitch(loc.getPitch());
         setYaw(loc.getYaw());
-        setWorld(loc.getWorld().getName());
+        setWorld(Objects.requireNonNull(loc.getWorld()).getName());
         setHomeName(name);
         setUuid(player.getUniqueId().toString());
     }
 
     public Location getLocation() {
         World homeWorld = Bukkit.getWorld(this.world);
-        Location loc = new Location(homeWorld, this.x, this.y, this.z);
-        return loc;
+        return new Location(homeWorld, this.x, this.y, this.z);
     }
 }
