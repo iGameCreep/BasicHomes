@@ -1,6 +1,7 @@
 package fr.gamecreep.basichomes.entities.commands;
 
 import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.homes.PlayerHome;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -23,16 +24,17 @@ public class Home implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
-
         if (commandSender instanceof Player) {
             Player playerSender = (Player) commandSender;
 
-            if (args.length < 1) {
+            if (args.length == 0) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, "Please add the name of the home to teleport to !");
                 return true;
             }
 
-            PlayerHome home = this.plugin.getHomeByName(playerSender, args[0]);
+            String homeName = args[0];
+            PlayerHome home = this.plugin.getHomeByName(playerSender, homeName);
+
             if (home == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, "No home exists with that name !");
                 return true;
@@ -43,7 +45,7 @@ public class Home implements CommandExecutor, TabCompleter {
             location.setYaw(playerSender.getLocation().getYaw());
             playerSender.teleport(location);
 
-            this.plugin.getChatUtils().sendPlayerInfo(playerSender, "Teleporting you to §e" + args[0] + "§b...");
+            this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, homeName, Constants.SUCCESS_COLOR));
 
             return true;
         }

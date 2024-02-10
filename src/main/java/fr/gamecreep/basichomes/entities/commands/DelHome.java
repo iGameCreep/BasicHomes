@@ -1,6 +1,7 @@
 package fr.gamecreep.basichomes.entities.commands;
 
 import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.homes.PlayerHome;
 import lombok.NonNull;
 import org.bukkit.command.Command;
@@ -40,7 +41,7 @@ public class DelHome implements CommandExecutor, TabCompleter {
 
             this.plugin.removeHome(home);
 
-            this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Home §e%s§b has been removed !", homeName));
+            this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Home %s%s%s has been removed !", Constants.SPECIAL_COLOR, homeName, Constants.SUCCESS_COLOR));
             return true;
         }
 

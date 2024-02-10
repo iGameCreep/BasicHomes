@@ -1,6 +1,7 @@
 package fr.gamecreep.basichomes.utils;
 
 import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.homes.PlayerHome;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -26,7 +27,7 @@ public class HomesUtils {
 
         int totalPages = (int) Math.ceil((double) homes.size() / homesPerPage);
 
-        Inventory inventory = Bukkit.createInventory(null, 54, "§bMy Homes");
+        Inventory inventory = Bukkit.createInventory(null, 54, Constants.HOMES_MENU_NAME);
 
         int startIndex = (currentPage - 1) * homesPerPage;
         int endIndex = Math.min(startIndex + homesPerPage, homes.size());
@@ -49,8 +50,8 @@ public class HomesUtils {
     }
 
     private void addPaginationButtons(Inventory inventory, int currentPage, int totalPages) {
-        ItemStack prevPageItem = createNavigationItem("§6<-- Previous Page");
-        ItemStack nextPageItem = createNavigationItem("§6Next Page -->");
+        ItemStack prevPageItem = createNavigationItem(Constants.PREVIOUS_PAGE_ITEM_NAME);
+        ItemStack nextPageItem = createNavigationItem(Constants.NEXT_PAGE_ITEM_NAME);
 
         if (currentPage > 1) {
             inventory.setItem(48, prevPageItem);
@@ -64,7 +65,7 @@ public class HomesUtils {
     }
 
     private ItemStack createNavigationItem(String displayName) {
-        ItemStack item = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+        ItemStack item = new ItemStack(Constants.NAVIGATION_ITEM);
         ItemMeta meta = item.getItemMeta();
         Objects.requireNonNull(meta).setDisplayName(displayName);
         item.setItemMeta(meta);
@@ -72,8 +73,9 @@ public class HomesUtils {
     }
 
     private ItemStack createPageIndicatorItem(int currentPage, int totalPages) {
-        ItemStack item = new ItemStack(Material.ENDER_EYE);
+        ItemStack item = new ItemStack(Constants.PAGE_INDICATOR_ITEM);
         ItemMeta meta = item.getItemMeta();
+        Objects.requireNonNull(meta).setLore(List.of(String.valueOf(currentPage)));
         Objects.requireNonNull(meta).setDisplayName("Page " + currentPage + "/" + totalPages);
         item.setItemMeta(meta);
         return item;
@@ -84,16 +86,16 @@ public class HomesUtils {
 
         switch (home.getWorld()) {
             case "world":
-                material = Material.GRASS_BLOCK;
+                material = Constants.HOME_OVERWORLD_ITEM;
                 break;
             case "world_nether":
-                material = Material.CRIMSON_NYLIUM;
+                material = Constants.HOME_NETHER_ITEM;
                 break;
             case "world_the_end":
-                material = Material.END_PORTAL_FRAME;
+                material = Constants.HOME_END_ITEM;
                 break;
             default:
-                material = Material.ENDER_PEARL;
+                material = Constants.DEFAULT_HOME_ITEM;
                 break;
         }
 
@@ -109,11 +111,11 @@ public class HomesUtils {
         return homeItem;
     }
     private ItemStack createDelHomeItem(PlayerHome home) {
-        ItemStack delItem = new ItemStack(Material.BARRIER);
+        ItemStack delItem = new ItemStack(Constants.DELETE_HOME_ITEM);
         List<String> lore = new ArrayList<>();
 
         ItemMeta delItemMeta = delItem.getItemMeta();
-        Objects.requireNonNull(delItemMeta).setDisplayName("§cDelete this home");
+        Objects.requireNonNull(delItemMeta).setDisplayName(Constants.DELETE_HOME_ITEM_NAME);
         lore.add(home.getHomeName());
         delItemMeta.setLore(lore);
         delItem.setItemMeta(delItemMeta);
