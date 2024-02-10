@@ -54,7 +54,7 @@ public class MenuEvents implements Listener {
                     return;
                 }
                 this.plugin.removeHome(home);
-                this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Home %s%s%s has been removed !", Constants.SPECIAL_COLOR, home.getHomeName(), Constants.SUCCESS_COLOR));
+                this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Home %s%s%s has been removed !", Constants.SPECIAL_COLOR, home.getName(), Constants.SUCCESS_COLOR));
             } else {
                 // Item clicked is a home
                 String name = item.getItemMeta().getDisplayName();
@@ -69,7 +69,7 @@ public class MenuEvents implements Listener {
                 location.setYaw(playerSender.getLocation().getYaw());
                 playerSender.teleport(location);
 
-                this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, home.getHomeName(), Constants.SUCCESS_COLOR));
+                this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, home.getName(), Constants.SUCCESS_COLOR));
             }
         }
     }

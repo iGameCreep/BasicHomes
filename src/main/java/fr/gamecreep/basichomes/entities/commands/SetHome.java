@@ -35,7 +35,7 @@ public class SetHome implements CommandExecutor {
 
             List<PlayerHome> playerHomeList = this.plugin.getAllPlayerHomes(playerSender);
             for (PlayerHome home : playerHomeList) {
-                if (home.getHomeName().equalsIgnoreCase(name)) {
+                if (home.getName().equalsIgnoreCase(name)) {
                     this.plugin.getChatUtils().sendPlayerError(playerSender, "A home with this name already exists !");
                     return true;
                 }

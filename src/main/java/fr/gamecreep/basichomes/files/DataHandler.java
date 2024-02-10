@@ -37,7 +37,7 @@ public class DataHandler {
         List<PlayerHome> homes = new ArrayList<>();
 
         for (PlayerHome home : this.getAllHomes()) {
-            if (UUID.fromString(home.getUuid()).equals(player.getUniqueId())) homes.add(home);
+            if (UUID.fromString(home.getOwnerUuid()).equals(player.getUniqueId())) homes.add(home);
         }
 
         return homes;
@@ -48,7 +48,7 @@ public class DataHandler {
         List<PlayerHome> homes = this.getAllPlayerHomes(player);
 
         for (PlayerHome home : homes) {
-            if (home.getHomeName().equals(name)) return home;
+            if (home.getName().equals(name)) return home;
         }
 
         return null;

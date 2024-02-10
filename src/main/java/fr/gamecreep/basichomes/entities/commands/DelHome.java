@@ -57,7 +57,7 @@ public class DelHome implements CommandExecutor, TabCompleter {
             List<PlayerHome> homeList = this.plugin.getAllPlayerHomes(playerSender);
 
             for (PlayerHome home : homeList) {
-                homeNameList.add(home.getHomeName());
+                homeNameList.add(home.getName());
             }
             return homeNameList;
         }

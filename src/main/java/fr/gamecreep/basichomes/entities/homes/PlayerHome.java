@@ -16,18 +16,18 @@ public class PlayerHome {
     private float pitch;
     private float yaw;
     private String world;
-    private String homeName;
-    private String uuid;
+    private String name;
+    private String ownerUuid;
 
-    public PlayerHome(@NonNull String name, @NonNull String playerUuid, @NonNull Location loc) {
+    public PlayerHome(@NonNull String name, @NonNull String ownerUuid, @NonNull Location loc) {
         setX(loc.getX());
         setY(loc.getY());
         setZ(loc.getZ());
         setPitch(loc.getPitch());
         setYaw(loc.getYaw());
         setWorld(Objects.requireNonNull(loc.getWorld()).getName());
-        setHomeName(name);
-        setUuid(playerUuid);
+        setName(name);
+        setOwnerUuid(ownerUuid);
     }
 
     public Location getLocation() {

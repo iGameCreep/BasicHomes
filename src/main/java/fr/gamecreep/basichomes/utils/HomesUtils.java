@@ -103,7 +103,7 @@ public class HomesUtils {
         List<String> lore = new ArrayList<>();
 
         ItemMeta homeItemMeta = homeItem.getItemMeta();
-        Objects.requireNonNull(homeItemMeta).setDisplayName(home.getHomeName());
+        Objects.requireNonNull(homeItemMeta).setDisplayName(home.getName());
         lore.add("Click to teleport!");
         homeItemMeta.setLore(lore);
         homeItem.setItemMeta(homeItemMeta);
@@ -116,7 +116,7 @@ public class HomesUtils {
 
         ItemMeta delItemMeta = delItem.getItemMeta();
         Objects.requireNonNull(delItemMeta).setDisplayName(Constants.DELETE_HOME_ITEM_NAME);
-        lore.add(home.getHomeName());
+        lore.add(home.getName());
         delItemMeta.setLore(lore);
         delItem.setItemMeta(delItemMeta);
 
