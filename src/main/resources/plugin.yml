@@ -2,7 +2,7 @@ name: BasicHomes
 version: '${project.version}'
 main: fr.gamecreep.basichomes.BasicHomes
 api-version: 1.19
-load: STARTUP
+load: POSTWORLD
 authors: [GameCreep35#1564]
 description: Basic Minecraft Paper plugin to use homes !
 website: https://github.com/iGameCreep
@@ -23,10 +23,6 @@ commands:
   home:
     description: Teleport to one of your homes !
     usage: /home (home-name)
-
-  account:
-    description: Create an account to manage your homes online !
-    usage: /account
 
 permissions:
   basichomes.op:
