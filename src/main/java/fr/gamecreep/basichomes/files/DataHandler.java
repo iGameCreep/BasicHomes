@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,13 +19,13 @@ public class DataHandler {
     }
 
     public void createHome(@NonNull PlayerHome home) {
-        List<PlayerHome> homes = this.dataStore.loadData();
+        List<PlayerHome> homes = new LinkedList<>(this.dataStore.loadData());
         homes.add(home);
         this.dataStore.saveData(homes);
     }
 
     public void deleteHome(@NonNull PlayerHome home) {
-        List<PlayerHome> homes = this.dataStore.loadData();
+        List<PlayerHome> homes = new LinkedList<>(this.dataStore.loadData());
         homes.remove(home);
         this.dataStore.saveData(homes);
     }
