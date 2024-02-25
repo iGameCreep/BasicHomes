@@ -5,7 +5,8 @@ import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 @Data
 public class PlayerHome {
@@ -15,23 +16,22 @@ public class PlayerHome {
     private float pitch;
     private float yaw;
     private String world;
-    private String homeName;
-    private String uuid;
+    private String name;
+    private String ownerUuid;
 
-    public PlayerHome(@NonNull String name, @NonNull Player player, @NonNull Location loc) {
+    public PlayerHome(@NonNull String name, @NonNull String ownerUuid, @NonNull Location loc) {
         setX(loc.getX());
         setY(loc.getY());
         setZ(loc.getZ());
         setPitch(loc.getPitch());
         setYaw(loc.getYaw());
-        setWorld(loc.getWorld().getName());
-        setHomeName(name);
-        setUuid(player.getUniqueId().toString());
+        setWorld(Objects.requireNonNull(loc.getWorld()).getName());
+        setName(name);
+        setOwnerUuid(ownerUuid);
     }
 
     public Location getLocation() {
         World homeWorld = Bukkit.getWorld(this.world);
-        Location loc = new Location(homeWorld, this.x, this.y, this.z);
-        return loc;
+        return new Location(homeWorld, this.x, this.y, this.z);
     }
 }

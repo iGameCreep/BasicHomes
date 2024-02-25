@@ -1,6 +1,7 @@
 package fr.gamecreep.basichomes.entities.commands;
 
 import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.homes.PlayerHome;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -23,23 +24,25 @@ public class SetHome implements CommandExecutor {
 
         if (commandSender instanceof Player) {
             Player playerSender = (Player) commandSender;
-            Location playerPos = playerSender.getLocation();
 
-            if (args.length < 1) {
-                plugin.getChatUtils().sendPlayerError(playerSender, "Please add a home name !");
-                return false;
+            if (args.length == 0) {
+                this.plugin.getChatUtils().sendPlayerError(playerSender, "Please add a home name !");
+                return true;
             }
 
-            List<PlayerHome> playerHomeList = plugin.getAllPlayerHomes(playerSender);
+            Location playerPos = playerSender.getLocation();
+            String name = args[0];
+
+            List<PlayerHome> playerHomeList = this.plugin.getAllPlayerHomes(playerSender);
             for (PlayerHome home : playerHomeList) {
-                if (home.getHomeName().equalsIgnoreCase(args[0])) {
-                    plugin.getChatUtils().sendPlayerError(playerSender, "A home with this name already exists !");
+                if (home.getName().equalsIgnoreCase(name)) {
+                    this.plugin.getChatUtils().sendPlayerError(playerSender, "A home with this name already exists !");
                     return true;
                 }
             }
 
-            plugin.createHome(args[0], playerSender, playerPos);
-            plugin.getChatUtils().sendPlayerInfo(playerSender, "Home §e" + args[0] + "§b has been created !");
+            this.plugin.createHome(new PlayerHome(name, playerSender.getUniqueId().toString(), playerPos));
+            this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Home %s%s%s has been created !", Constants.SPECIAL_COLOR, name, Constants.SUCCESS_COLOR));
 
             return true;
         }
