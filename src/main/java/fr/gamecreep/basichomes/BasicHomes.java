@@ -1,15 +1,14 @@
 package fr.gamecreep.basichomes;
 
+import fr.gamecreep.basichomes.entities.classes.Warp;
 import fr.gamecreep.basichomes.entities.commands.*;
 import fr.gamecreep.basichomes.entities.events.MenuEvents;
-import fr.gamecreep.basichomes.entities.homes.PlayerHome;
+import fr.gamecreep.basichomes.entities.classes.PlayerHome;
 import fr.gamecreep.basichomes.files.DataHandler;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import fr.gamecreep.basichomes.utils.HomesUtils;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
 import lombok.Getter;
-import lombok.NonNull;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
@@ -19,7 +18,8 @@ public final class BasicHomes extends JavaPlugin {
     private final LoggerUtils pluginLogger = new LoggerUtils(String.format("[%s]", this.getDescription().getPrefix()));
     private final ChatUtils chatUtils = new ChatUtils();
     private final HomesUtils homesUtils = new HomesUtils(this);
-    private final DataHandler dataHandler = new DataHandler(this);
+    private final DataHandler<PlayerHome> homeHandler = new DataHandler<>(this, "homes.json");
+    private final DataHandler<Warp> warpHandler = new DataHandler<>(this, "warps.json");
 
     @Override
     public void onEnable() {
@@ -49,21 +49,5 @@ public final class BasicHomes extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MenuEvents(this), this);
 
         this.pluginLogger.logInfo("Events loaded !");
-    }
-
-    public void createHome(@NonNull PlayerHome home) {
-        this.dataHandler.createHome(home);
-    }
-
-    public void removeHome(@NonNull PlayerHome home) {
-        this.dataHandler.deleteHome(home);
-    }
-
-    public List<PlayerHome> getAllPlayerHomes(@NonNull Player player) {
-        return this.dataHandler.getAllPlayerHomes(player);
-    }
-
-    public PlayerHome getHomeByName(@NonNull Player player, String name) {
-        return this.dataHandler.getHomeByName(player, name);
     }
 }

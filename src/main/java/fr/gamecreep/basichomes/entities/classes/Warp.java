@@ -1,25 +1,25 @@
-package fr.gamecreep.basichomes.entities.homes;
+package fr.gamecreep.basichomes.entities.classes;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.util.Objects;
 
-@Data
-public class PlayerHome {
+@Getter
+@Setter
+public class Warp extends Default {
     private double x;
     private double y;
     private double z;
     private float pitch;
     private float yaw;
     private String world;
-    private String name;
-    private String ownerUuid;
 
-    public PlayerHome(@NonNull String name, @NonNull String ownerUuid, @NonNull Location loc) {
+    public Warp(@NonNull String name, @NonNull String ownerUuid, @NonNull Location loc) {
         setX(loc.getX());
         setY(loc.getY());
         setZ(loc.getZ());
@@ -31,7 +31,7 @@ public class PlayerHome {
     }
 
     public Location getLocation() {
-        World homeWorld = Bukkit.getWorld(this.world);
-        return new Location(homeWorld, this.x, this.y, this.z);
+        World w = Bukkit.getWorld(this.world);
+        return new Location(w, this.x, this.y, this.z);
     }
 }

@@ -4,8 +4,7 @@ import fr.gamecreep.basichomes.Constants;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
-public class ChatUtils
-{
+public class ChatUtils {
     public void sendPlayerError(@NonNull final Player player, final String message) {
         player.sendMessage(Constants.WARNING_COLOR + message);
     }

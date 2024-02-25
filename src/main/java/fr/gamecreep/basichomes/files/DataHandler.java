@@ -1,7 +1,7 @@
 package fr.gamecreep.basichomes.files;
 
 import fr.gamecreep.basichomes.BasicHomes;
-import fr.gamecreep.basichomes.entities.homes.PlayerHome;
+import fr.gamecreep.basichomes.entities.classes.Default;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -11,45 +11,45 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class DataHandler {
-    private final DataStore dataStore;
+public class DataHandler<T extends Default> {
+    private final DataStore<T> dataStore;
 
-    public DataHandler(BasicHomes plugin) {
-        this.dataStore = new DataStore(plugin);
+    public DataHandler(BasicHomes plugin, String fileName) {
+        this.dataStore = new DataStore<>(plugin, fileName);
     }
 
-    public void createHome(@NonNull PlayerHome home) {
-        List<PlayerHome> homes = new LinkedList<>(this.dataStore.loadData());
-        homes.add(home);
-        this.dataStore.saveData(homes);
+    public void create(@NonNull T data) {
+        List<T> list = new LinkedList<>(this.dataStore.loadData());
+        list.add(data);
+        this.dataStore.saveData(list);
     }
 
-    public void deleteHome(@NonNull PlayerHome home) {
-        List<PlayerHome> homes = new LinkedList<>(this.dataStore.loadData());
-        homes.remove(home);
-        this.dataStore.saveData(homes);
+    public void delete(@NonNull T data) {
+        List<T> list = new LinkedList<>(this.dataStore.loadData());
+        list.remove(data);
+        this.dataStore.saveData(list);
     }
 
-    public List<PlayerHome> getAllHomes() {
+    public List<T> getAll() {
         return this.dataStore.loadData();
     }
 
-    public List<PlayerHome> getAllPlayerHomes(@NonNull Player player) {
-        List<PlayerHome> homes = new ArrayList<>();
+    public List<T> getAllByPlayer(@NonNull Player player) {
+        List<T> list = new ArrayList<>();
 
-        for (PlayerHome home : this.getAllHomes()) {
-            if (UUID.fromString(home.getOwnerUuid()).equals(player.getUniqueId())) homes.add(home);
+        for (T data : this.getAll()) {
+            if (UUID.fromString(data.getOwnerUuid()).equals(player.getUniqueId())) list.add(data);
         }
 
-        return homes;
+        return list;
     }
 
     @Nullable
-    public PlayerHome getHomeByName(@NonNull Player player, @NonNull String name) {
-        List<PlayerHome> homes = this.getAllPlayerHomes(player);
+    public T getByName(@NonNull Player player, @NonNull String name) {
+        List<T> list = this.getAllByPlayer(player);
 
-        for (PlayerHome home : homes) {
-            if (home.getName().equals(name)) return home;
+        for (T data : list) {
+            if (data.getName().equals(name)) return data;
         }
 
         return null;

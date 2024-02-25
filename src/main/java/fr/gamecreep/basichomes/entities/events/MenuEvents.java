@@ -2,7 +2,7 @@ package fr.gamecreep.basichomes.entities.events;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.homes.PlayerHome;
+import fr.gamecreep.basichomes.entities.classes.PlayerHome;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,17 +48,17 @@ public class MenuEvents implements Listener {
                 this.plugin.getHomesUtils().openHomeInventory(playerSender, page + 1);
             } else if (displayName.equals(Constants.DELETE_HOME_ITEM_NAME)) {
                 String homeName = Objects.requireNonNull(item.getItemMeta().getLore()).get(0);
-                PlayerHome home = this.plugin.getHomeByName(playerSender, homeName);
+                PlayerHome home = this.plugin.getHomeHandler().getByName(playerSender, homeName);
                 if (home == null) {
                     this.plugin.getChatUtils().sendPlayerError(playerSender, "Could not delete the home.");
                     return;
                 }
-                this.plugin.removeHome(home);
+                this.plugin.getHomeHandler().delete(home);
                 this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Home %s%s%s has been removed !", Constants.SPECIAL_COLOR, home.getName(), Constants.SUCCESS_COLOR));
             } else {
                 // Item clicked is a home
                 String name = item.getItemMeta().getDisplayName();
-                PlayerHome home = this.plugin.getHomeByName(playerSender, name);
+                PlayerHome home = this.plugin.getHomeHandler().getByName(playerSender, name);
                 if (home == null) {
                     this.plugin.getChatUtils().sendPlayerError(playerSender, "Could not retrieve the home.");
                     return;

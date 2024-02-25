@@ -2,7 +2,7 @@ package fr.gamecreep.basichomes.entities.commands;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.homes.PlayerHome;
+import fr.gamecreep.basichomes.entities.classes.PlayerHome;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -33,7 +33,7 @@ public class Home implements CommandExecutor, TabCompleter {
             }
 
             String homeName = args[0];
-            PlayerHome home = this.plugin.getHomeByName(playerSender, homeName);
+            PlayerHome home = this.plugin.getHomeHandler().getByName(playerSender, homeName);
 
             if (home == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, "No home exists with that name !");
@@ -59,7 +59,7 @@ public class Home implements CommandExecutor, TabCompleter {
             Player playerSender = (Player) commandSender;
 
             List<String> homeNameList = new ArrayList<>();
-            List<PlayerHome> homeList = this.plugin.getAllPlayerHomes(playerSender);
+            List<PlayerHome> homeList = this.plugin.getHomeHandler().getAllByPlayer(playerSender);
 
             for (PlayerHome home : homeList) {
                 homeNameList.add(home.getName());

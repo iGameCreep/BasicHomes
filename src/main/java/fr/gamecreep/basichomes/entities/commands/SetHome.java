@@ -2,7 +2,7 @@ package fr.gamecreep.basichomes.entities.commands;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.homes.PlayerHome;
+import fr.gamecreep.basichomes.entities.classes.PlayerHome;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -33,7 +33,7 @@ public class SetHome implements CommandExecutor {
             Location playerPos = playerSender.getLocation();
             String name = args[0];
 
-            List<PlayerHome> playerHomeList = this.plugin.getAllPlayerHomes(playerSender);
+            List<PlayerHome> playerHomeList = this.plugin.getHomeHandler().getAllByPlayer(playerSender);
             for (PlayerHome home : playerHomeList) {
                 if (home.getName().equalsIgnoreCase(name)) {
                     this.plugin.getChatUtils().sendPlayerError(playerSender, "A home with this name already exists !");
@@ -41,7 +41,7 @@ public class SetHome implements CommandExecutor {
                 }
             }
 
-            this.plugin.createHome(new PlayerHome(name, playerSender.getUniqueId().toString(), playerPos));
+            this.plugin.getHomeHandler().create(new PlayerHome(name, playerSender.getUniqueId().toString(), playerPos));
             this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Home %s%s%s has been created !", Constants.SPECIAL_COLOR, name, Constants.SUCCESS_COLOR));
 
             return true;

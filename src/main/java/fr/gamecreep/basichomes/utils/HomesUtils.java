@@ -2,7 +2,7 @@ package fr.gamecreep.basichomes.utils;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.homes.PlayerHome;
+import fr.gamecreep.basichomes.entities.classes.PlayerHome;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ public class HomesUtils {
 
     public void openHomeInventory(Player player, int currentPage) {
         final int homesPerPage = 4;
-        List<PlayerHome> homes = plugin.getAllPlayerHomes(player);
+        List<PlayerHome> homes = this.plugin.getHomeHandler().getAllByPlayer(player);
 
         int totalPages = (int) Math.ceil((double) homes.size() / homesPerPage);
 
