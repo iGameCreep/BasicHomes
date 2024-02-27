@@ -11,18 +11,58 @@ commands:
   homes:
     description: Show all of your homes !
     usage: /homes
+    aliases:
+      - listhomes
+      - allhomes
 
   sethome:
     description: Create a home at your position !
-    usage: /sethome (name)
+    usage: /sethome [name]
+    aliases:
+      - createhome
+      - addhome
 
   delhome:
     description: Delete a home by it name !
-    usage: /deletehome (home-name)
+    usage: /delhome [name]
+    aliases:
+      - deletehome
+      - removehome
 
   home:
     description: Teleport to one of your homes !
-    usage: /home (home-name)
+    usage: /home [name]
+    aliases:
+      - tphome
+      - teleporthome
+
+  warps:
+    description: Show all of the warps !
+    usage: /warps
+    aliases:
+      - listwarps
+      - allwarps
+
+  setwarp:
+    description: Create a warp at your position !
+    usage: /setwarp [name]
+    aliases:
+      - createwarp
+      - addwarp
+
+  delwarp:
+    description: Delete a warp by it's name !
+    usage: /delwarp [name]
+    aliases:
+      - deletewarp
+      - removewarp
+
+  warp:
+    description: Teleport to a warp !
+    usage: /warp [name]
+    aliases:
+      - tpwarp
+      - teleportwarp
 
 permissions:
   basichomes.op:

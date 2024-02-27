@@ -26,7 +26,8 @@ public class DataHandler {
 
     public void delete(@NonNull SavedPosition pos) {
         List<SavedPosition> list = new LinkedList<>(this.dataStore.loadData());
-        list.remove(pos);
+        SavedPosition toRemove = this.getByIdInList(list, pos.getId());
+        list.remove(toRemove);
         this.dataStore.saveData(list);
     }
 
@@ -52,6 +53,14 @@ public class DataHandler {
             if (pos.getName().equals(name)) return pos;
         }
 
+        return null;
+    }
+
+    @Nullable
+    private SavedPosition getByIdInList(List<SavedPosition> list, UUID id) {
+        for (SavedPosition pos : list) {
+            if (pos.getId().equals(id)) return pos;
+        }
         return null;
     }
 }

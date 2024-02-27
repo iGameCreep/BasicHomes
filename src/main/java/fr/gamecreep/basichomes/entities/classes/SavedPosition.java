@@ -8,10 +8,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class SavedPosition {
+    UUID id;
     private String name;
     private String ownerUuid;
     private double x;
@@ -22,6 +24,7 @@ public class SavedPosition {
     private String world;
 
     public SavedPosition(@NonNull String name, @NonNull String ownerUuid, @NonNull Location loc) {
+        setId(UUID.randomUUID());
         setX(loc.getX());
         setY(loc.getY());
         setZ(loc.getZ());
