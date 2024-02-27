@@ -1,6 +1,7 @@
-package fr.gamecreep.basichomes.entities.commands;
+package fr.gamecreep.basichomes.entities.commands.get;
 
 import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.menus.HomeMenu;
 import lombok.NonNull;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,7 +22,9 @@ public class Homes implements CommandExecutor {
             Player playerSender = (Player) commandSender;
 
             int currentPage = 1;
-            this.plugin.getHomesUtils().openHomeInventory(playerSender, currentPage);
+            HomeMenu menu = new HomeMenu(this.plugin);
+            menu.openInventory(playerSender, currentPage);
+
             return true;
         }
 
