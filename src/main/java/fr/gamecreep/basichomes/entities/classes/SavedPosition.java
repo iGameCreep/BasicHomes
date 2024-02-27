@@ -11,7 +11,9 @@ import java.util.Objects;
 
 @Getter
 @Setter
-public class Warp extends Default {
+public class SavedPosition {
+    private String name;
+    private String ownerUuid;
     private double x;
     private double y;
     private double z;
@@ -19,7 +21,7 @@ public class Warp extends Default {
     private float yaw;
     private String world;
 
-    public Warp(@NonNull String name, @NonNull String ownerUuid, @NonNull Location loc) {
+    public SavedPosition(@NonNull String name, @NonNull String ownerUuid, @NonNull Location loc) {
         setX(loc.getX());
         setY(loc.getY());
         setZ(loc.getZ());

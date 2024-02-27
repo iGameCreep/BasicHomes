@@ -3,7 +3,7 @@ package fr.gamecreep.basichomes.files;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import fr.gamecreep.basichomes.BasicHomes;
-import fr.gamecreep.basichomes.entities.classes.Default;
+import fr.gamecreep.basichomes.entities.classes.SavedPosition;
 
 import java.io.File;
 import java.io.FileReader;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DataStore<T extends Default> {
+public class DataStore {
     private final String fileName;
     private final Gson gson = new Gson();
     private final BasicHomes plugin;
@@ -48,7 +48,7 @@ public class DataStore<T extends Default> {
         }
     }
 
-    public void saveData(List<T> list) {
+    public void saveData(List<SavedPosition> list) {
         try {
             FileWriter writer = new FileWriter(this.fileName);
             this.gson.toJson(list, writer);
@@ -59,10 +59,10 @@ public class DataStore<T extends Default> {
         }
     }
 
-    public List<T> loadData() {
+    public List<SavedPosition> loadData() {
         try {
-            Type listType = new TypeToken<ArrayList<T>>(){}.getType();
-            List<T> list = gson.fromJson(new FileReader(this.fileName), listType);
+            Type listType = new TypeToken<ArrayList<SavedPosition>>(){}.getType();
+            List<SavedPosition> list = gson.fromJson(new FileReader(this.fileName), listType);
             return list == null ? Collections.emptyList() : list;
         } catch (IOException e) {
             plugin.getPluginLogger().logWarning(String.format("Could not load data from file %s", this.fileName));
