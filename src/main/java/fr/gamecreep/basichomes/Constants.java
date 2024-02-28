@@ -13,6 +13,7 @@ public class Constants {
 
     public static final String PREVIOUS_PAGE_ITEM_NAME = SPECIAL_COLOR + "<-- Previous Page";
     public static final String NEXT_PAGE_ITEM_NAME = SPECIAL_COLOR + "Next Page -->";
+    public static final String HOMES_OF_START_MENU_NAME = INFO_COLOR + "Homes of";
 
     public static final Material PAGE_INDICATOR_ITEM = Material.ENDER_EYE;
     public static final Material NAVIGATION_ITEM = Material.PAPER;

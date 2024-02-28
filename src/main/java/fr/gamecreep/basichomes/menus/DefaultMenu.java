@@ -3,17 +3,15 @@ package fr.gamecreep.basichomes.menus;
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.enums.MenuType;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.DataHandler;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,80 +21,26 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class DefaultMenu implements Listener {
-    private final BasicHomes plugin;
-    private final PositionType type;
+    private final MenuType type;
     private final Permission permission;
     private final DataHandler handler;
 
-    protected DefaultMenu(BasicHomes plugin, PositionType type, Permission permission) {
-        this.plugin = plugin;
+    protected DefaultMenu(BasicHomes plugin, MenuType type, Permission permission) {
         this.type = type;
         this.permission = permission;
-        if (type == PositionType.HOME) this.handler = plugin.getHomeHandler();
+        if (type == MenuType.HOME) this.handler = plugin.getHomeHandler();
         else this.handler = plugin.getWarpHandler();
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        Player playerSender = (Player) event.getWhoClicked();
-        Inventory inv = event.getClickedInventory();
-        ItemStack item = event.getCurrentItem();
-
-        if (event.getView().getTitle().equals(this.type.getMenuName())) {
-            ItemStack pageIndicatorItem = Objects.requireNonNull(inv).getItem(49);
-            ItemMeta meta = Objects.requireNonNull(pageIndicatorItem).getItemMeta();
-            List<String> lore = Objects.requireNonNull(meta).getLore();
-            int page = Integer.parseInt(Objects.requireNonNull(lore).get(0));
-
-            if (item == null || item.getType().equals(Constants.PAGE_INDICATOR_ITEM)) {
-                event.setCancelled(true);
-                return;
-            }
-
-            String displayName = Objects.requireNonNull(Objects.requireNonNull(item).getItemMeta()).getDisplayName();
-
-            playerSender.closeInventory();
-            if (displayName.equals(Constants.PREVIOUS_PAGE_ITEM_NAME)) {
-                this.openInventory(playerSender, page - 1);
-            } else if (displayName.equals(Constants.NEXT_PAGE_ITEM_NAME)) {
-                this.openInventory(playerSender, page + 1);
-            } else if (displayName.equals(this.type.getDeleteText())) {
-                String posName = Objects.requireNonNull(item.getItemMeta().getLore()).get(0);
-                SavedPosition pos = this.handler.getByName(playerSender, posName);
-                if (pos == null) {
-                    this.plugin.getChatUtils().sendPlayerError(playerSender, "Could not delete the home.");
-                    return;
-                }
-                this.handler.delete(pos);
-                this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Home %s%s%s has been removed !", Constants.SPECIAL_COLOR, pos.getName(), Constants.SUCCESS_COLOR));
-            } else {
-                // Item clicked is a home/warp
-                String name = item.getItemMeta().getDisplayName();
-                SavedPosition pos = this.handler.getByName(playerSender, name);
-                if (pos == null) {
-                    this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("Could not retrieve the %s.", this.type.getDisplayName()));
-                    return;
-                }
-
-                Location location = pos.getLocation();
-                location.setPitch(playerSender.getLocation().getPitch());
-                location.setYaw(playerSender.getLocation().getYaw());
-                playerSender.teleport(location);
-
-                this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, pos.getName(), Constants.SUCCESS_COLOR));
-            }
-        }
     }
 
     public void openInventory(@NonNull Player player, int currentPage) {
         final int dataPerPage = 4;
         List<SavedPosition> list;
-        if (this.type == PositionType.HOME) list = this.handler.getAllByPlayer(player);
+        if (this.type.getType() == PositionType.HOME) list = this.handler.getAllByPlayer(player);
         else list = this.handler.getAll();
 
         int totalPages = (int) Math.ceil((double) list.size() / dataPerPage);
 
-        Inventory inventory = Bukkit.createInventory(null, 54, this.type.getMenuName());
+        Inventory inventory = Bukkit.createInventory(null, 54, this.type.getStartOfMenuName());
 
         int startIndex = (currentPage - 1) * dataPerPage;
         int endIndex = Math.min(startIndex + dataPerPage, list.size());
@@ -123,12 +67,13 @@ public abstract class DefaultMenu implements Listener {
     public void openInventoryOf(@NonNull Player player, @NonNull Player target, int currentPage) {
         final int dataPerPage = 4;
         List<SavedPosition> list;
-        if (this.type == PositionType.HOME) list = this.handler.getAllByPlayer(target);
+        if (this.type.getType() == PositionType.HOME) list = this.handler.getAllByPlayer(target);
         else list = this.handler.getAll();
 
         int totalPages = (int) Math.ceil((double) list.size() / dataPerPage);
 
-        Inventory inventory = Bukkit.createInventory(null, 54, this.type.getMenuName());
+        String name = String.format("%s %s%s", Constants.HOMES_OF_START_MENU_NAME, Constants.SPECIAL_COLOR, target.getName());
+        Inventory inventory = Bukkit.createInventory(null, 54, name);
 
         int startIndex = (currentPage - 1) * dataPerPage;
         int endIndex = Math.min(startIndex + dataPerPage, list.size());
@@ -217,7 +162,7 @@ public abstract class DefaultMenu implements Listener {
         List<String> lore = new ArrayList<>();
 
         ItemMeta delItemMeta = delItem.getItemMeta();
-        Objects.requireNonNull(delItemMeta).setDisplayName(this.type.getDeleteText());
+        Objects.requireNonNull(delItemMeta).setDisplayName(this.type.getType().getDeleteText());
         lore.add(pos.getName());
         delItemMeta.setLore(lore);
         delItem.setItemMeta(delItemMeta);

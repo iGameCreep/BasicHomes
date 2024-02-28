@@ -10,9 +10,8 @@ import fr.gamecreep.basichomes.commands.get.GetHomesOf;
 import fr.gamecreep.basichomes.commands.get.GetWarps;
 import fr.gamecreep.basichomes.commands.teleport.TeleportHome;
 import fr.gamecreep.basichomes.commands.teleport.TeleportWarp;
+import fr.gamecreep.basichomes.events.MenuEvents;
 import fr.gamecreep.basichomes.files.DataHandler;
-import fr.gamecreep.basichomes.menus.HomeMenu;
-import fr.gamecreep.basichomes.menus.WarpMenu;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
 import lombok.Getter;
@@ -59,8 +58,7 @@ public final class BasicHomes extends JavaPlugin {
     }
 
     public void loadEvents() {
-        getServer().getPluginManager().registerEvents(new HomeMenu(this), this);
-        getServer().getPluginManager().registerEvents(new WarpMenu(this), this);
+        getServer().getPluginManager().registerEvents(new MenuEvents(this), this);
 
         this.pluginLogger.logInfo("Events loaded !");
     }
