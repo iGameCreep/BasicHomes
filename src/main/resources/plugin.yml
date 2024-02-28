@@ -29,6 +29,16 @@ commands:
       - deletehome
       - removehome
 
+  delhomeof:
+    description: Delete the home of someone !
+    usage: /delhome <player> [name]
+    aliases:
+      - deletehomeof
+
+  homesof:
+    description: Get the homes of someone !
+    usage: /homes <player>
+
   home:
     description: Teleport to one of your homes !
     usage: /home [name]

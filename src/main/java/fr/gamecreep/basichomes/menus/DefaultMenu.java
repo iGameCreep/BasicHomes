@@ -6,6 +6,7 @@ import fr.gamecreep.basichomes.entities.classes.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.DataHandler;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -87,7 +88,7 @@ public abstract class DefaultMenu implements Listener {
         }
     }
 
-    public void openInventory(Player player, int currentPage) {
+    public void openInventory(@NonNull Player player, int currentPage) {
         final int dataPerPage = 4;
         List<SavedPosition> list;
         if (this.type == PositionType.HOME) list = this.handler.getAllByPlayer(player);
@@ -112,6 +113,36 @@ public abstract class DefaultMenu implements Listener {
                 int delItemSlot = 16 + ((i - startIndex) * 9);
                 inventory.setItem(delItemSlot, delItem);
             }
+        }
+
+        addPaginationButtons(inventory, currentPage, totalPages);
+
+        player.openInventory(inventory);
+    }
+
+    public void openInventoryOf(@NonNull Player player, @NonNull Player target, int currentPage) {
+        final int dataPerPage = 4;
+        List<SavedPosition> list;
+        if (this.type == PositionType.HOME) list = this.handler.getAllByPlayer(target);
+        else list = this.handler.getAll();
+
+        int totalPages = (int) Math.ceil((double) list.size() / dataPerPage);
+
+        Inventory inventory = Bukkit.createInventory(null, 54, this.type.getMenuName());
+
+        int startIndex = (currentPage - 1) * dataPerPage;
+        int endIndex = Math.min(startIndex + dataPerPage, list.size());
+
+        for (int i = startIndex; i < endIndex; i++) {
+            SavedPosition pos = list.get(i);
+
+            ItemStack item = createItem(pos);
+            int homeItemSlot = 10 + ((i - startIndex) * 9);
+            inventory.setItem(homeItemSlot, item);
+
+            ItemStack delItem = createDeleteItem(pos);
+            int delItemSlot = 16 + ((i - startIndex) * 9);
+            inventory.setItem(delItemSlot, delItem);
         }
 
         addPaginationButtons(inventory, currentPage, totalPages);
