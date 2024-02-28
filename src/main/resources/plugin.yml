@@ -72,6 +72,28 @@ commands:
       - tpwarp
 
 permissions:
+  basichomes.*:
+    description: Wildcard permission, allows to use any command
+    default: op
+    children:
+      basichomes.home.*: true
+      basichomes.warp.*: true
+
+  basichomes.home.*:
+    description: Wildcard permission, allows to use any home-related command
+    default: op
+    children:
+      basichomes.home.use: true
+      basichomes.home.manage: true
+
+  basichomes.warp.*:
+    description: Wildcard permission, allows to use any warp-related command
+    default: op
+    children:
+      basichomes.warp.create: true
+      basichomes.warp.delete: true
+      basichomes.warp.use: true
+
   basichomes.warp.create:
     description: Allows to create a warp (OP)
     default: op
