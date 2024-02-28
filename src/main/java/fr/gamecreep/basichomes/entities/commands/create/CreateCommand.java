@@ -3,6 +3,7 @@ package fr.gamecreep.basichomes.entities.commands.create;
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.DataHandler;
 import lombok.NonNull;
@@ -19,11 +20,13 @@ import java.util.List;
 public abstract class CreateCommand implements CommandExecutor, TabCompleter {
     private final BasicHomes plugin;
     private final PositionType type;
+    private final Permission permission;
     private final DataHandler handler;
 
-    protected CreateCommand(BasicHomes plugin, PositionType type) {
+    protected CreateCommand(BasicHomes plugin, PositionType type, Permission permission) {
         this.plugin = plugin;
         this.type = type;
+        this.permission = permission;
         if (type == PositionType.HOME) this.handler = plugin.getHomeHandler();
         else this.handler = plugin.getWarpHandler();
     }
@@ -32,6 +35,11 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
         if (commandSender instanceof Player) {
             Player playerSender = (Player) commandSender;
+
+            if (!playerSender.hasPermission(this.permission.getName())) {
+                this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
+                return true;
+            }
 
             if (args.length == 0) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("Please add a %s name !", this.type.getDisplayName()));

@@ -4,8 +4,8 @@ import fr.gamecreep.basichomes.entities.commands.create.CreateHome;
 import fr.gamecreep.basichomes.entities.commands.create.CreateWarp;
 import fr.gamecreep.basichomes.entities.commands.delete.DeleteHome;
 import fr.gamecreep.basichomes.entities.commands.delete.DeleteWarp;
-import fr.gamecreep.basichomes.entities.commands.get.Homes;
-import fr.gamecreep.basichomes.entities.commands.get.Warps;
+import fr.gamecreep.basichomes.entities.commands.get.GetHomes;
+import fr.gamecreep.basichomes.entities.commands.get.GetWarps;
 import fr.gamecreep.basichomes.entities.commands.teleport.TeleportHome;
 import fr.gamecreep.basichomes.entities.commands.teleport.TeleportWarp;
 import fr.gamecreep.basichomes.files.DataHandler;
@@ -41,12 +41,12 @@ public final class BasicHomes extends JavaPlugin {
     }
 
     public void loadCommands() {
-        Objects.requireNonNull(getCommand("homes")).setExecutor(new Homes(this));
+        Objects.requireNonNull(getCommand("homes")).setExecutor(new GetHomes(this));
         Objects.requireNonNull(getCommand("sethome")).setExecutor(new CreateHome(this));
         Objects.requireNonNull(getCommand("delhome")).setExecutor(new DeleteHome(this));
         Objects.requireNonNull(getCommand("home")).setExecutor(new TeleportHome(this));
 
-        Objects.requireNonNull(getCommand("warps")).setExecutor(new Warps(this));
+        Objects.requireNonNull(getCommand("warps")).setExecutor(new GetWarps(this));
         Objects.requireNonNull(getCommand("setwarp")).setExecutor(new CreateWarp(this));
         Objects.requireNonNull(getCommand("delwarp")).setExecutor(new DeleteWarp(this));
         Objects.requireNonNull(getCommand("warp")).setExecutor(new TeleportWarp(this));

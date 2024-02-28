@@ -3,6 +3,7 @@ package fr.gamecreep.basichomes.menus;
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.DataHandler;
 import org.bukkit.Bukkit;
@@ -23,11 +24,13 @@ import java.util.Objects;
 public abstract class DefaultMenu implements Listener {
     private final BasicHomes plugin;
     private final PositionType type;
+    private final Permission permission;
     private final DataHandler handler;
 
-    protected DefaultMenu(BasicHomes plugin, PositionType type) {
+    protected DefaultMenu(BasicHomes plugin, PositionType type, Permission permission) {
         this.plugin = plugin;
         this.type = type;
+        this.permission = permission;
         if (type == PositionType.HOME) this.handler = plugin.getHomeHandler();
         else this.handler = plugin.getWarpHandler();
     }
@@ -44,14 +47,14 @@ public abstract class DefaultMenu implements Listener {
             List<String> lore = Objects.requireNonNull(meta).getLore();
             int page = Integer.parseInt(Objects.requireNonNull(lore).get(0));
 
-            playerSender.closeInventory();
             if (item == null || item.getType().equals(Constants.PAGE_INDICATOR_ITEM)) {
-                this.openInventory(playerSender, page);
+                event.setCancelled(true);
                 return;
             }
 
             String displayName = Objects.requireNonNull(Objects.requireNonNull(item).getItemMeta()).getDisplayName();
 
+            playerSender.closeInventory();
             if (displayName.equals(Constants.PREVIOUS_PAGE_ITEM_NAME)) {
                 this.openInventory(playerSender, page - 1);
             } else if (displayName.equals(Constants.NEXT_PAGE_ITEM_NAME)) {
@@ -86,7 +89,9 @@ public abstract class DefaultMenu implements Listener {
 
     public void openInventory(Player player, int currentPage) {
         final int dataPerPage = 4;
-        List<SavedPosition> list = this.handler.getAllByPlayer(player);
+        List<SavedPosition> list;
+        if (this.type == PositionType.HOME) list = this.handler.getAllByPlayer(player);
+        else list = this.handler.getAll();
 
         int totalPages = (int) Math.ceil((double) list.size() / dataPerPage);
 
@@ -102,9 +107,11 @@ public abstract class DefaultMenu implements Listener {
             int homeItemSlot = 10 + ((i - startIndex) * 9);
             inventory.setItem(homeItemSlot, item);
 
-            ItemStack delItem = createDeleteItem(pos);
-            int delItemSlot = 16 + ((i - startIndex) * 9);
-            inventory.setItem(delItemSlot, delItem);
+            if (player.hasPermission(this.permission.getName())) {
+                ItemStack delItem = createDeleteItem(pos);
+                int delItemSlot = 16 + ((i - startIndex) * 9);
+                inventory.setItem(delItemSlot, delItem);
+            }
         }
 
         addPaginationButtons(inventory, currentPage, totalPages);

@@ -34,14 +34,12 @@ commands:
     usage: /home [name]
     aliases:
       - tphome
-      - teleporthome
 
   warps:
     description: Show all of the warps !
     usage: /warps
     aliases:
       - listwarps
-      - allwarps
 
   setwarp:
     description: Create a warp at your position !
@@ -62,12 +60,24 @@ commands:
     usage: /warp [name]
     aliases:
       - tpwarp
-      - teleportwarp
 
 permissions:
-  basichomes.op:
-    description: Allows setup command
+  basichomes.warp.create:
+    description: Allows to create a warp (OP)
     default: op
-  basichomes.*:
-    description: Wildcard permission
+
+  basichomes.warp.delete:
+    description: Allows to delete a warp (OP)
+    default: op
+
+  basichomes.warp.use:
+    description: Allows to teleport to a warp (default)
+    default: true
+
+  basichomes.home.use:
+    description: Allows to create, delete and use homes (default)
+    default: true
+
+  basichomes.home.manage:
+    description: Allows to manage player homes (OP)
     default: op
