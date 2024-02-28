@@ -1,4 +1,4 @@
-package fr.gamecreep.basichomes.entities.commands.teleport;
+package fr.gamecreep.basichomes.commands.teleport;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.enums.Permission;

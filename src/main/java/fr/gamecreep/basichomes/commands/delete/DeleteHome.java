@@ -1,4 +1,4 @@
-package fr.gamecreep.basichomes.entities.commands.delete;
+package fr.gamecreep.basichomes.commands.delete;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.enums.Permission;

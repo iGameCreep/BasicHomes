@@ -1,4 +1,4 @@
-package fr.gamecreep.basichomes.entities.commands.get;
+package fr.gamecreep.basichomes.commands.get;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.enums.Permission;

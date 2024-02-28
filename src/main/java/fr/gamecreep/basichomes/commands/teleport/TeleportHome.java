@@ -1,12 +1,12 @@
-package fr.gamecreep.basichomes.entities.commands.create;
+package fr.gamecreep.basichomes.commands.teleport;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 
-public class CreateHome extends CreateCommand {
+public class TeleportHome extends TeleportCommand {
 
-    public CreateHome(BasicHomes plugin) {
+    public TeleportHome(BasicHomes plugin) {
         super(plugin, PositionType.HOME, Permission.USE_HOME);
     }
 }

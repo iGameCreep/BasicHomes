@@ -1,4 +1,4 @@
-package fr.gamecreep.basichomes.entities.commands.create;
+package fr.gamecreep.basichomes.commands.create;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;

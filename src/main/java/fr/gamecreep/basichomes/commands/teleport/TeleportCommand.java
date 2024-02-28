@@ -1,4 +1,4 @@
-package fr.gamecreep.basichomes.entities.commands.delete;
+package fr.gamecreep.basichomes.commands.teleport;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
@@ -7,6 +7,7 @@ import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.DataHandler;
 import lombok.NonNull;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,13 +18,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class DeleteCommand implements CommandExecutor, TabCompleter {
+public abstract class TeleportCommand implements CommandExecutor, TabCompleter {
     private final BasicHomes plugin;
     private final PositionType type;
     private final Permission permission;
     private final DataHandler handler;
 
-    protected DeleteCommand(BasicHomes plugin, PositionType type, Permission permission) {
+    protected TeleportCommand(BasicHomes plugin, PositionType type, Permission permission) {
         this.plugin = plugin;
         this.type = type;
         this.permission = permission;
@@ -41,28 +42,25 @@ public abstract class DeleteCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            if (args.length < 1) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("Please add the name of the %s to delete !", this.type.getDisplayName()));
-                return false;
+            if (args.length == 0) {
+                this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("Please add the name of the %s to teleport to !", this.type.getDisplayName()));
+                return true;
             }
 
             String name = args[0];
-            SavedPosition pos = this.plugin.getHomeHandler().getByName(playerSender, name);
+            SavedPosition pos = this.handler.getByName(playerSender, name);
 
             if (pos == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
                 return true;
             }
 
-            this.handler.delete(pos);
+            Location location = pos.getLocation();
+            location.setPitch(playerSender.getLocation().getPitch());
+            location.setYaw(playerSender.getLocation().getYaw());
+            playerSender.teleport(location);
 
-            this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format(
-                    "The %s %s%s%s has been removed !",
-                    this.type.getDisplayName(),
-                    Constants.SPECIAL_COLOR,
-                    name,
-                    Constants.SUCCESS_COLOR
-            ));
+            this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, name, Constants.SUCCESS_COLOR));
 
             return true;
         }
@@ -75,16 +73,14 @@ public abstract class DeleteCommand implements CommandExecutor, TabCompleter {
         if (commandSender instanceof Player) {
             Player playerSender = (Player) commandSender;
 
-            List<String> nameList = new ArrayList<>();
+            List<String> homeNameList = new ArrayList<>();
             List<SavedPosition> list = this.handler.getAllByPlayer(playerSender);
 
             for (SavedPosition pos : list) {
-                nameList.add(pos.getName());
+                homeNameList.add(pos.getName());
             }
-
-            return nameList;
+            return homeNameList;
         }
-
         return Collections.emptyList();
     }
 }

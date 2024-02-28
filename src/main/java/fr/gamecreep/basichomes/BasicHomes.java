@@ -1,13 +1,13 @@
 package fr.gamecreep.basichomes;
 
-import fr.gamecreep.basichomes.entities.commands.create.CreateHome;
-import fr.gamecreep.basichomes.entities.commands.create.CreateWarp;
-import fr.gamecreep.basichomes.entities.commands.delete.DeleteHome;
-import fr.gamecreep.basichomes.entities.commands.delete.DeleteWarp;
-import fr.gamecreep.basichomes.entities.commands.get.GetHomes;
-import fr.gamecreep.basichomes.entities.commands.get.GetWarps;
-import fr.gamecreep.basichomes.entities.commands.teleport.TeleportHome;
-import fr.gamecreep.basichomes.entities.commands.teleport.TeleportWarp;
+import fr.gamecreep.basichomes.commands.create.CreateHome;
+import fr.gamecreep.basichomes.commands.create.CreateWarp;
+import fr.gamecreep.basichomes.commands.delete.DeleteHome;
+import fr.gamecreep.basichomes.commands.delete.DeleteWarp;
+import fr.gamecreep.basichomes.commands.get.GetHomes;
+import fr.gamecreep.basichomes.commands.get.GetWarps;
+import fr.gamecreep.basichomes.commands.teleport.TeleportHome;
+import fr.gamecreep.basichomes.commands.teleport.TeleportWarp;
 import fr.gamecreep.basichomes.files.DataHandler;
 import fr.gamecreep.basichomes.menus.HomeMenu;
 import fr.gamecreep.basichomes.menus.WarpMenu;
