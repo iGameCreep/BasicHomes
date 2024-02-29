@@ -40,7 +40,7 @@ public abstract class DefaultMenu implements Listener {
 
         int totalPages = (int) Math.ceil((double) list.size() / dataPerPage);
 
-        Inventory inventory = Bukkit.createInventory(null, 54, this.type.getStartOfMenuName());
+        Inventory inventory = Bukkit.createInventory(player, 54, this.type.getStartOfMenuName());
 
         int startIndex = (currentPage - 1) * dataPerPage;
         int endIndex = Math.min(startIndex + dataPerPage, list.size());
@@ -73,7 +73,7 @@ public abstract class DefaultMenu implements Listener {
         int totalPages = (int) Math.ceil((double) list.size() / dataPerPage);
 
         String name = String.format("%s %s%s", Constants.HOMES_OF_START_MENU_NAME, Constants.SPECIAL_COLOR, target.getName());
-        Inventory inventory = Bukkit.createInventory(null, 54, name);
+        Inventory inventory = Bukkit.createInventory(target, 54, name);
 
         int startIndex = (currentPage - 1) * dataPerPage;
         int endIndex = Math.min(startIndex + dataPerPage, list.size());

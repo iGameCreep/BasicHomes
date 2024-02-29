@@ -8,7 +8,6 @@ import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.DataHandler;
 import fr.gamecreep.basichomes.menus.HomeMenu;
 import fr.gamecreep.basichomes.menus.WarpMenu;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,14 +29,16 @@ public class MenuEvents implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        Player playerSender = (Player) event.getWhoClicked();
+        Player player = (Player) event.getWhoClicked();
         Inventory inv = event.getClickedInventory();
         ItemStack item = event.getCurrentItem();
         String invTitle = event.getView().getTitle();
+        if (inv == null) return;
+        if (!(inv.getHolder() instanceof Player)) return;
 
         if (isMenu(invTitle)) {
             MenuType menuType = this.findTypeFromMenuName(invTitle);
-            DataHandler handler = (menuType.getType() == PositionType.WARP) ? this.plugin.getWarpHandler() : this.plugin.getHomeHandler();
+            Player target = (Player) inv.getHolder();
 
             ItemStack pageIndicatorItem = Objects.requireNonNull(inv).getItem(49);
             ItemMeta meta = Objects.requireNonNull(pageIndicatorItem).getItemMeta();
@@ -49,38 +50,7 @@ public class MenuEvents implements Listener {
                 return;
             }
 
-            String displayName = Objects.requireNonNull(Objects.requireNonNull(item).getItemMeta()).getDisplayName();
-
-            playerSender.closeInventory();
-            if (displayName.equals(Constants.PREVIOUS_PAGE_ITEM_NAME)) {
-                this.reopenInventory(playerSender, menuType, invTitle, page - 1);
-            } else if (displayName.equals(Constants.NEXT_PAGE_ITEM_NAME)) {
-                this.reopenInventory(playerSender, menuType, invTitle, page + 1);
-            } else if (displayName.equals(menuType.getType().getDeleteText())) {
-                String posName = Objects.requireNonNull(item.getItemMeta().getLore()).get(0);
-                SavedPosition pos = handler.getByName(playerSender, posName);
-                if (pos == null) {
-                    this.plugin.getChatUtils().sendPlayerError(playerSender, "Could not delete the home.");
-                    return;
-                }
-                handler.delete(pos);
-                this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Home %s%s%s has been removed !", Constants.SPECIAL_COLOR, pos.getName(), Constants.SUCCESS_COLOR));
-            } else {
-                // Item clicked is a home/warp
-                String name = item.getItemMeta().getDisplayName();
-                SavedPosition pos = handler.getByName(playerSender, name);
-                if (pos == null) {
-                    this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("Could not retrieve the %s.", menuType.getType().getDisplayName()));
-                    return;
-                }
-
-                Location location = pos.getLocation();
-                location.setPitch(playerSender.getLocation().getPitch());
-                location.setYaw(playerSender.getLocation().getYaw());
-                playerSender.teleport(location);
-
-                this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, pos.getName(), Constants.SUCCESS_COLOR));
-            }
+            this.handleClickByItem(item, menuType, page, player, target);
         }
     }
 
@@ -98,14 +68,48 @@ public class MenuEvents implements Listener {
         return (isHomeMenu || isWarpMenu || isHomeOfMenu);
     }
 
-    private void reopenInventory(Player player, MenuType menuType, String invName, int page) {
+    private void handleClickByItem(ItemStack item, MenuType menuType, int page, Player player, Player target) {
+        DataHandler handler = (menuType.getType() == PositionType.WARP) ? this.plugin.getWarpHandler() : this.plugin.getHomeHandler();
+        String displayName = Objects.requireNonNull(Objects.requireNonNull(item).getItemMeta()).getDisplayName();
+
+        player.closeInventory();
+        if (displayName.equals(Constants.PREVIOUS_PAGE_ITEM_NAME)) {
+            this.reopenInventory(player, target, menuType, page - 1);
+        } else if (displayName.equals(Constants.NEXT_PAGE_ITEM_NAME)) {
+            this.reopenInventory(player, target, menuType, page + 1);
+        } else if (displayName.equals(menuType.getType().getDeleteText())) {
+            String posName = Objects.requireNonNull(item.getItemMeta().getLore()).get(0);
+            SavedPosition pos = handler.getByName(player, posName);
+            if (pos == null) {
+                this.plugin.getChatUtils().sendPlayerError(player, "Could not delete the home.");
+                return;
+            }
+            handler.delete(pos);
+            this.plugin.getChatUtils().sendPlayerInfo(player, String.format("Home %s%s%s has been removed !", Constants.SPECIAL_COLOR, pos.getName(), Constants.SUCCESS_COLOR));
+        } else {
+            // Item clicked is a home/warp
+            String name = item.getItemMeta().getDisplayName();
+            SavedPosition pos = handler.getByName(player, name);
+            if (pos == null) {
+                this.plugin.getChatUtils().sendPlayerError(player, String.format("Could not retrieve the %s.", menuType.getType().getDisplayName()));
+                return;
+            }
+
+            Location location = pos.getLocation();
+            location.setPitch(player.getLocation().getPitch());
+            location.setYaw(player.getLocation().getYaw());
+            player.teleport(location);
+
+            this.plugin.getChatUtils().sendPlayerInfo(player, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, pos.getName(), Constants.SUCCESS_COLOR));
+        }
+    }
+
+    private void reopenInventory(Player player, Player target, MenuType menuType, int page) {
         if (menuType == MenuType.HOME) {
             new HomeMenu(this.plugin).openInventory(player, page);
         } else if (menuType == MenuType.WARP) {
             new WarpMenu(this.plugin).openInventory(player, page);
         } else {
-            String targetName = invName.split(String.valueOf(Constants.SPECIAL_COLOR))[0];
-            Player target = Bukkit.getPlayerExact(targetName);
             new HomeMenu(this.plugin).openInventoryOf(player, target, page);
         }
     }
