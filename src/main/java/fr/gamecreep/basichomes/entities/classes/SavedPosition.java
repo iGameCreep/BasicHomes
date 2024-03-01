@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class SavedPosition {
-    UUID id;
+    private UUID id;
     private String name;
     private String ownerUuid;
     private double x;
