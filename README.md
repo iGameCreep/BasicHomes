@@ -30,19 +30,28 @@ Here are all the commands available at the moment ! (v1.7 or newer)
 
 *Requires a permission not given by default (all permissions are granted to OP players)
 
-## Commands
+## Config file
+
+Here is the default config file:
+```
+homes.enabled: true
+warps.enabled: true
+```
+You can change the values from `true` to `false` to enable/disable the homes and warps in your server.
+
+## Permissions
 
 Here are all the permission available at the moment ! (v1.7 or newer)
 To give specific permissions to players, you will need a plugin like [LuckPerms](https://luckperms.net/download) or [Vault](https://dev.bukkit.org/projects/vault).
 With one, you can grant the permissions needed to players to give them access to commands ! Use the spreadsheet to find the permission you want.
 
-| Permission             | Usage                             | Description                                     | Default |
-|------------------------|-----------------------------------|-------------------------------------------------|---------|
-| basichomes.home.use    | /home, /sethome, /delhome, /homes | Allows to use any home command (for users)      | true    |
-| basichomes.home.manage | /delhomeof, /homesof              | Allows to use any admin home command            | OP      |
-| basichomes.warp.use    | /warp, /homes                     | Allows to use any warp command (for users)      | true    |
-| basichomes.warp.create | /setwarp                          | Allows to use /setwarp command (create a warp)  | OP      |
-| basichomes.warp.delete | /delwarp                          | Allows to use /delwarp command (delete a warp)  | OP      |
-| basichomes.home.*      | All home commands (user+admin)    | Allows to use any home command (user+admin)     | OP      |
-| basichomes.warp.*      | All warp commands (user+admin)    | Allows to use any warp command (user+admin)     | OP      |
-| basichomes.*           | All of the above                  | Allows to use any command (wildcard permission) | OP      |
+| Permission             | Usage                              | Default |
+|------------------------|------------------------------------|---------|
+| basichomes.home.use    | /home, /sethome, /delhome, /homes  | true    |
+| basichomes.home.manage | /delhomeof, /homesof               | OP      |
+| basichomes.warp.use    | /warp, /homes                      | true    |
+| basichomes.warp.create | /setwarp                           | OP      |
+| basichomes.warp.delete | /delwarp                           | OP      |
+| basichomes.home.*      | All home commands (user+admin)     | OP      |
+| basichomes.warp.*      | All warp commands (user+admin)     | OP      |
+| basichomes.*           | All of the above                   | OP      |
