@@ -5,7 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PluginConfig {
-    private SubConfig homesConfig;
-    private SubConfig warpsConfig;
+public class SubConfig {
+    boolean enabled;
+    int teleportAfterSeconds;
+    boolean delayTeleport;
 }

@@ -1,2 +1,12 @@
-homes.enabled: true
-warps.enabled: true
+# Config file for BasicHomes.
+# To enable/disable homes/warps, set the enabled value to true or false.
+# To wait before teleporting to a home/warp, set the teleportAfterSeconds value to
+# the number of seconds to wait or 0 to teleport directly.
+
+homes:
+  enabled: true
+  teleportAfterSeconds: 3
+
+warps:
+  enabled: true
+  teleportAfterSeconds: 0
