@@ -8,7 +8,6 @@ import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.DataHandler;
 import fr.gamecreep.basichomes.menus.HomeMenu;
 import fr.gamecreep.basichomes.menus.WarpMenu;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -95,12 +94,10 @@ public class MenuEvents implements Listener {
                 return;
             }
 
-            Location location = pos.getLocation();
-            location.setPitch(player.getLocation().getPitch());
-            location.setYaw(player.getLocation().getYaw());
-            player.teleport(location);
+            PositionType posType = menuType == MenuType.HOME ? PositionType.HOME : PositionType.WARP;
+            boolean success = this.plugin.getTeleportUtils().add(player, pos, posType);
 
-            this.plugin.getChatUtils().sendPlayerInfo(player, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, pos.getName(), Constants.SUCCESS_COLOR));
+            if (success) this.plugin.getChatUtils().sendPlayerInfo(player, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, pos.getName(), Constants.SUCCESS_COLOR));
         }
     }
 

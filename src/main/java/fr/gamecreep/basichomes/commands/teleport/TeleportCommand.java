@@ -1,13 +1,11 @@
 package fr.gamecreep.basichomes.commands.teleport;
 
 import fr.gamecreep.basichomes.BasicHomes;
-import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.classes.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.DataHandler;
 import lombok.NonNull;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -55,12 +53,7 @@ public abstract class TeleportCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            Location location = pos.getLocation();
-            location.setPitch(playerSender.getLocation().getPitch());
-            location.setYaw(playerSender.getLocation().getYaw());
-            playerSender.teleport(location);
-
-            this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format("Teleporting you to %s%s%s...", Constants.SPECIAL_COLOR, name, Constants.SUCCESS_COLOR));
+            this.plugin.getTeleportUtils().add(playerSender, pos, this.type);
 
             return true;
         }

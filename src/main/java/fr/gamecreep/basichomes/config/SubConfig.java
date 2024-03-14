@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class SubConfig {
     boolean enabled;
-    int teleportAfterSeconds;
+    int delay;
     boolean delayTeleport;
+    boolean standStill;
 }

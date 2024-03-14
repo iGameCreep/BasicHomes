@@ -1,5 +1,6 @@
 package fr.gamecreep.basichomes.entities.classes;
 
+import fr.gamecreep.basichomes.entities.enums.PositionType;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -22,8 +24,22 @@ public class SavedPosition {
     private float pitch;
     private float yaw;
     private String world;
+    @Nullable private PositionType type;
 
-    public SavedPosition(@NonNull String name, @NonNull String ownerUuid, @NonNull Location loc) {
+    public SavedPosition(@NonNull final String name, @NonNull final String ownerUuid, @NonNull final Location loc, @NonNull final PositionType type) {
+        setId(UUID.randomUUID());
+        setX(loc.getX());
+        setY(loc.getY());
+        setZ(loc.getZ());
+        setPitch(loc.getPitch());
+        setYaw(loc.getYaw());
+        setWorld(Objects.requireNonNull(loc.getWorld()).getName());
+        setName(name);
+        setOwnerUuid(ownerUuid);
+        setType(type);
+    }
+
+    public SavedPosition(@NonNull final String name, @NonNull final String ownerUuid, @NonNull final Location loc) {
         setId(UUID.randomUUID());
         setX(loc.getX());
         setY(loc.getY());

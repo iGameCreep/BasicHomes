@@ -1,12 +1,16 @@
 # Config file for BasicHomes.
 # To enable/disable homes/warps, set the enabled value to true or false.
-# To wait before teleporting to a home/warp, set the teleportAfterSeconds value to
+# To wait before teleporting to a home/warp, set the delay value to
 # the number of seconds to wait or 0 to teleport directly.
+# To require the player to stand still while the plugin
+# is teleporting them, set the standStill value to true, else false.
 
 homes:
   enabled: true
-  teleportAfterSeconds: 3
+  delay: 3
+  standStill: true
 
 warps:
   enabled: true
-  teleportAfterSeconds: 0
+  delay: 0
+  standStill: true

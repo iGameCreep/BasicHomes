@@ -15,9 +15,11 @@ import fr.gamecreep.basichomes.commands.teleport.TeleportWarp;
 import fr.gamecreep.basichomes.config.PluginConfig;
 import fr.gamecreep.basichomes.config.SubConfig;
 import fr.gamecreep.basichomes.events.MenuEvents;
+import fr.gamecreep.basichomes.events.TeleportEvents;
 import fr.gamecreep.basichomes.files.DataHandler;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
+import fr.gamecreep.basichomes.utils.TeleportUtils;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,10 +33,12 @@ public final class BasicHomes extends JavaPlugin {
     private final DataHandler homeHandler = new DataHandler(this, "homes.json");
     private final DataHandler warpHandler = new DataHandler(this, "warps.json");
     private final PluginConfig pluginConfig = new PluginConfig();
+    private TeleportUtils teleportUtils;
 
     @Override
     public void onEnable() {
         loadConfig();
+        this.teleportUtils = new TeleportUtils(this);
         loadCommands();
         loadEvents();
 
@@ -82,6 +86,7 @@ public final class BasicHomes extends JavaPlugin {
 
     private void loadEvents() {
         super.getServer().getPluginManager().registerEvents(new MenuEvents(this), this);
+        super.getServer().getPluginManager().registerEvents(new TeleportEvents(this), this);
 
         this.pluginLogger.logInfo("Events loaded !");
     }
@@ -92,13 +97,15 @@ public final class BasicHomes extends JavaPlugin {
 
         SubConfig homesConfig = new SubConfig();
         homesConfig.setEnabled(configFile.getBoolean("homes.enabled"));
-        homesConfig.setTeleportAfterSeconds(configFile.getInt("homes.teleportAfterSeconds"));
-        homesConfig.setDelayTeleport(homesConfig.getTeleportAfterSeconds() == 0);
+        homesConfig.setDelay(configFile.getInt("homes.delay"));
+        homesConfig.setStandStill(configFile.getBoolean("homes.standStill"));
+        homesConfig.setDelayTeleport(homesConfig.getDelay() != 0);
 
         SubConfig warpsConfig = new SubConfig();
         warpsConfig.setEnabled(configFile.getBoolean("warps.enabled"));
-        warpsConfig.setTeleportAfterSeconds(configFile.getInt("warps.teleportAfterSeconds"));
-        warpsConfig.setDelayTeleport(warpsConfig.getTeleportAfterSeconds() == 0);
+        warpsConfig.setDelay(configFile.getInt("warps.delay"));
+        warpsConfig.setStandStill(configFile.getBoolean("warps.standStill"));
+        warpsConfig.setDelayTeleport(warpsConfig.getDelay() != 0);
 
         this.pluginConfig.setHomesConfig(homesConfig);
         this.pluginConfig.setWarpsConfig(warpsConfig);
