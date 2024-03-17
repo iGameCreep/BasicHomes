@@ -47,7 +47,7 @@ public abstract class DeleteCommand implements CommandExecutor, TabCompleter {
             }
 
             String name = args[0];
-            SavedPosition pos = this.plugin.getHomeHandler().getByName(playerSender, name);
+            SavedPosition pos = this.handler.getByName(playerSender, name);
 
             if (pos == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));

@@ -50,7 +50,7 @@ public class DeleteHomeOf implements CommandExecutor, TabCompleter {
             }
 
             String name = args[1];
-            SavedPosition pos = this.plugin.getHomeHandler().getByName(target, name);
+            SavedPosition pos = this.handler.getByName(target, name);
 
             if (pos == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, "No home exists with that name !");
