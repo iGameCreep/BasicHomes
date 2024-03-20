@@ -57,6 +57,33 @@ public class DataHandler {
     }
 
     @Nullable
+    public SavedPosition getByName(@NonNull String name) {
+        List<SavedPosition> list = this.getAll();
+
+        for (SavedPosition pos : list) {
+            if (pos.getName().equals(name)) return pos;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public SavedPosition getById(@NonNull final Player player, @NonNull final UUID id) {
+        for (SavedPosition pos : this.getAllByPlayer(player)) {
+            if (pos.getId().equals(id)) return pos;
+        }
+        return null;
+    }
+
+    @Nullable
+    public SavedPosition getById(@NonNull final UUID id) {
+        for (SavedPosition pos : this.getAll()) {
+            if (pos.getId().equals(id)) return pos;
+        }
+        return null;
+    }
+
+    @Nullable
     private SavedPosition getByIdInList(List<SavedPosition> list, UUID id) {
         for (SavedPosition pos : list) {
             if (pos.getId().equals(id)) return pos;

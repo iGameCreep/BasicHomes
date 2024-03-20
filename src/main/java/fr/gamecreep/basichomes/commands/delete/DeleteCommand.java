@@ -33,8 +33,7 @@ public abstract class DeleteCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
-        if (commandSender instanceof Player) {
-            Player playerSender = (Player) commandSender;
+        if (commandSender instanceof Player playerSender) {
 
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
@@ -72,8 +71,7 @@ public abstract class DeleteCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
-        if (commandSender instanceof Player) {
-            Player playerSender = (Player) commandSender;
+        if (commandSender instanceof Player playerSender) {
 
             List<String> nameList = new ArrayList<>();
             List<SavedPosition> list = this.handler.getAllByPlayer(playerSender);

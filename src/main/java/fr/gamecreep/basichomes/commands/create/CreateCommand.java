@@ -33,9 +33,7 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
-        if (commandSender instanceof Player) {
-            Player playerSender = (Player) commandSender;
-
+        if (commandSender instanceof Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
                 return true;
@@ -57,7 +55,7 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
-            this.handler.create(new SavedPosition(name, playerSender.getUniqueId().toString(), playerPos));
+            this.handler.create(new SavedPosition(name, playerSender.getUniqueId().toString(), playerPos, this.type));
             this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format(
                     "The %s %s%s%s has been created !",
                     this.type.getDisplayName(),

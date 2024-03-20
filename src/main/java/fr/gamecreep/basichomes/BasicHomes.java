@@ -13,8 +13,9 @@ import fr.gamecreep.basichomes.commands.get.GetWarps;
 import fr.gamecreep.basichomes.commands.teleport.TeleportHome;
 import fr.gamecreep.basichomes.commands.teleport.TeleportWarp;
 import fr.gamecreep.basichomes.config.PluginConfig;
-import fr.gamecreep.basichomes.events.MenuEvents;
 import fr.gamecreep.basichomes.files.DataHandler;
+import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
+import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
 import lombok.Getter;
@@ -30,6 +31,10 @@ public final class BasicHomes extends JavaPlugin {
     private final DataHandler homeHandler = new DataHandler(this, "homes.json");
     private final DataHandler warpHandler = new DataHandler(this, "warps.json");
     private final PluginConfig pluginConfig = new PluginConfig();
+    private final HomeMenuFactory homeMenuFactory = new HomeMenuFactory();
+    private final WarpMenuFactory warpMenuFactory = new WarpMenuFactory();
+
+    //TODO: Make a migration script for files
 
     @Override
     public void onEnable() {
@@ -80,7 +85,8 @@ public final class BasicHomes extends JavaPlugin {
     }
 
     private void loadEvents() {
-        super.getServer().getPluginManager().registerEvents(new MenuEvents(this), this);
+        this.getServer().getPluginManager().registerEvents(this.homeMenuFactory, this);
+        this.getServer().getPluginManager().registerEvents(this.warpMenuFactory, this);
 
         this.pluginLogger.logInfo("Events loaded !");
     }

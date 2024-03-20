@@ -34,9 +34,7 @@ public abstract class TeleportCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
-        if (commandSender instanceof Player) {
-            Player playerSender = (Player) commandSender;
-
+        if (commandSender instanceof Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
                 return true;
@@ -48,7 +46,7 @@ public abstract class TeleportCommand implements CommandExecutor, TabCompleter {
             }
 
             String name = args[0];
-            SavedPosition pos = this.handler.getByName(playerSender, name);
+            SavedPosition pos = this.type == PositionType.HOME ? this.handler.getByName(playerSender, name) : this.handler.getByName(name);
 
             if (pos == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
@@ -70,11 +68,9 @@ public abstract class TeleportCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
-        if (commandSender instanceof Player) {
-            Player playerSender = (Player) commandSender;
-
+        if (commandSender instanceof Player playerSender) {
             List<String> homeNameList = new ArrayList<>();
-            List<SavedPosition> list = this.handler.getAllByPlayer(playerSender);
+            List<SavedPosition> list = this.type == PositionType.HOME ? this.handler.getAllByPlayer(playerSender) : this.handler.getAll();
 
             for (SavedPosition pos : list) {
                 homeNameList.add(pos.getName());

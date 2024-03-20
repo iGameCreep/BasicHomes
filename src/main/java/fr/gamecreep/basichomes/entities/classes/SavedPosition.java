@@ -1,5 +1,6 @@
 package fr.gamecreep.basichomes.entities.classes;
 
+import fr.gamecreep.basichomes.entities.enums.PositionType;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -22,8 +23,9 @@ public class SavedPosition {
     private float pitch;
     private float yaw;
     private String world;
+    private PositionType type;
 
-    public SavedPosition(@NonNull String name, @NonNull String ownerUuid, @NonNull Location loc) {
+    public SavedPosition(final String name, final String ownerUuid, @NonNull final Location loc, @NonNull final PositionType type) {
         setId(UUID.randomUUID());
         setX(loc.getX());
         setY(loc.getY());
@@ -33,6 +35,7 @@ public class SavedPosition {
         setWorld(Objects.requireNonNull(loc.getWorld()).getName());
         setName(name);
         setOwnerUuid(ownerUuid);
+        setType(type);
     }
 
     public Location getLocation() {
