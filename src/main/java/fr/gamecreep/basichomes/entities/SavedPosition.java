@@ -1,4 +1,4 @@
-package fr.gamecreep.basichomes.entities.classes;
+package fr.gamecreep.basichomes.entities;
 
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import lombok.Getter;

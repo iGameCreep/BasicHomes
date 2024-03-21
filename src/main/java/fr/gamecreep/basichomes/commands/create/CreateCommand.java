@@ -2,10 +2,10 @@ package fr.gamecreep.basichomes.commands.create;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
-import fr.gamecreep.basichomes.files.DataHandler;
+import fr.gamecreep.basichomes.files.PositionDataHandler;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -21,7 +21,7 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
     private final BasicHomes plugin;
     private final PositionType type;
     private final Permission permission;
-    private final DataHandler handler;
+    private final PositionDataHandler handler;
 
     protected CreateCommand(BasicHomes plugin, PositionType type, Permission permission) {
         this.plugin = plugin;

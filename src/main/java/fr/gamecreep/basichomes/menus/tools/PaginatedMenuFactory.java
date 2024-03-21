@@ -1,7 +1,7 @@
 package fr.gamecreep.basichomes.menus.tools;
 
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.SavedPosition;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;

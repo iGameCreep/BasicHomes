@@ -2,7 +2,7 @@ package fr.gamecreep.basichomes.menus.home;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.menus.tools.PaginatedMenu;
 import lombok.NonNull;

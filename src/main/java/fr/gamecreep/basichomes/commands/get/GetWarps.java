@@ -1,7 +1,7 @@
 package fr.gamecreep.basichomes.commands.get;
 
 import fr.gamecreep.basichomes.BasicHomes;
-import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.menus.warp.WarpMenu;
 import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
 import lombok.NonNull;

@@ -13,7 +13,8 @@ import fr.gamecreep.basichomes.commands.get.GetWarps;
 import fr.gamecreep.basichomes.commands.teleport.TeleportHome;
 import fr.gamecreep.basichomes.commands.teleport.TeleportWarp;
 import fr.gamecreep.basichomes.config.PluginConfig;
-import fr.gamecreep.basichomes.files.DataHandler;
+import fr.gamecreep.basichomes.files.MigrationsVerifier;
+import fr.gamecreep.basichomes.files.PositionDataHandler;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
 import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
 import fr.gamecreep.basichomes.utils.ChatUtils;
@@ -28,16 +29,16 @@ import java.util.*;
 public final class BasicHomes extends JavaPlugin {
     private final LoggerUtils pluginLogger = new LoggerUtils(String.format("[%s]", this.getDescription().getPrefix()));
     private final ChatUtils chatUtils = new ChatUtils();
-    private final DataHandler homeHandler = new DataHandler(this, "homes.json");
-    private final DataHandler warpHandler = new DataHandler(this, "warps.json");
+    private final PositionDataHandler homeHandler = new PositionDataHandler(this, "homes.json");
+    private final PositionDataHandler warpHandler = new PositionDataHandler(this, "warps.json");
     private final PluginConfig pluginConfig = new PluginConfig();
     private final HomeMenuFactory homeMenuFactory = new HomeMenuFactory();
     private final WarpMenuFactory warpMenuFactory = new WarpMenuFactory();
-
-    //TODO: Make a migration script for files
+    private final MigrationsVerifier migrationsVerifier = new MigrationsVerifier(this);
 
     @Override
     public void onEnable() {
+        this.migrationsVerifier.verifyMigrations();
         loadConfig();
         loadCommands();
         loadEvents();

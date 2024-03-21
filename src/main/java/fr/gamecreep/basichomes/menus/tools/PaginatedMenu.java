@@ -1,7 +1,7 @@
 package fr.gamecreep.basichomes.menus.tools;
 
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import lombok.Getter;
 import lombok.NonNull;
