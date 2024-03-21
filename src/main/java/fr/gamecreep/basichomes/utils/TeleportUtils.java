@@ -2,7 +2,7 @@ package fr.gamecreep.basichomes.utils;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -31,16 +31,20 @@ public class TeleportUtils {
         this.warpStandStill = plugin.getPluginConfig().getWarpsConfig().isStandStill();
     }
 
-    public boolean add(@NonNull final Player player, @NonNull final SavedPosition destination, @NonNull final PositionType type) {
+    public void add(@NonNull final Player player, @NonNull final SavedPosition destination) {
+        PositionType type = destination.getType();
+        if (type == null) {
+            this.plugin.getChatUtils().sendPlayerError(player, "Plugin error: could not retrieve the position type.");
+            return;
+        }
         boolean delayTeleport = type == PositionType.HOME ? this.homeDelayEnabled : this.warpDelayEnabled;
         if (!delayTeleport) {
             teleportPlayer(player, destination);
-            return true;
+            return;
         }
-        if (destination.getType() == null) destination.setType(type);
         if (isQueued(player)) {
             this.plugin.getChatUtils().sendPlayerError(player, "You are already teleporting somewhere !");
-            return false;
+            return;
         }
 
         this.tpQueue.put(player.getUniqueId(), destination);
@@ -61,8 +65,6 @@ public class TeleportUtils {
         }
 
         this.plugin.getChatUtils().sendPlayerInfo(player, message);
-
-        return true;
     }
 
     public boolean isQueued(@NonNull final Player player) {

@@ -31,8 +31,6 @@ public class WarpMenu extends PaginatedMenu {
         this.plugin = plugin;
     }
 
-
-
     @Override
     protected void onMenuClickEvent(@NonNull InventoryClickEvent event) {
         ItemStack item = event.getCurrentItem();
@@ -46,10 +44,15 @@ public class WarpMenu extends PaginatedMenu {
         if (item.getType().equals(Constants.DELETE_ITEM)) {
             this.plugin.getWarpHandler().delete(warp);
             super.getPlayer().closeInventory();
+            this.plugin.getChatUtils().sendPlayerInfo(super.getPlayer(), String.format(
+                    "The warp %s%s%s has been removed !",
+                    Constants.SPECIAL_COLOR,
+                    warp.getName(),
+                    Constants.SUCCESS_COLOR
+            ));
         } else {
-            //TODO: Teleport player
+            this.plugin.getTeleportUtils().add(super.getPlayer(), warp);
             super.getPlayer().closeInventory();
-            //TODO: Send player message to confirm warp deletion
         }
 
     }

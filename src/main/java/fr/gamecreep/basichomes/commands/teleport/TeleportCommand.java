@@ -51,7 +51,7 @@ public abstract class TeleportCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            this.plugin.getTeleportUtils().add(playerSender, pos, this.type);
+            this.plugin.getTeleportUtils().add(playerSender, pos);
 
             return true;
         }

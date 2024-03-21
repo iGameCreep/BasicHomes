@@ -18,9 +18,7 @@ import fr.gamecreep.basichomes.files.PositionDataHandler;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
 import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
 import fr.gamecreep.basichomes.config.SubConfig;
-import fr.gamecreep.basichomes.events.MenuEvents;
 import fr.gamecreep.basichomes.events.TeleportEvents;
-import fr.gamecreep.basichomes.files.DataHandler;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
 import fr.gamecreep.basichomes.utils.TeleportUtils;
@@ -37,15 +35,16 @@ public final class BasicHomes extends JavaPlugin {
     private final PositionDataHandler homeHandler = new PositionDataHandler(this, "homes.json");
     private final PositionDataHandler warpHandler = new PositionDataHandler(this, "warps.json");
     private final PluginConfig pluginConfig = new PluginConfig();
-    private final TeleportUtils teleportUtils = this.teleportUtils = new TeleportUtils(this);;
     private final HomeMenuFactory homeMenuFactory = new HomeMenuFactory();
     private final WarpMenuFactory warpMenuFactory = new WarpMenuFactory();
     private final MigrationsVerifier migrationsVerifier = new MigrationsVerifier(this);
+    private TeleportUtils teleportUtils;
 
     @Override
     public void onEnable() {
         this.migrationsVerifier.verifyMigrations();
         loadConfig();
+        this.teleportUtils = new TeleportUtils(this);
         loadCommands();
         loadEvents();
 

@@ -59,10 +59,15 @@ public class HomeMenu extends PaginatedMenu {
         if (item.getType().equals(Constants.DELETE_ITEM)) {
             this.plugin.getHomeHandler().delete(home);
             super.getPlayer().closeInventory();
+            this.plugin.getChatUtils().sendPlayerInfo(super.getPlayer(), String.format(
+                    "The home %s%s%s has been removed !",
+                    Constants.SPECIAL_COLOR,
+                    home.getName(),
+                    Constants.SUCCESS_COLOR
+            ));
         } else {
-            //TODO: Teleport player
+            this.plugin.getTeleportUtils().add(super.getPlayer(), home);
             super.getPlayer().closeInventory();
-            //TODO: Send player message to confirm home deletion
         }
 
     }
