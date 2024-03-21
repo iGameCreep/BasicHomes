@@ -19,8 +19,7 @@ public abstract class DisabledCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
-        if (commandSender instanceof Player) {
-            Player playerSender = (Player) commandSender;
+        if (commandSender instanceof Player playerSender) {
 
             String message = String.format("The %ss are disabled on this server !", this.type.getDisplayName());
             this.plugin.getChatUtils().sendPlayerError(playerSender, message);

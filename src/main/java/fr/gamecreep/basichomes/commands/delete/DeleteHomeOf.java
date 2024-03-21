@@ -2,9 +2,9 @@ package fr.gamecreep.basichomes.commands.delete;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
-import fr.gamecreep.basichomes.files.DataHandler;
+import fr.gamecreep.basichomes.files.PositionDataHandler;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -20,7 +20,7 @@ import java.util.List;
 public class DeleteHomeOf implements CommandExecutor, TabCompleter {
     private final BasicHomes plugin;
     private final Permission permission;
-    private final DataHandler handler;
+    private final PositionDataHandler handler;
 
     public DeleteHomeOf(BasicHomes plugin) {
         this.plugin = plugin;
@@ -30,8 +30,7 @@ public class DeleteHomeOf implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
-        if (commandSender instanceof Player) {
-            Player playerSender = (Player) commandSender;
+        if (commandSender instanceof Player playerSender) {
 
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);

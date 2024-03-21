@@ -1,27 +1,24 @@
 package fr.gamecreep.basichomes.files;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import fr.gamecreep.basichomes.BasicHomes;
-import fr.gamecreep.basichomes.entities.classes.SavedPosition;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-public class DataStore {
+public class DataStore<T> {
     private final String fileName;
-    private final Gson gson = new Gson();
-    private final BasicHomes plugin;
+    protected final Gson gson = new Gson();
+    protected final BasicHomes plugin;
+    protected final T defaultData;
 
-    public DataStore(BasicHomes plugin, String fileName) {
+    public DataStore(BasicHomes plugin, String fileName, T defaultData) {
         this.fileName = "plugins" + File.separator + "BasicHomes" + File.separator + fileName;
         this.plugin = plugin;
+        this.defaultData = defaultData;
         verifyFiles();
     }
 
@@ -41,17 +38,17 @@ public class DataStore {
                     this.plugin.getPluginLogger().logWarning(errorMessage);
                     return;
                 }
-                this.saveData(Collections.emptyList());
+                this.saveData(this.defaultData);
             }
         } catch (IOException e) {
             this.plugin.getPluginLogger().logWarning(errorMessage);
         }
     }
 
-    public void saveData(List<SavedPosition> list) {
+    public void saveData(T data) {
         try {
             FileWriter writer = new FileWriter(this.fileName);
-            this.gson.toJson(list, writer);
+            this.gson.toJson(data, writer);
             writer.flush();
             writer.close();
         } catch (IOException e) {
@@ -59,14 +56,12 @@ public class DataStore {
         }
     }
 
-    public List<SavedPosition> loadData() {
+    public T loadData(Type type) {
         try {
-            Type listType = new TypeToken<ArrayList<SavedPosition>>(){}.getType();
-            List<SavedPosition> list = gson.fromJson(new FileReader(this.fileName), listType);
-            return list == null ? Collections.emptyList() : list;
+            return gson.fromJson(new FileReader(this.fileName), type);
         } catch (IOException e) {
             plugin.getPluginLogger().logWarning(String.format("Could not load data from file %s", this.fileName));
-            return Collections.emptyList();
+            return null;
         }
     }
 }

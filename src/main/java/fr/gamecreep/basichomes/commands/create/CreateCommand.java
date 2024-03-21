@@ -2,10 +2,10 @@ package fr.gamecreep.basichomes.commands.create;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.classes.SavedPosition;
+import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
-import fr.gamecreep.basichomes.files.DataHandler;
+import fr.gamecreep.basichomes.files.PositionDataHandler;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -21,7 +21,7 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
     private final BasicHomes plugin;
     private final PositionType type;
     private final Permission permission;
-    private final DataHandler handler;
+    private final PositionDataHandler handler;
 
     protected CreateCommand(BasicHomes plugin, PositionType type, Permission permission) {
         this.plugin = plugin;
@@ -33,9 +33,7 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
-        if (commandSender instanceof Player) {
-            Player playerSender = (Player) commandSender;
-
+        if (commandSender instanceof Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
                 return true;
@@ -57,7 +55,7 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
-            this.handler.create(new SavedPosition(name, playerSender.getUniqueId().toString(), playerPos));
+            this.handler.create(new SavedPosition(name, playerSender.getUniqueId().toString(), playerPos, this.type));
             this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format(
                     "The %s %s%s%s has been created !",
                     this.type.getDisplayName(),
