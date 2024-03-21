@@ -29,6 +29,6 @@ public class TeleportEvents implements Listener {
     }
 
     private boolean hasBlockChanged(Location a, Location b) {
-        return a.getX() != b.getX() || a.getY() != b.getY() || a.getZ() != b.getZ();
+        return Math.round(a.getX()) != Math.round(b.getX()) || Math.round(a.getY()) != Math.round(b.getY()) || Math.round(a.getZ()) != Math.round(b.getZ());
     }
 }
