@@ -34,10 +34,25 @@ Here are all the commands available at the moment ! (v1.7 or newer)
 
 Here is the default config file:
 ```
-homes.enabled: true
-warps.enabled: true
+# Config file for BasicHomes.
+# To enable/disable homes/warps, set the enabled value to true or false.
+# To wait before teleporting to a home/warp, set the delay value to
+# the number of seconds to wait or 0 to teleport directly.
+# To require the player to stand still while the plugin
+# is teleporting them, set the standStill value to true, else false.
+
+homes:
+  enabled: true
+  delay: 0
+  standStill: true
+
+warps:
+  enabled: true
+  delay: 0
+  standStill: true
 ```
-You can change the values from `true` to `false` to enable/disable the homes and warps in your server.
+You can change the values from `true` to `false` to enable/disable the homes and warps in your server or enable/disable standing still while waiting to be teleported.
+Setting the `delay` value to `0` will by default disable it and disable the `standStill` option too. 
 
 ## Permissions
 
