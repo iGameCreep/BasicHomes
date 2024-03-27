@@ -27,7 +27,7 @@ public class HomeMenu extends PaginatedMenu {
         super(
                 player,
                 target,
-                Constants.MY_HOMES_MENU_NAME,
+                Constants.HOMES_OF_START_MENU_NAME + target.getDisplayName(),
                 Permission.USE_HOME
         );
         this.plugin = plugin;

@@ -26,16 +26,16 @@ public abstract class PaginatedMenuFactory<MENU extends PaginatedMenu> {
     }
 
     protected void onInventoryClose(InventoryCloseEvent event) {
-        MENU menu = this.getMenuFromInventory(event.getInventory());
+        MENU menu = this.getMenuFromInventory(event.getView().getTopInventory());
         if (menu == null) return;
         this.openedMenus.remove(menu);
     }
 
     protected void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
-        event.setCancelled(true);
         MENU menu = this.getMenuFromInventory(event.getClickedInventory());
         if (menu == null) return;
+        event.setCancelled(true);
 
         final ItemStack item = event.getCurrentItem();
         if (item == null) return;

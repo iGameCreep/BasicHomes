@@ -12,13 +12,13 @@ public class Constants {
     public static final ChatColor WARNING_COLOR = ChatColor.RED;
     public static final ChatColor SPECIAL_COLOR = ChatColor.GOLD;
 
-    public static final String MY_HOMES_MENU_NAME = Constants.SPECIAL_COLOR + "My Homes";
+    public static final String MY_HOMES_MENU_NAME = SPECIAL_COLOR + "My Homes";
+    public static final String HOMES_OF_START_MENU_NAME = SPECIAL_COLOR + "Homes of" + INFO_COLOR + " ";
     public static final String WARPS_MENU_NAME = SPECIAL_COLOR + "Warps";
 
     public static final String PREVIOUS_PAGE_ITEM_NAME = SPECIAL_COLOR + "<-- Previous Page";
     public static final String NEXT_PAGE_ITEM_NAME = SPECIAL_COLOR + "Next Page -->";
-    public static final String HOMES_OF_START_MENU_NAME = INFO_COLOR + "Homes of";
-    public static final String DELETE_ITEM_NAME = Constants.WARNING_COLOR + "Delete this %s";
+    public static final String DELETE_ITEM_NAME = WARNING_COLOR + "Delete this %s";
 
     public static final Material PAGE_INDICATOR_ITEM = Material.ENDER_EYE;
     public static final Material NAVIGATION_ITEM = Material.PAPER;
