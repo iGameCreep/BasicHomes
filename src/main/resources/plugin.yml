@@ -1,33 +1,115 @@
 name: BasicHomes
 version: '${project.version}'
 main: fr.gamecreep.basichomes.BasicHomes
-api-version: 1.19
+api-version: 1.20
 load: POSTWORLD
-authors: [GameCreep35#1564]
-description: Basic Minecraft Paper plugin to use homes !
-website: https://github.com/iGameCreep
+authors: ["@GameCreep35"]
+description: Basic Minecraft plugin to use homes and warps !
+website: https://www.curseforge.com/minecraft/bukkit-plugins/basichomes
 prefix: 'BasicHomes'
 commands:
   homes:
     description: Show all of your homes !
     usage: /homes
+    aliases:
+      - listhomes
+      - allhomes
 
   sethome:
     description: Create a home at your position !
-    usage: /sethome (name)
+    usage: /sethome [name]
+    aliases:
+      - createhome
+      - addhome
 
   delhome:
     description: Delete a home by it name !
-    usage: /deletehome (home-name)
+    usage: /delhome [name]
+    aliases:
+      - deletehome
+      - removehome
+
+  delhomeof:
+    description: Delete the home of someone !
+    usage: /delhome <player> [name]
+    aliases:
+      - deletehomeof
+
+  homesof:
+    description: Get the homes of someone !
+    usage: /homes <player>
 
   home:
     description: Teleport to one of your homes !
-    usage: /home (home-name)
+    usage: /home [name]
+    aliases:
+      - tphome
+
+  warps:
+    description: Show all of the warps !
+    usage: /warps
+    aliases:
+      - listwarps
+
+  setwarp:
+    description: Create a warp at your position !
+    usage: /setwarp [name]
+    aliases:
+      - createwarp
+      - addwarp
+
+  delwarp:
+    description: Delete a warp by it's name !
+    usage: /delwarp [name]
+    aliases:
+      - deletewarp
+      - removewarp
+
+  warp:
+    description: Teleport to a warp !
+    usage: /warp [name]
+    aliases:
+      - tpwarp
 
 permissions:
-  basichomes.op:
-    description: Allows setup command
-    default: op
   basichomes.*:
-    description: Wildcard permission
+    description: Wildcard permission, allows to use any command
+    default: op
+    children:
+      basichomes.home.*: true
+      basichomes.warp.*: true
+
+  basichomes.home.*:
+    description: Wildcard permission, allows to use any home-related command
+    default: op
+    children:
+      basichomes.home.use: true
+      basichomes.home.manage: true
+
+  basichomes.warp.*:
+    description: Wildcard permission, allows to use any warp-related command
+    default: op
+    children:
+      basichomes.warp.create: true
+      basichomes.warp.delete: true
+      basichomes.warp.use: true
+
+  basichomes.warp.create:
+    description: Allows to create a warp (OP)
+    default: op
+
+  basichomes.warp.delete:
+    description: Allows to delete a warp (OP)
+    default: op
+
+  basichomes.warp.use:
+    description: Allows to teleport to a warp (default)
+    default: true
+
+  basichomes.home.use:
+    description: Allows to create, delete and use homes (default)
+    default: true
+
+  basichomes.home.manage:
+    description: Allows to manage player homes (OP)
     default: op
