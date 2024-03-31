@@ -1,6 +1,7 @@
-package fr.gamecreep.basichomes.commands.delete;
+package fr.gamecreep.basichomes.commands.warps;
 
 import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.commands.utils.DeleteCommand;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 

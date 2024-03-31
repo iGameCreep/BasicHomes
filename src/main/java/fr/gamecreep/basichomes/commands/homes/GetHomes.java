@@ -1,18 +1,16 @@
-package fr.gamecreep.basichomes.commands.get;
+package fr.gamecreep.basichomes.commands.homes;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.menus.home.HomeMenu;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
 import lombok.NonNull;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GetHomes implements CommandExecutor {
+public class GetHomes {
 
     private final BasicHomes plugin;
 
@@ -20,8 +18,7 @@ public class GetHomes implements CommandExecutor {
         this.plugin = plugin;
     }
 
-    @Override
-    public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final Command command, @NonNull final String label, @NonNull final String[] args) {
+    public boolean onCommand(@NonNull final CommandSender commandSender) {
         if (commandSender instanceof Player playerSender) {
             HomeMenuFactory factory = this.plugin.getHomeMenuFactory();
             List<SavedPosition> homes = this.plugin.getHomeHandler().getAllByPlayer(playerSender);

@@ -1,6 +1,7 @@
-package fr.gamecreep.basichomes.commands.teleport;
+package fr.gamecreep.basichomes.commands.warps;
 
 import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.commands.utils.TeleportCommand;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 

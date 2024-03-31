@@ -1,4 +1,4 @@
-package fr.gamecreep.basichomes.commands.delete;
+package fr.gamecreep.basichomes.commands.homes;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
@@ -7,17 +7,14 @@ import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DeleteHomeOf implements CommandExecutor, TabCompleter {
+public class DeleteHomeOf {
     private final BasicHomes plugin;
     private final Permission permission;
     private final PositionDataHandler handler;
@@ -28,8 +25,7 @@ public class DeleteHomeOf implements CommandExecutor, TabCompleter {
         this.handler = plugin.getHomeHandler();
     }
 
-    @Override
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull String[] args) {
         if (commandSender instanceof Player playerSender) {
 
             if (!playerSender.hasPermission(this.permission.getName())) {
@@ -74,8 +70,7 @@ public class DeleteHomeOf implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    @Override
-    public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
+    public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull String[] args) {
         if (commandSender instanceof Player) {
             List<String> list = new ArrayList<>();
 

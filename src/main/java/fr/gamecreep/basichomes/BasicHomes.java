@@ -1,23 +1,14 @@
 package fr.gamecreep.basichomes;
 
-import fr.gamecreep.basichomes.commands.create.CreateHome;
-import fr.gamecreep.basichomes.commands.create.CreateWarp;
-import fr.gamecreep.basichomes.commands.delete.DeleteHome;
-import fr.gamecreep.basichomes.commands.delete.DeleteHomeOf;
-import fr.gamecreep.basichomes.commands.delete.DeleteWarp;
-import fr.gamecreep.basichomes.commands.disabled.HomesDisabled;
-import fr.gamecreep.basichomes.commands.disabled.WarpsDisabled;
-import fr.gamecreep.basichomes.commands.get.GetHomes;
-import fr.gamecreep.basichomes.commands.get.GetHomesOf;
-import fr.gamecreep.basichomes.commands.get.GetWarps;
-import fr.gamecreep.basichomes.commands.teleport.TeleportHome;
-import fr.gamecreep.basichomes.commands.teleport.TeleportWarp;
+import fr.gamecreep.basichomes.commands.config.ConfigCommand;
+import fr.gamecreep.basichomes.commands.homes.*;
+import fr.gamecreep.basichomes.commands.warps.*;
 import fr.gamecreep.basichomes.config.PluginConfig;
+import fr.gamecreep.basichomes.entities.enums.ConfigElement;
 import fr.gamecreep.basichomes.files.MigrationsVerifier;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
 import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
-import fr.gamecreep.basichomes.config.SubConfig;
 import fr.gamecreep.basichomes.events.TeleportEvents;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
@@ -57,34 +48,16 @@ public final class BasicHomes extends JavaPlugin {
     }
 
     private void loadCommands() {
-        if (this.pluginConfig.getHomesConfig().isEnabled()) {
-            Objects.requireNonNull(super.getCommand("homes")).setExecutor(new GetHomes(this));
-            Objects.requireNonNull(super.getCommand("sethome")).setExecutor(new CreateHome(this));
-            Objects.requireNonNull(super.getCommand("delhome")).setExecutor(new DeleteHome(this));
-            Objects.requireNonNull(super.getCommand("home")).setExecutor(new TeleportHome(this));
-            Objects.requireNonNull(super.getCommand("delhomeof")).setExecutor(new DeleteHomeOf(this));
-            Objects.requireNonNull(super.getCommand("homesof")).setExecutor(new GetHomesOf(this));
-        } else {
-            List<String> homeCommands = List.of("homes", "sethome", "delhome", "home", "delhomeof", "homesof");
-            HomesDisabled disabledCommand = new HomesDisabled(this);
+        Objects.requireNonNull(super.getCommand("config")).setExecutor(new ConfigCommand(this));
 
-            for (String cmd : homeCommands) {
-                Objects.requireNonNull(super.getCommand(cmd)).setExecutor(disabledCommand);
-            }
+        List<String> homeCommands = List.of("homes", "sethome", "delhome", "home", "delhomeof", "homesof");
+        List<String> warpCommands = List.of("warps", "setwarp", "delwarp", "warp");
+
+        for (String cmd : homeCommands) {
+            Objects.requireNonNull(super.getCommand(cmd)).setExecutor(new HomesHandler(this));
         }
-
-        if (this.pluginConfig.getWarpsConfig().isEnabled()) {
-            Objects.requireNonNull(super.getCommand("warps")).setExecutor(new GetWarps(this));
-            Objects.requireNonNull(super.getCommand("setwarp")).setExecutor(new CreateWarp(this));
-            Objects.requireNonNull(super.getCommand("delwarp")).setExecutor(new DeleteWarp(this));
-            Objects.requireNonNull(super.getCommand("warp")).setExecutor(new TeleportWarp(this));
-        } else {
-            List<String> homeCommands = List.of("warps", "setwarp", "delwarp", "warp");
-            WarpsDisabled disabledCommand = new WarpsDisabled(this);
-
-            for (String cmd : homeCommands) {
-                Objects.requireNonNull(super.getCommand(cmd)).setExecutor(disabledCommand);
-            }
+        for (String cmd : warpCommands) {
+            Objects.requireNonNull(super.getCommand(cmd)).setExecutor(new WarpsHandler(this));
         }
 
         this.pluginLogger.logInfo("Commands loaded !");
@@ -101,20 +74,24 @@ public final class BasicHomes extends JavaPlugin {
     private void loadConfig() {
         saveDefaultConfig();
         FileConfiguration configFile = super.getConfig();
+        Map<ConfigElement, Object> config = this.pluginConfig.getConfig();
 
-        SubConfig homesConfig = new SubConfig();
-        homesConfig.setEnabled(configFile.getBoolean("homes.enabled"));
-        homesConfig.setDelay(configFile.getInt("homes.delay"));
-        homesConfig.setStandStill(configFile.getBoolean("homes.standStill"));
-        homesConfig.setDelayTeleport(homesConfig.getDelay() != 0);
+        for (ConfigElement element : ConfigElement.values()) {
+            if (!configFile.contains(element.getPath())) {
+                configFile.addDefault(element.getPath(), element.getDefaultValue());
+            }
+            config.put(element, configFile.get(element.getPath()));
+        }
 
-        SubConfig warpsConfig = new SubConfig();
-        warpsConfig.setEnabled(configFile.getBoolean("warps.enabled"));
-        warpsConfig.setDelay(configFile.getInt("warps.delay"));
-        warpsConfig.setStandStill(configFile.getBoolean("warps.standStill"));
-        warpsConfig.setDelayTeleport(warpsConfig.getDelay() != 0);
+        this.pluginConfig.setConfig(config);
+        saveConfig();
+    }
 
-        this.pluginConfig.setHomesConfig(homesConfig);
-        this.pluginConfig.setWarpsConfig(warpsConfig);
+    public void updateConfig(ConfigElement element, Object newValue) {
+        this.pluginConfig.getConfig().remove(element);
+        this.pluginConfig.getConfig().put(element, newValue);
+        getConfig().set(element.getPath(), newValue);
+        saveConfig();
+        reloadConfig();
     }
 }

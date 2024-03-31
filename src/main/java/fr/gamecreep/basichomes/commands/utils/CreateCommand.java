@@ -1,23 +1,21 @@
-package fr.gamecreep.basichomes.commands.create;
+package fr.gamecreep.basichomes.commands.utils;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.SavedPosition;
+import fr.gamecreep.basichomes.entities.enums.ConfigElement;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
 import lombok.NonNull;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
 
-public abstract class CreateCommand implements CommandExecutor, TabCompleter {
+public abstract class CreateCommand {
     private final BasicHomes plugin;
     private final PositionType type;
     private final Permission permission;
@@ -31,12 +29,19 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
         else this.handler = plugin.getWarpHandler();
     }
 
-    @Override
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull String[] args) {
         if (commandSender instanceof Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
                 return true;
+            }
+
+            List<SavedPosition> list = this.handler.getAllByPlayer(playerSender);
+
+            if (this.type == PositionType.HOME && !this.canCreateHome(playerSender, list.size())) {
+                this.plugin.getChatUtils().sendPlayerError(playerSender, "You already have the max number of homes allowed !");
+                return true;
+
             }
 
             if (args.length == 0) {
@@ -47,7 +52,6 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
             Location playerPos = playerSender.getLocation();
             String name = args[0];
 
-            List<SavedPosition> list = this.handler.getAllByPlayer(playerSender);
             for (SavedPosition pos : list) {
                 if (pos.getName().equalsIgnoreCase(name)) {
                     this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("A %s with this name already exists !", this.type.getDisplayName()));
@@ -70,8 +74,14 @@ public abstract class CreateCommand implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    @Override
-    public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
+    public List<String> onTabComplete() {
         return Collections.singletonList("[name]");
+    }
+
+    private boolean canCreateHome(@NonNull Player player, int currentHomes) {
+        boolean opBypassLimit = (boolean) this.plugin.getPluginConfig().getConfig().get(ConfigElement.OP_BYPASS_HOME_LIMIT);
+        if (opBypassLimit && player.hasPermission("op")) return true;
+        int maxHomes = (int) this.plugin.getPluginConfig().getConfig().get(ConfigElement.MAX_HOMES);
+        return currentHomes < maxHomes;
     }
 }
