@@ -11,6 +11,7 @@ public class Constants {
     public static final ChatColor SUCCESS_COLOR = ChatColor.GREEN;
     public static final ChatColor WARNING_COLOR = ChatColor.RED;
     public static final ChatColor SPECIAL_COLOR = ChatColor.GOLD;
+    public static final net.md_5.bungee.api.ChatColor PLUGIN_COLOR = net.md_5.bungee.api.ChatColor.of("#2596be");
 
     public static final String MY_HOMES_MENU_NAME = SPECIAL_COLOR + "My Homes";
     public static final String HOMES_OF_START_MENU_NAME = SPECIAL_COLOR + "Homes of" + INFO_COLOR + " ";

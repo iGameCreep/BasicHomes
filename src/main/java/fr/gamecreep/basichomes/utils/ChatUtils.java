@@ -3,15 +3,18 @@ package fr.gamecreep.basichomes.utils;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import lombok.NonNull;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class ChatUtils {
+    private static final String PREFIX = String.format("%s[%sBH%s] ", ChatColor.GRAY, Constants.PLUGIN_COLOR, ChatColor.GRAY);
+
     public void sendPlayerError(@NonNull final Player player, final String message) {
-        player.sendMessage(Constants.WARNING_COLOR + message);
+        player.sendMessage(PREFIX + Constants.WARNING_COLOR + message);
     }
 
     public void sendPlayerInfo(@NonNull final Player player, final String message) {
-        player.sendMessage(Constants.SUCCESS_COLOR + message);
+        player.sendMessage(PREFIX + Constants.SUCCESS_COLOR + message);
     }
 
     public void sendNoPermission(Player player, Permission permission) {
