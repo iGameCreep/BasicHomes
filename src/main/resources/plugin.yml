@@ -8,6 +8,12 @@ description: Basic Minecraft plugin to use homes and warps !
 website: https://www.curseforge.com/minecraft/bukkit-plugins/basichomes
 prefix: 'BasicHomes'
 commands:
+  config:
+    description: Edit the config directly in-game !
+    usage: /config <action> [key] (value)
+    aliases:
+      - cfg
+
   homes:
     description: Show all of your homes !
     usage: /homes
@@ -76,8 +82,13 @@ permissions:
     description: Wildcard permission, allows to use any command
     default: op
     children:
+      basichomes.config: true
       basichomes.home.*: true
       basichomes.warp.*: true
+
+  basichomes.config:
+    description: Allows to use config command (OP)
+    default: op
 
   basichomes.home.*:
     description: Wildcard permission, allows to use any home-related command

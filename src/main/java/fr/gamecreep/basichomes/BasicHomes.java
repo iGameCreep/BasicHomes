@@ -78,9 +78,10 @@ public final class BasicHomes extends JavaPlugin {
 
         for (ConfigElement element : ConfigElement.values()) {
             if (!configFile.contains(element.getPath())) {
-                configFile.addDefault(element.getPath(), element.getDefaultValue());
+                config.put(element, element.getDefaultValue());
+            } else {
+                config.put(element, configFile.get(element.getPath()));
             }
-            config.put(element, configFile.get(element.getPath()));
         }
 
         this.pluginConfig.setConfig(config);
