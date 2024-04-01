@@ -82,6 +82,7 @@ public abstract class CreateCommand {
         boolean opBypassLimit = (boolean) this.plugin.getPluginConfig().getConfig().get(ConfigElement.OP_BYPASS_HOME_LIMIT);
         if (opBypassLimit && player.hasPermission("op")) return true;
         int maxHomes = (int) this.plugin.getPluginConfig().getConfig().get(ConfigElement.MAX_HOMES);
+        if (maxHomes == 0) return true;
         return currentHomes < maxHomes;
     }
 }
