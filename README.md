@@ -15,18 +15,19 @@
 
 Here are all the commands available at the moment ! (v1.7 or newer)
 
-| Command    | Usage                      | Description                                   |
-|------------|----------------------------|-----------------------------------------------|
-| /home      | /home (name)               | Teleport to a home by it's name !             |
-| /homes     | /homes                     | Get all of your homes in an inventory !       |
-| /sethome   | /sethome (name)            | Create a home and give it a name !            |
-| /delhome   | /delhome (name)            | Delete a home by it's name !                  |
-| /delhomeof | /delhomeof <player> (name) | Delete the home of someone !*                 |
-| /homesof   | /homesof <player> (name)   | Access the homes of a player !*               |
-| /warp      | /warp (name)               | Teleport to a warp by it's name !             |
-| /warps     | /warps                     | Get all of the server warps in an inventory ! |
-| /setwarp   | /setwarp (name)            | Create a warp and give it a name !*           |
-| /delwarp   | /delwarp (name)            | Delete a warp by it's name !                  |
+| Command    | Usage                           | Description                                   |
+|------------|---------------------------------|-----------------------------------------------|
+| /config    | /config <get/set> [key] (value) | Get or set and element of the config !*       |
+| /home      | /home (name)                    | Teleport to a home by it's name !             |
+| /homes     | /homes                          | Get all of your homes in an inventory !       |
+| /sethome   | /sethome (name)                 | Create a home and give it a name !            |
+| /delhome   | /delhome (name)                 | Delete a home by it's name !                  |
+| /delhomeof | /delhomeof <player> (name)      | Delete the home of someone !*                 |
+| /homesof   | /homesof <player> (name)        | Access the homes of a player !*               |
+| /warp      | /warp (name)                    | Teleport to a warp by it's name !             |
+| /warps     | /warps                          | Get all of the server warps in an inventory ! |
+| /setwarp   | /setwarp (name)                 | Create a warp and give it a name !*           |
+| /delwarp   | /delwarp (name)                 | Delete a warp by it's name !                  |
 
 *Requires a permission not given by default (all permissions are granted to OP players)
 
@@ -50,9 +51,18 @@ warps:
   enabled: true
   delay: 0
   standStill: true
+
+# Config of max homes.
+# Set max-homes to the max number of homes a player can have
+# Set the value to 0 to remove limit
+# Set op-bypass-home-limit to true if you want OP players to have no home limit
+
+op-bypass-home-limit: false
+max-homes: 1
 ```
 You can change the values from `true` to `false` to enable/disable the homes and warps in your server or enable/disable standing still while waiting to be teleported.
 Setting the `delay` value to `0` will by default disable it and disable the `standStill` option too. 
+Set the max-homes value to 0 to disable max-homes.
 
 ## Permissions
 
@@ -60,13 +70,14 @@ Here are all the permission available at the moment ! (v1.7 or newer)
 To give specific permissions to players, you will need a plugin like [LuckPerms](https://luckperms.net/download) or [Vault](https://dev.bukkit.org/projects/vault).
 With one, you can grant the permissions needed to players to give them access to commands ! Use the spreadsheet to find the permission you want.
 
-| Permission             | Usage                              | Default |
-|------------------------|------------------------------------|---------|
-| basichomes.home.use    | /home, /sethome, /delhome, /homes  | true    |
-| basichomes.home.manage | /delhomeof, /homesof               | OP      |
-| basichomes.warp.use    | /warp, /homes                      | true    |
-| basichomes.warp.create | /setwarp                           | OP      |
-| basichomes.warp.delete | /delwarp                           | OP      |
-| basichomes.home.*      | All home commands (user+admin)     | OP      |
-| basichomes.warp.*      | All warp commands (user+admin)     | OP      |
-| basichomes.*           | All of the above                   | OP      |
+| Permission             | Usage                             | Default |
+|------------------------|-----------------------------------|---------|
+| basichomes.config      | Allows to use /config command     | OP      |
+| basichomes.home.use    | /home, /sethome, /delhome, /homes | true    |
+| basichomes.home.manage | /delhomeof, /homesof              | OP      |
+| basichomes.warp.use    | /warp, /homes                     | true    |
+| basichomes.warp.create | /setwarp                          | OP      |
+| basichomes.warp.delete | /delwarp                          | OP      |
+| basichomes.home.*      | All home commands (user+admin)    | OP      |
+| basichomes.warp.*      | All warp commands (user+admin)    | OP      |
+| basichomes.*           | All of the above                  | OP      |
