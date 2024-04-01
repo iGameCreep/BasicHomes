@@ -28,9 +28,8 @@ public abstract class DeleteCommand {
         else this.handler = plugin.getWarpHandler();
     }
 
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull String[] args) {
+    public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
         if (commandSender instanceof Player playerSender) {
-
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
                 return true;
@@ -65,14 +64,18 @@ public abstract class DeleteCommand {
         return false;
     }
 
-    public List<String> onTabComplete(@NonNull CommandSender commandSender) {
+    public List<String> onTabComplete(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
         if (commandSender instanceof Player playerSender) {
-
             List<String> nameList = new ArrayList<>();
-            List<SavedPosition> list = this.handler.getAllByPlayer(playerSender);
 
-            for (SavedPosition pos : list) {
-                nameList.add(pos.getName());
+            if (args.length == 1) {
+                List<SavedPosition> list = this.type == PositionType.HOME ? this.handler.getAllByPlayer(playerSender) : this.handler.getAll();
+
+                for (SavedPosition pos : list) {
+                    if (pos.getName().contains(args[0])) {
+                        nameList.add(pos.getName());
+                    }
+                }
             }
 
             return nameList;

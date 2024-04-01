@@ -27,7 +27,7 @@ public abstract class TeleportCommand {
         else this.handler = plugin.getWarpHandler();
     }
 
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull String[] args) {
+    public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
         if (commandSender instanceof Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
@@ -55,15 +55,18 @@ public abstract class TeleportCommand {
         return false;
     }
 
-    public List<String> onTabComplete(@NonNull CommandSender commandSender) {
+    public List<String> onTabComplete(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
         if (commandSender instanceof Player playerSender) {
-            List<String> homeNameList = new ArrayList<>();
+            List<String> nameList = new ArrayList<>();
             List<SavedPosition> list = this.type == PositionType.HOME ? this.handler.getAllByPlayer(playerSender) : this.handler.getAll();
 
             for (SavedPosition pos : list) {
-                homeNameList.add(pos.getName());
+                if (pos.getName().contains(args[0])) {
+                    nameList.add(pos.getName());
+                }
             }
-            return homeNameList;
+
+            return nameList;
         }
         return Collections.emptyList();
     }

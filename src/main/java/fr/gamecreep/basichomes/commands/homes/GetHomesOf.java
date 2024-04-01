@@ -58,7 +58,9 @@ public class GetHomesOf {
 
             if (args.length == 1) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    list.add(player.getName());
+                    if (player.getDisplayName().contains(args[0])) {
+                        list.add(player.getName());
+                    }
                 }
             }
 

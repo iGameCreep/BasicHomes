@@ -39,8 +39,8 @@ public class WarpsHandler implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
         return switch (command.getName()) {
             case "setwarp" -> new CreateWarp(this.plugin).onTabComplete();
-            case "delwarp" -> new DeleteWarp(this.plugin).onTabComplete(commandSender);
-            case "warp" -> new TeleportWarp(this.plugin).onTabComplete(commandSender);
+            case "delwarp" -> new DeleteWarp(this.plugin).onTabComplete(commandSender, args);
+            case "warp" -> new TeleportWarp(this.plugin).onTabComplete(commandSender, args);
             default -> Collections.emptyList();
         };
     }

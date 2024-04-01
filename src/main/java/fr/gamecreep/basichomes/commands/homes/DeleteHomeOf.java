@@ -76,11 +76,15 @@ public class DeleteHomeOf {
 
             if (args.length == 1) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    list.add(player.getName());
+                    if (player.getDisplayName().contains(args[0])) {
+                        list.add(player.getName());
+                    }
                 }
             } else if (args.length == 2) {
                 for (SavedPosition pos : this.handler.getAll()) {
-                    list.add(pos.getName());
+                    if (pos.getName().contains(args[1])) {
+                        list.add(pos.getName());
+                    }
                 }
             }
 
