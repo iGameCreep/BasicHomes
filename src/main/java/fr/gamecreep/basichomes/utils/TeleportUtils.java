@@ -3,35 +3,48 @@ package fr.gamecreep.basichomes.utils;
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.SavedPosition;
+import fr.gamecreep.basichomes.entities.enums.ConfigElement;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
 public class TeleportUtils {
     private final BasicHomes plugin;
     private final Map<UUID, SavedPosition> tpQueue = new HashMap<>();
-    private final boolean homeDelayEnabled;
-    private final boolean warpDelayEnabled;
-    private final int homeDelay;
-    private final int warpDelay;
-    private final boolean homeStandStill;
-    private final boolean warpStandStill;
+    private final Map<UUID, Integer> internalQueue = new HashMap<>();
+    private int homeDelay;
+    private int warpDelay;
+    private boolean homeDelayEnabled;
+    private boolean warpDelayEnabled;
+    private boolean homeStandStill;
+    private boolean warpStandStill;
 
     public TeleportUtils(@NonNull final BasicHomes plugin) {
         this.plugin = plugin;
-        this.homeDelayEnabled = plugin.getPluginConfig().getHomesConfig().isDelayTeleport();
-        this.warpDelayEnabled = plugin.getPluginConfig().getWarpsConfig().isDelayTeleport();
-        this.homeDelay = plugin.getPluginConfig().getHomesConfig().getDelay();
-        this.warpDelay = plugin.getPluginConfig().getWarpsConfig().getDelay();
-        this.homeStandStill = plugin.getPluginConfig().getHomesConfig().isStandStill();
-        this.warpStandStill = plugin.getPluginConfig().getWarpsConfig().isStandStill();
+        this.homeDelay = (int) plugin.getPluginConfig().getConfig().get(ConfigElement.HOMES_DELAY);
+        this.warpDelay = (int) plugin.getPluginConfig().getConfig().get(ConfigElement.WARPS_DELAY);
+        this.homeDelayEnabled = (this.homeDelay != 0);
+        this.warpDelayEnabled = (this.warpDelay != 0);
+        this.homeStandStill = (boolean) plugin.getPluginConfig().getConfig().get(ConfigElement.HOMES_STAND_STILL);
+        this.warpStandStill = (boolean) plugin.getPluginConfig().getConfig().get(ConfigElement.WARPS_STAND_STILL);
+    }
+
+    private void resetConfig() {
+        this.homeDelay = (int) plugin.getPluginConfig().getConfig().get(ConfigElement.HOMES_DELAY);
+        this.warpDelay = (int) plugin.getPluginConfig().getConfig().get(ConfigElement.WARPS_DELAY);
+        this.homeDelayEnabled = (this.homeDelay != 0);
+        this.warpDelayEnabled = (this.warpDelay != 0);
+        this.homeStandStill = (boolean) plugin.getPluginConfig().getConfig().get(ConfigElement.HOMES_STAND_STILL);
+        this.warpStandStill = (boolean) plugin.getPluginConfig().getConfig().get(ConfigElement.WARPS_STAND_STILL);
     }
 
     public void add(@NonNull final Player player, @NonNull final SavedPosition destination) {
+        resetConfig();
         PositionType type = destination.getType();
         if (type == null) {
             this.plugin.getChatUtils().sendPlayerError(player, "Plugin error: could not retrieve the position type.");
@@ -72,6 +85,7 @@ public class TeleportUtils {
     }
 
     public void playerMoved(@NonNull final Player player) {
+        resetConfig();
         if (!isQueued(player)) return;
         SavedPosition pos = this.tpQueue.get(player.getUniqueId());
 
@@ -81,17 +95,20 @@ public class TeleportUtils {
         if (needToStandStill) {
             this.plugin.getChatUtils().sendPlayerError(player, "Teleport has been canceled because you were moving.");
             this.tpQueue.remove(player.getUniqueId());
+            Bukkit.getScheduler().cancelTask(this.internalQueue.get(player.getUniqueId()));
+            this.internalQueue.remove(player.getUniqueId());
         }
     }
 
     private void prepareTeleport(@NonNull final Player player, int delay) {
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+        BukkitTask task = Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             SavedPosition pos = this.tpQueue.get(player.getUniqueId());
             if (pos == null) return;
 
             this.teleportPlayer(player, pos);
-
         }, (delay * 20L));
+
+        this.internalQueue.put(player.getUniqueId(), task.getTaskId());
     }
 
     private void teleportPlayer(@NonNull final Player player, @NonNull SavedPosition pos) {
@@ -100,6 +117,7 @@ public class TeleportUtils {
         loc.setYaw(player.getLocation().getYaw());
         player.teleport(loc);
         this.tpQueue.remove(player.getUniqueId());
+        this.internalQueue.remove(player.getUniqueId());
 
         this.plugin.getChatUtils().sendPlayerInfo(player, String.format("Successfully teleported you to %s%s%s !",
                 Constants.SPECIAL_COLOR,
