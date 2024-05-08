@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Permission {
+    CONFIG("basichomes.config"),
+
     CREATE_WARP("basichomes.warp.create"),
     DELETE_WARP("basichomes.warp.delete"),
     USE_WARP("basichomes.warp.use"),

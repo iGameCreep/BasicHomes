@@ -14,3 +14,11 @@ warps:
   enabled: true
   delay: 0
   standStill: true
+
+# Config of max homes.
+# Set max-homes to the max number of homes a player can have
+# Set the value to 0 to remove limit
+# Set op-bypass-home-limit to true if you want OP players to have no home limit
+
+op-bypass-home-limit: false
+max-homes: 1

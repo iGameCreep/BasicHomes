@@ -1,18 +1,16 @@
-package fr.gamecreep.basichomes.commands.get;
+package fr.gamecreep.basichomes.commands.warps;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.menus.warp.WarpMenu;
 import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
 import lombok.NonNull;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class GetWarps implements CommandExecutor {
+public class GetWarps {
 
     private final BasicHomes plugin;
 
@@ -20,8 +18,7 @@ public class GetWarps implements CommandExecutor {
         this.plugin = plugin;
     }
 
-    @Override
-    public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final Command command, @NonNull final String label, @NonNull final String[] args) {
+    public boolean onCommand(@NonNull final CommandSender commandSender) {
         if (commandSender instanceof Player playerSender) {
             WarpMenuFactory factory = this.plugin.getWarpMenuFactory();
             List<SavedPosition> warps = this.plugin.getWarpHandler().getAll();
