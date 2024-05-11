@@ -15,7 +15,7 @@ public class DataStore<T> {
     protected final BasicHomes plugin;
     protected final T defaultData;
 
-    public DataStore(BasicHomes plugin, String fileName, T defaultData) {
+    public DataStore(final BasicHomes plugin, final String fileName, final T defaultData) {
         this.fileName = "plugins" + File.separator + "BasicHomes" + File.separator + fileName;
         this.plugin = plugin;
         this.defaultData = defaultData;
@@ -45,7 +45,7 @@ public class DataStore<T> {
         }
     }
 
-    public void saveData(T data) {
+    public void saveData(final T data) {
         try {
             FileWriter writer = new FileWriter(this.fileName);
             this.gson.toJson(data, writer);
@@ -56,7 +56,7 @@ public class DataStore<T> {
         }
     }
 
-    public T loadData(Type type) {
+    public T loadData(final Type type) {
         try {
             return gson.fromJson(new FileReader(this.fileName), type);
         } catch (IOException e) {

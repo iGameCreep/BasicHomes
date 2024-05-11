@@ -17,10 +17,10 @@ public class TeleportEvents implements Listener {
 
     @EventHandler
     private void onPlayerMove(PlayerMoveEvent event) {
-        Location from = event.getFrom();
-        Location to = event.getTo();
-        Player player = event.getPlayer();
-        boolean isQueued = this.teleportUtils.isQueued(player);
+        final Location from = event.getFrom();
+        final Location to = event.getTo();
+        final Player player = event.getPlayer();
+        final boolean isQueued = this.teleportUtils.isQueued(player);
 
         if (to == null) return;
         if (isQueued && hasBlockChanged(from, to)) {
@@ -28,7 +28,9 @@ public class TeleportEvents implements Listener {
         }
     }
 
-    private boolean hasBlockChanged(Location a, Location b) {
-        return Math.round(a.getX()) != Math.round(b.getX()) || Math.round(a.getY()) != Math.round(b.getY()) || Math.round(a.getZ()) != Math.round(b.getZ());
+    private boolean hasBlockChanged(final Location a, final Location b) {
+        return Math.round(a.getX()) != Math.round(b.getX())
+                || Math.round(a.getY()) != Math.round(b.getY())
+                || Math.round(a.getZ()) != Math.round(b.getZ());
     }
 }

@@ -1,6 +1,6 @@
 package fr.gamecreep.basichomes.config;
 
-import fr.gamecreep.basichomes.entities.enums.ConfigElement;
+import fr.gamecreep.basichomes.config.enums.ConfigElement;
 import lombok.Getter;
 import lombok.Setter;
 

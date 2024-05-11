@@ -20,7 +20,7 @@ public abstract class DeleteCommand {
     private final Permission permission;
     private final PositionDataHandler handler;
 
-    protected DeleteCommand(BasicHomes plugin, PositionType type, Permission permission) {
+    protected DeleteCommand(@NonNull final BasicHomes plugin, final PositionType type, final Permission permission) {
         this.plugin = plugin;
         this.type = type;
         this.permission = permission;
@@ -29,7 +29,7 @@ public abstract class DeleteCommand {
     }
 
     public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
-        if (commandSender instanceof Player playerSender) {
+        if (commandSender instanceof final Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
                 return true;
@@ -40,8 +40,8 @@ public abstract class DeleteCommand {
                 return false;
             }
 
-            String name = args[0];
-            SavedPosition pos = this.handler.getByName(playerSender, name);
+            final String name = args[0];
+            final SavedPosition pos = this.handler.getByName(playerSender, name);
 
             if (pos == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
@@ -65,13 +65,13 @@ public abstract class DeleteCommand {
     }
 
     public List<String> onTabComplete(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
-        if (commandSender instanceof Player playerSender) {
-            List<String> nameList = new ArrayList<>();
+        if (commandSender instanceof final Player playerSender) {
+            final List<String> nameList = new ArrayList<>();
 
             if (args.length == 1) {
                 List<SavedPosition> list = this.type == PositionType.HOME ? this.handler.getAllByPlayer(playerSender) : this.handler.getAll();
 
-                for (SavedPosition pos : list) {
+                for (final SavedPosition pos : list) {
                     if (pos.getName().contains(args[0])) {
                         nameList.add(pos.getName());
                     }

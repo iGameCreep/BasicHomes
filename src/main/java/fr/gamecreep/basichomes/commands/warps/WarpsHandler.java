@@ -1,8 +1,8 @@
 package fr.gamecreep.basichomes.commands.warps;
 
 import fr.gamecreep.basichomes.BasicHomes;
-import fr.gamecreep.basichomes.commands.DisabledCommand;
-import fr.gamecreep.basichomes.entities.enums.ConfigElement;
+import fr.gamecreep.basichomes.commands.utils.DisabledCommand;
+import fr.gamecreep.basichomes.config.enums.ConfigElement;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import lombok.NonNull;
 import org.bukkit.command.Command;

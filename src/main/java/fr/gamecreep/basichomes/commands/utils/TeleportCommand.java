@@ -28,7 +28,7 @@ public abstract class TeleportCommand {
     }
 
     public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
-        if (commandSender instanceof Player playerSender) {
+        if (commandSender instanceof final Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
                 this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
                 return true;
@@ -39,8 +39,8 @@ public abstract class TeleportCommand {
                 return true;
             }
 
-            String name = args[0];
-            SavedPosition pos = this.type == PositionType.HOME ? this.handler.getByName(playerSender, name) : this.handler.getByName(name);
+            final String name = args[0];
+            final SavedPosition pos = this.type == PositionType.HOME ? this.handler.getByName(playerSender, name) : this.handler.getByName(name);
 
             if (pos == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
@@ -56,11 +56,11 @@ public abstract class TeleportCommand {
     }
 
     public List<String> onTabComplete(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
-        if (commandSender instanceof Player playerSender) {
-            List<String> nameList = new ArrayList<>();
-            List<SavedPosition> list = this.type == PositionType.HOME ? this.handler.getAllByPlayer(playerSender) : this.handler.getAll();
+        if (commandSender instanceof final Player playerSender) {
+            final List<String> nameList = new ArrayList<>();
+            final List<SavedPosition> list = this.type == PositionType.HOME ? this.handler.getAllByPlayer(playerSender) : this.handler.getAll();
 
-            for (SavedPosition pos : list) {
+            for (final SavedPosition pos : list) {
                 if (pos.getName().contains(args[0])) {
                     nameList.add(pos.getName());
                 }

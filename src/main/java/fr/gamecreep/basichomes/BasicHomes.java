@@ -4,7 +4,7 @@ import fr.gamecreep.basichomes.commands.config.ConfigCommand;
 import fr.gamecreep.basichomes.commands.homes.*;
 import fr.gamecreep.basichomes.commands.warps.*;
 import fr.gamecreep.basichomes.config.PluginConfig;
-import fr.gamecreep.basichomes.entities.enums.ConfigElement;
+import fr.gamecreep.basichomes.config.enums.ConfigElement;
 import fr.gamecreep.basichomes.files.MigrationsVerifier;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;

@@ -14,16 +14,16 @@ public class GetHomes {
 
     private final BasicHomes plugin;
 
-    public GetHomes(BasicHomes plugin) {
+    public GetHomes(final BasicHomes plugin) {
         this.plugin = plugin;
     }
 
     public boolean onCommand(@NonNull final CommandSender commandSender) {
         if (commandSender instanceof Player playerSender) {
-            HomeMenuFactory factory = this.plugin.getHomeMenuFactory();
-            List<SavedPosition> homes = this.plugin.getHomeHandler().getAllByPlayer(playerSender);
-            factory.openInventory(playerSender, new HomeMenu(this.plugin, playerSender), homes);
+            final HomeMenuFactory factory = this.plugin.getHomeMenuFactory();
+            final List<SavedPosition> homes = this.plugin.getHomeHandler().getAllByPlayer(playerSender);
 
+            factory.openInventory(playerSender, new HomeMenu(this.plugin, playerSender), homes);
             return true;
         }
 

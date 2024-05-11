@@ -2,7 +2,7 @@ package fr.gamecreep.basichomes.commands.config;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
-import fr.gamecreep.basichomes.entities.enums.ConfigElement;
+import fr.gamecreep.basichomes.config.enums.ConfigElement;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import lombok.NonNull;
 import org.bukkit.command.Command;
@@ -17,13 +17,13 @@ import java.util.List;
 public class ConfigCommand implements CommandExecutor, TabCompleter {
     private final BasicHomes plugin;
 
-    public ConfigCommand(BasicHomes plugin) {
+    public ConfigCommand(@NonNull final BasicHomes plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final Command command, @NonNull final String label, @NonNull final String[] args) {
-        if (!(commandSender instanceof Player playerSender)) {
+        if (!(commandSender instanceof final Player playerSender)) {
             return false;
         }
 
@@ -44,9 +44,7 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
             }
         }
 
-        if (selectedElement == null) {
-            return false;
-        }
+        if (selectedElement == null) return false;
 
         if (args[0].equalsIgnoreCase("get") && args.length == 2) {
             handleGetCommand(playerSender, selectedElement);
@@ -58,7 +56,7 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleGetCommand(@NonNull final Player player, @NonNull final ConfigElement selectedElement) {
-        Object value = this.plugin.getPluginConfig().getConfig().get(selectedElement);
+        final Object value = this.plugin.getPluginConfig().getConfig().get(selectedElement);
         this.plugin.getChatUtils().sendPlayerInfo(player, String.format(
                 "Current value for %s%s%s is %s%s%s.",
                 Constants.SPECIAL_COLOR,
@@ -70,14 +68,15 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
         ));
     }
 
-    private void handleSetCommand(@NonNull final Player player, @NonNull final ConfigElement selectedElement, @NonNull String newValue) {
-        Object currentValue = this.plugin.getPluginConfig().getConfig().get(selectedElement);
-        Object value = selectedElement.parseValue(newValue);
+    private void handleSetCommand(@NonNull final Player player, @NonNull final ConfigElement selectedElement, final String newValue) {
+        final Object currentValue = this.plugin.getPluginConfig().getConfig().get(selectedElement);
+        final Object value = selectedElement.parseValue(newValue);
         if (value == null) {
-            String errMsg = "New value must be a number or a boolean (true|false) according to it's name. Check documentation for more information on this command.";
+            final String errMsg = "New value must be a number or a boolean (true|false) according to it's name. Check documentation for more information on this command.";
             this.plugin.getChatUtils().sendPlayerError(player, errMsg);
             return;
         }
+
         this.plugin.updateConfig(selectedElement, value);
 
         this.plugin.getChatUtils().sendPlayerInfo(player, String.format(
@@ -96,7 +95,7 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@NonNull final CommandSender commandSender, @NonNull final Command command, @NonNull final String label, @NonNull final String[] args) {
-        List<String> options = new ArrayList<>();
+        final List<String> options = new ArrayList<>();
 
         if (args.length == 1) {
             options.addAll(List.of("get", "set"));
@@ -107,7 +106,7 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
                 }
             }
         } else if (args.length == 3 && args[0].equals("set")) {
-            ConfigElement element = ConfigElement.valueOf(args[1].toUpperCase());
+            final ConfigElement element = ConfigElement.valueOf(args[1].toUpperCase());
             if (element.getDefaultValue() instanceof Boolean) {
                 options.addAll(List.of("true", "false"));
             } else if (element.getDefaultValue() instanceof Integer) {

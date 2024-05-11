@@ -39,7 +39,7 @@ public class SavedPosition {
     }
 
     public Location getLocation() {
-        World w = Bukkit.getWorld(this.world);
+        final World w = Bukkit.getWorld(this.world);
         return new Location(w, this.x, this.y, this.z);
     }
 }

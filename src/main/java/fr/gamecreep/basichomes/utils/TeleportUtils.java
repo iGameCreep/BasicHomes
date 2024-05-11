@@ -3,7 +3,7 @@ package fr.gamecreep.basichomes.utils;
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.SavedPosition;
-import fr.gamecreep.basichomes.entities.enums.ConfigElement;
+import fr.gamecreep.basichomes.config.enums.ConfigElement;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -45,23 +45,27 @@ public class TeleportUtils {
 
     public void add(@NonNull final Player player, @NonNull final SavedPosition destination) {
         resetConfig();
-        PositionType type = destination.getType();
+
+        final PositionType type = destination.getType();
         if (type == null) {
-            this.plugin.getChatUtils().sendPlayerError(player, "Plugin error: could not retrieve the position type.");
+            this.plugin.getChatUtils().sendPlayerError(player, "Internal error: could not retrieve the position type. Please try again later or contact an administrator/developer.");
             return;
         }
-        boolean delayTeleport = type == PositionType.HOME ? this.homeDelayEnabled : this.warpDelayEnabled;
+
+        final boolean delayTeleport = type == PositionType.HOME ? this.homeDelayEnabled : this.warpDelayEnabled;
         if (!delayTeleport) {
             teleportPlayer(player, destination);
             return;
         }
+
         if (isQueued(player)) {
             this.plugin.getChatUtils().sendPlayerError(player, "You are already teleporting somewhere !");
             return;
         }
 
         this.tpQueue.put(player.getUniqueId(), destination);
-        int delay = type == PositionType.HOME ? this.homeDelay : warpDelay;
+
+        final int delay = type == PositionType.HOME ? this.homeDelay : warpDelay;
         this.prepareTeleport(player, delay);
 
         String message = String.format("Teleporting you to %s%s%s in %s%s%s seconds...",
@@ -72,7 +76,7 @@ public class TeleportUtils {
                 delay,
                 Constants.SUCCESS_COLOR);
 
-        boolean standStill = type == PositionType.HOME ? this.homeStandStill : this.warpStandStill;
+        final boolean standStill = type == PositionType.HOME ? this.homeStandStill : this.warpStandStill;
         if (standStill) {
             message += " Stand still !";
         }
@@ -86,23 +90,25 @@ public class TeleportUtils {
 
     public void playerMoved(@NonNull final Player player) {
         resetConfig();
-        if (!isQueued(player)) return;
-        SavedPosition pos = this.tpQueue.get(player.getUniqueId());
 
+        if (!isQueued(player)) return;
+
+        final SavedPosition pos = this.tpQueue.get(player.getUniqueId());
         if (pos.getType() == null) return;
-        boolean needToStandStill = pos.getType() == PositionType.HOME ? this.homeStandStill : this.warpStandStill;
+
+        final boolean needToStandStill = pos.getType() == PositionType.HOME ? this.homeStandStill : this.warpStandStill;
 
         if (needToStandStill) {
-            this.plugin.getChatUtils().sendPlayerError(player, "Teleport has been canceled because you were moving.");
+            this.plugin.getChatUtils().sendPlayerError(player, "Teleport has been canceled because you moved.");
             this.tpQueue.remove(player.getUniqueId());
             Bukkit.getScheduler().cancelTask(this.internalQueue.get(player.getUniqueId()));
             this.internalQueue.remove(player.getUniqueId());
         }
     }
 
-    private void prepareTeleport(@NonNull final Player player, int delay) {
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-            SavedPosition pos = this.tpQueue.get(player.getUniqueId());
+    private void prepareTeleport(@NonNull final Player player, final int delay) {
+        final BukkitTask task = Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            final SavedPosition pos = this.tpQueue.get(player.getUniqueId());
             if (pos == null) return;
 
             this.teleportPlayer(player, pos);

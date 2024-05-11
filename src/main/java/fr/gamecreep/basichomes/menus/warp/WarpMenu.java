@@ -23,6 +23,7 @@ public class WarpMenu extends PaginatedMenu {
     public WarpMenu(@NonNull final BasicHomes plugin,
                     @NonNull final Player player) {
         super(
+                plugin,
                 player,
                 player,
                 Constants.WARPS_MENU_NAME,
@@ -32,13 +33,15 @@ public class WarpMenu extends PaginatedMenu {
     }
 
     @Override
-    protected void onMenuClickEvent(@NonNull InventoryClickEvent event) {
-        ItemStack item = event.getCurrentItem();
+    protected void onMenuClickEvent(@NonNull final InventoryClickEvent event) {
+        final ItemStack item = event.getCurrentItem();
         if (item == null) return;
-        ItemMeta itemMeta = item.getItemMeta();
+
+        final ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) return;
-        PersistentDataContainer dataContainer = itemMeta.getPersistentDataContainer();
-        SavedPosition warp = getPosByPersistentData(dataContainer);
+
+        final PersistentDataContainer dataContainer = itemMeta.getPersistentDataContainer();
+        final SavedPosition warp = getPosByPersistentData(dataContainer);
         if (warp == null) return;
 
         if (item.getType().equals(Constants.DELETE_ITEM)) {
@@ -58,10 +61,11 @@ public class WarpMenu extends PaginatedMenu {
     }
 
     @Nullable
-    private SavedPosition getPosByPersistentData(PersistentDataContainer dataContainer) {
-        String savedWarpId = dataContainer.get(Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS, PersistentDataType.STRING);
+    private SavedPosition getPosByPersistentData(final PersistentDataContainer dataContainer) {
+        final String savedWarpId = dataContainer.get(Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS, PersistentDataType.STRING);
         if (savedWarpId == null) return null;
-        UUID warpId = UUID.fromString(savedWarpId);
+
+        final UUID warpId = UUID.fromString(savedWarpId);
         return this.plugin.getWarpHandler().getById(warpId);
     }
 }

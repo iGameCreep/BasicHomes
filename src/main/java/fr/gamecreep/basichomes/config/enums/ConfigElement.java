@@ -1,4 +1,4 @@
-package fr.gamecreep.basichomes.entities.enums;
+package fr.gamecreep.basichomes.config.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

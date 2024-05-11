@@ -55,7 +55,7 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
         this.saveLatestMigration(1);
     }
 
-    private void saveLatestMigration(int migrationNumber) {
+    private void saveLatestMigration(final int migrationNumber) {
         MigrationsData data = new MigrationsData();
         data.setLatestMigrationNumberDone(migrationNumber);
         this.saveData(data);
