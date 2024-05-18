@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
 
 public class DataStore<T> {
     private final String fileName;
-    protected final Gson gson = new Gson();
+    private final Gson gson = new Gson();
     protected final BasicHomes plugin;
     protected final T defaultData;
 
@@ -23,11 +23,11 @@ public class DataStore<T> {
     }
 
     private void verifyFiles() {
-        File file = new File(this.fileName);
+        final File file = new File(this.fileName);
         final String errorMessage = String.format("Could not create the data store file %s.", this.fileName);
 
         try {
-            File parentDir = file.getParentFile();
+            final File parentDir = file.getParentFile();
 
             if (!parentDir.exists() && !parentDir.mkdirs()) {
                 this.plugin.getPluginLogger().logWarning("Could not create the parent directory.");
@@ -47,8 +47,10 @@ public class DataStore<T> {
 
     public void saveData(final T data) {
         try {
-            FileWriter writer = new FileWriter(this.fileName);
+            final FileWriter writer = new FileWriter(this.fileName);
+
             this.gson.toJson(data, writer);
+
             writer.flush();
             writer.close();
         } catch (IOException e) {

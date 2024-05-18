@@ -23,6 +23,7 @@ import java.util.*;
 public final class BasicHomes extends JavaPlugin {
     private final LoggerUtils pluginLogger = new LoggerUtils(String.format("[%s]", this.getDescription().getPrefix()));
     private final ChatUtils chatUtils = new ChatUtils();
+    private final PositionDataHandler positionDataHandler = new PositionDataHandler(this, "data.json");
     private final PositionDataHandler homeHandler = new PositionDataHandler(this, "homes.json");
     private final PositionDataHandler warpHandler = new PositionDataHandler(this, "warps.json");
     private final PluginConfig pluginConfig = new PluginConfig();
@@ -30,6 +31,8 @@ public final class BasicHomes extends JavaPlugin {
     private final WarpMenuFactory warpMenuFactory = new WarpMenuFactory();
     private final MigrationsVerifier migrationsVerifier = new MigrationsVerifier(this);
     private TeleportUtils teleportUtils;
+
+    //TODO: MOVE homeHandler and warpHandler to positionDataHandler, make method to get all home/warp by user (using pos.type and parse into enum PositionType ("HOME"|"WARP")
 
     @Override
     public void onEnable() {
@@ -50,13 +53,13 @@ public final class BasicHomes extends JavaPlugin {
     private void loadCommands() {
         Objects.requireNonNull(super.getCommand("config")).setExecutor(new ConfigCommand(this));
 
-        List<String> homeCommands = List.of("homes", "sethome", "delhome", "home", "delhomeof", "homesof");
-        List<String> warpCommands = List.of("warps", "setwarp", "delwarp", "warp");
+        final List<String> homeCommands = List.of("homes", "sethome", "delhome", "home", "delhomeof", "homesof");
+        final List<String> warpCommands = List.of("warps", "setwarp", "delwarp", "warp");
 
-        for (String cmd : homeCommands) {
+        for (final String cmd : homeCommands) {
             Objects.requireNonNull(super.getCommand(cmd)).setExecutor(new HomesHandler(this));
         }
-        for (String cmd : warpCommands) {
+        for (final String cmd : warpCommands) {
             Objects.requireNonNull(super.getCommand(cmd)).setExecutor(new WarpsHandler(this));
         }
 
@@ -73,10 +76,10 @@ public final class BasicHomes extends JavaPlugin {
 
     private void loadConfig() {
         saveDefaultConfig();
-        FileConfiguration configFile = super.getConfig();
-        Map<ConfigElement, Object> config = this.pluginConfig.getConfig();
+        final FileConfiguration configFile = super.getConfig();
+        final Map<ConfigElement, Object> config = this.pluginConfig.getConfig();
 
-        for (ConfigElement element : ConfigElement.values()) {
+        for (final ConfigElement element : ConfigElement.values()) {
             if (!configFile.contains(element.getPath())) {
                 config.put(element, element.getDefaultValue());
             } else {
@@ -88,7 +91,7 @@ public final class BasicHomes extends JavaPlugin {
         saveConfig();
     }
 
-    public void updateConfig(ConfigElement element, Object newValue) {
+    public void updateConfig(final ConfigElement element, final Object newValue) {
         this.pluginConfig.getConfig().remove(element);
         this.pluginConfig.getConfig().put(element, newValue);
         getConfig().set(element.getPath(), newValue);

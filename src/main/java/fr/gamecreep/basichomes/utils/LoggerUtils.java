@@ -8,14 +8,14 @@ public class LoggerUtils {
     private final String prefix;
     private final ConsoleCommandSender consoleCommandSender = Bukkit.getConsoleSender();
 
-    public LoggerUtils(String prefix) {
+    public LoggerUtils(final String prefix) {
         this.prefix = prefix;
     }
-    public void logInfo(String message) {
+    public void logInfo(final String message) {
        this.consoleCommandSender.sendMessage(String.format("%s%s %s", Constants.INFO_COLOR, prefix, message));
     }
 
-    public void logWarning(String message) {
+    public void logWarning(final String message) {
         this.consoleCommandSender.sendMessage(String.format("%s%s %s", Constants.WARNING_COLOR, prefix, message));
     }
 
