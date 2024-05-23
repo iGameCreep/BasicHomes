@@ -21,12 +21,11 @@ public abstract class CreateCommand {
     private final Permission permission;
     private final PositionDataHandler handler;
 
-    protected CreateCommand(final BasicHomes plugin, final PositionType type, final Permission permission) {
+    protected CreateCommand(@NonNull final BasicHomes plugin, final PositionType type, final Permission permission) {
         this.plugin = plugin;
         this.type = type;
         this.permission = permission;
-        if (type == PositionType.HOME) this.handler = plugin.getHomeHandler();
-        else this.handler = plugin.getWarpHandler();
+        this.handler = plugin.getPositionDataHandler();
     }
 
     public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
@@ -36,17 +35,17 @@ public abstract class CreateCommand {
                 return true;
             }
 
-            final List<SavedPosition> list = this.handler.getAllByPlayer(playerSender);
+            if (args.length < 1) {
+                this.plugin.getChatUtils().sendPlayerError(playerSender, "Please add a name !");
+                return true;
+            }
 
-            if (this.type == PositionType.HOME && !this.canCreateHome(playerSender, list.size())) {
+            final List<SavedPosition> list = this.handler.getAllByPlayer(this.type, playerSender);
+
+            if (this.type.equals(PositionType.HOME) && !this.canCreateHome(playerSender, list.size())) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, "You already have the max number of homes allowed !");
                 return true;
 
-            }
-
-            if (args.length == 0) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("Please add a %s name !", this.type.getDisplayName()));
-                return true;
             }
 
             final Location playerPos = playerSender.getLocation();

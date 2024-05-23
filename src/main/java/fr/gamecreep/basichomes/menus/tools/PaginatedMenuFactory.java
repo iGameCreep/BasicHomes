@@ -2,6 +2,7 @@ package fr.gamecreep.basichomes.menus.tools;
 
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.SavedPosition;
+import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -19,26 +20,30 @@ public abstract class PaginatedMenuFactory<MENU extends PaginatedMenu> {
 
     protected PaginatedMenuFactory() { }
 
-    public final void openInventory(final Player player, final MENU menu, List<SavedPosition> data) {
+    public final void openInventory(@NonNull final Player player, @NonNull final MENU menu, @NonNull final List<SavedPosition> data) {
         menu.populateMenu(data);
         this.openedMenus.add(menu);
         player.openInventory(menu.getMenu());
     }
 
-    protected void onInventoryClose(InventoryCloseEvent event) {
-        MENU menu = this.getMenuFromInventory(event.getView().getTopInventory());
+    protected void onInventoryClose(@NonNull final InventoryCloseEvent event) {
+        final MENU menu = this.getMenuFromInventory(event.getView().getTopInventory());
         if (menu == null) return;
+
         this.openedMenus.remove(menu);
     }
 
-    protected void onInventoryClick(InventoryClickEvent event) {
+    protected void onInventoryClick(@NonNull final InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
-        MENU menu = this.getMenuFromInventory(event.getClickedInventory());
+
+        final MENU menu = this.getMenuFromInventory(event.getClickedInventory());
         if (menu == null) return;
+
         event.setCancelled(true);
 
         final ItemStack item = event.getCurrentItem();
         if (item == null) return;
+
         final ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) return;
 
@@ -56,8 +61,8 @@ public abstract class PaginatedMenuFactory<MENU extends PaginatedMenu> {
         menu.onMenuClickEvent(event);
     }
 
-    private MENU getMenuFromInventory(Inventory inv) {
-        for (MENU menu : this.openedMenus) {
+    private MENU getMenuFromInventory(@NonNull final Inventory inv) {
+        for (final MENU menu : this.openedMenus) {
             if (menu.getMenu().equals(inv)) return menu;
         }
 

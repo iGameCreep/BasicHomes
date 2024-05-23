@@ -3,6 +3,7 @@ package fr.gamecreep.basichomes.files;
 import com.google.gson.reflect.TypeToken;
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.SavedPosition;
+import fr.gamecreep.basichomes.entities.enums.PositionType;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -18,31 +19,40 @@ public class PositionDataHandler {
     private static final Type TYPE = new TypeToken<List<SavedPosition>>(){}.getType();
     private final DataStore<List<SavedPosition>> dataStore;
 
-    public PositionDataHandler(BasicHomes plugin, String fileName) {
+    public PositionDataHandler(@NonNull final BasicHomes plugin, final String fileName) {
         this.dataStore = new DataStore<>(plugin, fileName, Collections.emptyList());
     }
 
-    public void create(@NonNull SavedPosition pos) {
-        List<SavedPosition> list = this.dataStore.loadData(TYPE);
+    public void create(@NonNull final SavedPosition pos) {
+        final List<SavedPosition> list = this.dataStore.loadData(TYPE);
         list.add(pos);
         this.dataStore.saveData(list);
     }
 
-    public void delete(@NonNull SavedPosition pos) {
-        List<SavedPosition> list = this.dataStore.loadData(TYPE);
-        SavedPosition toRemove = this.getByIdInList(list, pos.getId());
-        list.remove(toRemove);
+    public void delete(@NonNull final SavedPosition pos) {
+        final List<SavedPosition> list = this.dataStore.loadData(TYPE);
+
+        list.removeIf(savedPos -> savedPos.getId().equals(pos.getId()));
+
         this.dataStore.saveData(list);
     }
 
-    public List<SavedPosition> getAll() {
-        return this.dataStore.loadData(TYPE);
+    public List<SavedPosition> getAll(final PositionType type) {
+        List<SavedPosition> all = this.dataStore.loadData(TYPE);
+        List<SavedPosition> correctType = new ArrayList<>();
+
+        for (final SavedPosition pos : all) {
+            if (pos.getType().equals(type)) correctType.add(pos);
+        }
+
+        return correctType;
     }
 
-    public List<SavedPosition> getAllByPlayer(@NonNull Player player) {
-        List<SavedPosition> list = new ArrayList<>();
+    public List<SavedPosition> getAllByPlayer(@NonNull final PositionType type, @NonNull final Player player) {
+        if (type.equals(PositionType.WARP)) return this.getAll(type);
+        final List<SavedPosition> list = new ArrayList<>();
 
-        for (SavedPosition pos : this.getAll()) {
+        for (final SavedPosition pos : this.getAll(type)) {
             if (UUID.fromString(pos.getOwnerUuid()).equals(player.getUniqueId())) list.add(pos);
         }
 
@@ -50,10 +60,10 @@ public class PositionDataHandler {
     }
 
     @Nullable
-    public SavedPosition getByName(@NonNull Player player, @NonNull String name) {
-        List<SavedPosition> list = this.getAllByPlayer(player);
+    public SavedPosition getByName(@NonNull final PositionType type, @NonNull final Player player, final String name) {
+        final List<SavedPosition> list = this.getAllByPlayer(type, player);
 
-        for (SavedPosition pos : list) {
+        for (final SavedPosition pos : list) {
             if (pos.getName().equals(name)) return pos;
         }
 
@@ -61,10 +71,10 @@ public class PositionDataHandler {
     }
 
     @Nullable
-    public SavedPosition getByName(@NonNull String name) {
-        List<SavedPosition> list = this.getAll();
+    public SavedPosition getByName(@NonNull final PositionType type, final String name) {
+        final List<SavedPosition> list = this.getAll(type);
 
-        for (SavedPosition pos : list) {
+        for (final SavedPosition pos : list) {
             if (pos.getName().equals(name)) return pos;
         }
 
@@ -72,26 +82,20 @@ public class PositionDataHandler {
     }
 
     @Nullable
-    public SavedPosition getById(@NonNull final Player player, @NonNull final UUID id) {
-        for (SavedPosition pos : this.getAllByPlayer(player)) {
+    public SavedPosition getById(@NonNull final PositionType type, @NonNull final Player player, final UUID id) {
+        for (final SavedPosition pos : this.getAllByPlayer(type, player)) {
             if (pos.getId().equals(id)) return pos;
         }
+
         return null;
     }
 
     @Nullable
-    public SavedPosition getById(@NonNull final UUID id) {
-        for (SavedPosition pos : this.getAll()) {
+    public SavedPosition getById(@NonNull final PositionType type, final UUID id) {
+        for (final SavedPosition pos : this.getAll(type)) {
             if (pos.getId().equals(id)) return pos;
         }
-        return null;
-    }
 
-    @Nullable
-    private SavedPosition getByIdInList(List<SavedPosition> list, UUID id) {
-        for (SavedPosition pos : list) {
-            if (pos.getId().equals(id)) return pos;
-        }
         return null;
     }
 }

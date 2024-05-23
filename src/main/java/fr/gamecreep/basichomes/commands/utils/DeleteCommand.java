@@ -24,8 +24,7 @@ public abstract class DeleteCommand {
         this.plugin = plugin;
         this.type = type;
         this.permission = permission;
-        if (type == PositionType.HOME) this.handler = plugin.getHomeHandler();
-        else this.handler = plugin.getWarpHandler();
+        this.handler = plugin.getPositionDataHandler();
     }
 
     public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
@@ -41,7 +40,7 @@ public abstract class DeleteCommand {
             }
 
             final String name = args[0];
-            final SavedPosition pos = this.handler.getByName(playerSender, name);
+            final SavedPosition pos = this.handler.getByName(this.type, playerSender, name);
 
             if (pos == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
@@ -69,7 +68,7 @@ public abstract class DeleteCommand {
             final List<String> nameList = new ArrayList<>();
 
             if (args.length == 1) {
-                List<SavedPosition> list = this.type == PositionType.HOME ? this.handler.getAllByPlayer(playerSender) : this.handler.getAll();
+                final List<SavedPosition> list = this.handler.getAllByPlayer(this.type, playerSender);
 
                 for (final SavedPosition pos : list) {
                     if (pos.getName().contains(args[0])) {

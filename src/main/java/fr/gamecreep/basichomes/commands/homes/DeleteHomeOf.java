@@ -4,6 +4,7 @@ import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
+import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -22,7 +23,7 @@ public class DeleteHomeOf {
     public DeleteHomeOf(BasicHomes plugin) {
         this.plugin = plugin;
         this.permission = Permission.MANAGE_HOME;
-        this.handler = plugin.getHomeHandler();
+        this.handler = plugin.getPositionDataHandler();
     }
 
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull String[] args) {
@@ -45,7 +46,7 @@ public class DeleteHomeOf {
             }
 
             String name = args[1];
-            SavedPosition pos = this.handler.getByName(target, name);
+            SavedPosition pos = this.handler.getByName(PositionType.HOME, target, name);
 
             if (pos == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, "No home exists with that name !");
@@ -81,7 +82,7 @@ public class DeleteHomeOf {
                     }
                 }
             } else if (args.length == 2) {
-                for (SavedPosition pos : this.handler.getAll()) {
+                for (SavedPosition pos : this.handler.getAll(PositionType.HOME)) {
                     if (pos.getName().contains(args[1])) {
                         list.add(pos.getName());
                     }

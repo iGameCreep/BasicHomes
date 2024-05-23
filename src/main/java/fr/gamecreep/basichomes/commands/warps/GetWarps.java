@@ -2,6 +2,7 @@ package fr.gamecreep.basichomes.commands.warps;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.SavedPosition;
+import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.menus.warp.WarpMenu;
 import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
 import lombok.NonNull;
@@ -20,8 +21,9 @@ public class GetWarps {
 
     public boolean onCommand(@NonNull final CommandSender commandSender) {
         if (commandSender instanceof Player playerSender) {
-            WarpMenuFactory factory = this.plugin.getWarpMenuFactory();
-            List<SavedPosition> warps = this.plugin.getWarpHandler().getAll();
+            final WarpMenuFactory factory = this.plugin.getWarpMenuFactory();
+            final List<SavedPosition> warps = this.plugin.getPositionDataHandler().getAll(PositionType.WARP);
+
             factory.openInventory(playerSender, new WarpMenu(this.plugin, playerSender), warps);
 
             return true;

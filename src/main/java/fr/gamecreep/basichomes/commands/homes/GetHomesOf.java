@@ -3,6 +3,7 @@ package fr.gamecreep.basichomes.commands.homes;
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
+import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.menus.home.HomeMenu;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
 import lombok.NonNull;
@@ -36,15 +37,16 @@ public class GetHomesOf {
                 return true;
             }
 
-            Player target = Bukkit.getPlayerExact(args[0]);
+            final Player target = Bukkit.getPlayerExact(args[0]);
             if (target == null) {
                 this.plugin.getChatUtils().sendPlayerError(playerSender, "Player not found or isn't logged in.");
                 return true;
             }
 
-            HomeMenuFactory factory = this.plugin.getHomeMenuFactory();
-            List<SavedPosition> homes = this.plugin.getHomeHandler().getAllByPlayer(target);
-            factory.openInventory(playerSender, new HomeMenu(this.plugin, playerSender, target), homes);
+            final HomeMenuFactory factory = this.plugin.getHomeMenuFactory();
+            final List<SavedPosition> homes = this.plugin.getPositionDataHandler().getAllByPlayer(PositionType.HOME, target);
+
+            factory.openInventory(playerSender, new HomeMenu(this.plugin, playerSender, target, PositionType.HOME), homes);
 
             return true;
         }
@@ -52,12 +54,12 @@ public class GetHomesOf {
         return false;
     }
 
-    public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull String[] args) {
+    public List<String> onTabComplete(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
         if (commandSender instanceof Player) {
-            List<String> list = new ArrayList<>();
+            final List<String> list = new ArrayList<>();
 
             if (args.length == 1) {
-                for (Player player : Bukkit.getOnlinePlayers()) {
+                for (final Player player : Bukkit.getOnlinePlayers()) {
                     if (player.getDisplayName().contains(args[0])) {
                         list.add(player.getName());
                     }

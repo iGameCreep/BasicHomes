@@ -4,6 +4,7 @@ import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
+import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.menus.tools.PaginatedMenu;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -20,10 +21,12 @@ public class HomeMenu extends PaginatedMenu {
 
     private final BasicHomes plugin;
     private final Player target;
+    private final PositionType type;
 
     public HomeMenu(@NonNull final BasicHomes plugin,
                     @NonNull final Player player,
-                    @NonNull final Player target) {
+                    @NonNull final Player target,
+                    @NonNull final PositionType type) {
         super(
                 plugin,
                 player,
@@ -33,10 +36,12 @@ public class HomeMenu extends PaginatedMenu {
         );
         this.plugin = plugin;
         this.target = target;
+        this.type = type;
     }
 
     public HomeMenu(@NonNull final BasicHomes plugin,
-                    @NonNull final Player player) {
+                    @NonNull final Player player,
+                    @NonNull final PositionType type) {
         super(
                 plugin,
                 player,
@@ -46,6 +51,7 @@ public class HomeMenu extends PaginatedMenu {
         );
         this.plugin = plugin;
         this.target = player;
+        this.type = type;
     }
 
     @Override
@@ -61,7 +67,7 @@ public class HomeMenu extends PaginatedMenu {
         if (home == null) return;
 
         if (item.getType().equals(Constants.DELETE_ITEM)) {
-            this.plugin.getHomeHandler().delete(home);
+            this.plugin.getPositionDataHandler().delete(home);
             super.getPlayer().closeInventory();
             this.plugin.getChatUtils().sendPlayerInfo(super.getPlayer(), String.format(
                     "The home %s%s%s has been removed !",
@@ -82,6 +88,6 @@ public class HomeMenu extends PaginatedMenu {
         if (savedHomeId == null) return null;
 
         final UUID homeId = UUID.fromString(savedHomeId);
-        return this.plugin.getHomeHandler().getById(this.target, homeId);
+        return this.plugin.getPositionDataHandler().getById(this.type, this.target, homeId);
     }
 }

@@ -42,8 +42,8 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
         final PositionDataHandler homeHandler = new PositionDataHandler(super.plugin, HOMES_FILE_NAME);
         final PositionDataHandler warpHandler = new PositionDataHandler(super.plugin, WARPS_FILE_NAME);
 
-        final List<SavedPosition> homeList = homeHandler.getAll();
-        final List<SavedPosition> warpList = warpHandler.getAll();
+        final List<SavedPosition> homeList = homeHandler.getAll(PositionType.HOME);
+        final List<SavedPosition> warpList = warpHandler.getAll(PositionType.WARP);
 
         for (final SavedPosition savedPosition : homeList) {
             homeHandler.delete(savedPosition);
@@ -71,8 +71,8 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
         final PositionDataHandler homeHandler = new PositionDataHandler(super.plugin, HOMES_FILE_NAME);
         final PositionDataHandler warpHandler = new PositionDataHandler(super.plugin, WARPS_FILE_NAME);
 
-        final List<SavedPosition> homeList = homeHandler.getAll();
-        final List<SavedPosition> warpList = warpHandler.getAll();
+        final List<SavedPosition> homeList = homeHandler.getAll(PositionType.HOME);
+        final List<SavedPosition> warpList = warpHandler.getAll(PositionType.WARP);
 
         for (final SavedPosition savedPosition : homeList) {
             positionDataHandler.create(savedPosition);

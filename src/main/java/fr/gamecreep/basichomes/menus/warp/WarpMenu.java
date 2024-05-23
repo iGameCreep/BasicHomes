@@ -4,6 +4,7 @@ import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
+import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.menus.tools.PaginatedMenu;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -45,7 +46,7 @@ public class WarpMenu extends PaginatedMenu {
         if (warp == null) return;
 
         if (item.getType().equals(Constants.DELETE_ITEM)) {
-            this.plugin.getWarpHandler().delete(warp);
+            this.plugin.getPositionDataHandler().delete(warp);
             super.getPlayer().closeInventory();
             this.plugin.getChatUtils().sendPlayerInfo(super.getPlayer(), String.format(
                     "The warp %s%s%s has been removed !",
@@ -66,6 +67,6 @@ public class WarpMenu extends PaginatedMenu {
         if (savedWarpId == null) return null;
 
         final UUID warpId = UUID.fromString(savedWarpId);
-        return this.plugin.getWarpHandler().getById(warpId);
+        return this.plugin.getPositionDataHandler().getById(PositionType.WARP, warpId);
     }
 }

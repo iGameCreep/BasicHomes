@@ -2,6 +2,7 @@ package fr.gamecreep.basichomes.commands.homes;
 
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.SavedPosition;
+import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.menus.home.HomeMenu;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
 import lombok.NonNull;
@@ -21,9 +22,9 @@ public class GetHomes {
     public boolean onCommand(@NonNull final CommandSender commandSender) {
         if (commandSender instanceof Player playerSender) {
             final HomeMenuFactory factory = this.plugin.getHomeMenuFactory();
-            final List<SavedPosition> homes = this.plugin.getHomeHandler().getAllByPlayer(playerSender);
+            final List<SavedPosition> homes = this.plugin.getPositionDataHandler().getAllByPlayer(PositionType.HOME, playerSender);
 
-            factory.openInventory(playerSender, new HomeMenu(this.plugin, playerSender), homes);
+            factory.openInventory(playerSender, new HomeMenu(this.plugin, playerSender, PositionType.HOME), homes);
             return true;
         }
 

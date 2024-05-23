@@ -3,6 +3,7 @@ package fr.gamecreep.basichomes.commands.config;
 import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.config.enums.ConfigElement;
+import fr.gamecreep.basichomes.config.enums.DataType;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import lombok.NonNull;
 import org.bukkit.command.Command;
@@ -100,16 +101,17 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             options.addAll(List.of("get", "set"));
         } else if (args.length == 2) {
-            for (ConfigElement element : ConfigElement.values()) {
+            for (final ConfigElement element : ConfigElement.values()) {
                 if (element.name().toLowerCase().contains(args[1])) {
                     options.add(element.name().toLowerCase());
                 }
             }
         } else if (args.length == 3 && args[0].equals("set")) {
             final ConfigElement element = ConfigElement.valueOf(args[1].toUpperCase());
-            if (element.getDefaultValue() instanceof Boolean) {
+
+            if (element.getType().equals(DataType.BOOLEAN)) {
                 options.addAll(List.of("true", "false"));
-            } else if (element.getDefaultValue() instanceof Integer) {
+            } else if (element.getType().equals(DataType.INTEGER)) {
                 options.add("[number]");
             }
         }
