@@ -5,13 +5,16 @@ import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.MigrationsData;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
+import fr.gamecreep.basichomes.utils.PositionUtils;
+import org.bukkit.Material;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MigrationsVerifier extends DataStore<MigrationsData> {
-    private static final int LATEST_MIGRATION = 2;
+    private static final int LATEST_MIGRATION = 3;
     private static final Type TYPE = new TypeToken<MigrationsData>(){}.getType();
     private static final String HOMES_FILE_NAME = "homes.json";
     private static final String WARPS_FILE_NAME = "warps.json";
@@ -36,9 +39,7 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
     /**
      * Adds PositionType to saved positions directly in files.
      */
-    private void v1() {
-        super.plugin.getPluginLogger().logInfo("Running migration V1...");
-
+    private boolean v1() {
         final PositionDataHandler homeHandler = new PositionDataHandler(super.plugin, HOMES_FILE_NAME);
         final PositionDataHandler warpHandler = new PositionDataHandler(super.plugin, WARPS_FILE_NAME);
 
@@ -58,13 +59,13 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
         }
 
         this.saveLatestMigration(1);
-        super.plugin.getPluginLogger().logInfo("Success!");
+        return true;
     }
 
     /**
      * Moves homes.json and warps.json to data.json
      */
-    private void v2() {
+    private boolean v2() {
         super.plugin.getPluginLogger().logInfo("Running migration V2...");
 
         final PositionDataHandler positionDataHandler = super.plugin.getPositionDataHandler();
@@ -89,26 +90,63 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
         if (warpsFile.exists()) warpsFile.deleteOnExit();
 
         this.saveLatestMigration(2);
-        super.plugin.getPluginLogger().logInfo("Success!");
+        return true;
+    }
+
+    /**
+     * Add a material to each saved position
+     */
+    private boolean v3() {
+        final PositionDataHandler handler = this.plugin.getPositionDataHandler();
+
+        final List<SavedPosition> all = new ArrayList<>();
+
+        all.addAll(handler.getAll(PositionType.HOME));
+        all.addAll(handler.getAll(PositionType.WARP));
+
+        for (final SavedPosition pos : all) {
+            handler.delete(pos);
+
+            try {
+                final Material material = PositionUtils.getMaterialFromWorldEnvironment(pos.getLocation().getWorld().getEnvironment());
+                pos.setBlock(material);
+            } catch (final NullPointerException e) {
+                this.plugin.getPluginLogger().logWarning("Unable to run migration V3: " + e);
+                return false;
+            }
+
+            handler.create(pos);
+        }
+
+        this.saveLatestMigration(3);
+        return true;
     }
 
     private void saveLatestMigration(final int migrationNumber) {
-        MigrationsData data = new MigrationsData();
+        final MigrationsData data = new MigrationsData();
         data.setLatestMigrationNumberDone(migrationNumber);
         this.saveData(data);
     }
 
-    private void callMigrationFunction(int migrationNumber) {
-        switch (migrationNumber) {
-            case 1:
-                v1();
-                break;
-            case 2:
-                v2();
-                break;
-            default:
-                this.plugin.getPluginLogger().logWarning("Could not find migration for number " + migrationNumber);
-                break;
+    private void callMigrationFunction(final int migrationNumber) {
+        super.plugin.getPluginLogger().logInfo(String.format("Running migration V%s...", migrationNumber));
+
+        boolean success = switch (migrationNumber) {
+            case 1 -> v1();
+            case 2 -> v2();
+            case 3 -> v3();
+            default -> migrationNotFound(migrationNumber);
+        };
+
+        if (success) {
+            super.plugin.getPluginLogger().logInfo("Success!");
+        } else {
+            super.plugin.getPluginLogger().logWarning("A migration has failed to run. The plugin may not work properly. Please reload/restart the server. If this error persists, contact a plugin developer.");
         }
+    }
+
+    private boolean migrationNotFound(final int migrationNumber) {
+        this.plugin.getPluginLogger().logWarning("Could not find migration for number " + migrationNumber);
+        return true;
     }
 }
