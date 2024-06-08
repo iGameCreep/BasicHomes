@@ -12,6 +12,7 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MigrationsVerifier extends DataStore<MigrationsData> {
     private static final int LATEST_MIGRATION = 3;
@@ -108,7 +109,7 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
             handler.delete(pos);
 
             try {
-                final Material material = PositionUtils.getMaterialFromWorldEnvironment(pos.getLocation().getWorld().getEnvironment());
+                final Material material = PositionUtils.getMaterialFromWorldEnvironment(Objects.requireNonNull(pos.getLocation().getWorld()).getEnvironment());
                 pos.setBlock(material);
             } catch (final NullPointerException e) {
                 this.plugin.getPluginLogger().logWarning("Unable to run migration V3: " + e);
