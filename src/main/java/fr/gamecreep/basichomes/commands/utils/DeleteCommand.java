@@ -6,6 +6,7 @@ import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
+import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,13 +16,11 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class DeleteCommand {
-    private final BasicHomes plugin;
     private final PositionType type;
     private final Permission permission;
     private final PositionDataHandler handler;
 
     protected DeleteCommand(@NonNull final BasicHomes plugin, final PositionType type, final Permission permission) {
-        this.plugin = plugin;
         this.type = type;
         this.permission = permission;
         this.handler = plugin.getPositionDataHandler();
@@ -30,12 +29,12 @@ public abstract class DeleteCommand {
     public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
         if (commandSender instanceof final Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
-                this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
+                ChatUtils.sendNoPermission(playerSender, this.permission);
                 return true;
             }
 
             if (args.length < 1) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("Please add the name of the %s to delete !", this.type.getDisplayName()));
+                ChatUtils.sendPlayerError(playerSender, String.format("Please add the name of the %s to delete !", this.type.getDisplayName()));
                 return false;
             }
 
@@ -43,13 +42,13 @@ public abstract class DeleteCommand {
             final SavedPosition pos = this.handler.getByName(this.type, playerSender, name);
 
             if (pos == null) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
+                ChatUtils.sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
                 return true;
             }
 
             this.handler.delete(pos);
 
-            this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format(
+            ChatUtils.sendPlayerInfo(playerSender, String.format(
                     "The %s %s%s%s has been removed !",
                     this.type.getDisplayName(),
                     Constants.SPECIAL_COLOR,

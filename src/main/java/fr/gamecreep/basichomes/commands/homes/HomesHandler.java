@@ -23,7 +23,7 @@ public class HomesHandler implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
         if (!((boolean) this.plugin.getPluginConfig().getConfig().get(ConfigElement.HOMES_ENABLED))) {
-            return new DisabledCommand(this.plugin, PositionType.HOME).onCommand(commandSender);
+            return new DisabledCommand(PositionType.HOME).onCommand(commandSender);
         }
 
         return switch (command.getName()) {
@@ -40,7 +40,7 @@ public class HomesHandler implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
         return switch (command.getName()) {
-            case "sethome" -> new CreateHome(this.plugin).onTabComplete();
+            case "sethome" -> new CreateHome(this.plugin).onTabComplete(commandSender, args);
             case "delhome" -> new DeleteHome(this.plugin).onTabComplete(commandSender, args);
             case "delhomeof" -> new DeleteHomeOf(this.plugin).onTabComplete(commandSender, args);
             case "homesof" -> new GetHomesOf(this.plugin).onTabComplete(commandSender, args);

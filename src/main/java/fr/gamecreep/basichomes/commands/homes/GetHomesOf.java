@@ -6,6 +6,7 @@ import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.menus.home.HomeMenu;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
+import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -28,18 +29,18 @@ public class GetHomesOf {
     public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
         if (commandSender instanceof Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
-                this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
+                ChatUtils.sendNoPermission(playerSender, this.permission);
                 return true;
             }
 
             if (args.length < 1) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, "Please add the name of the player !");
+                ChatUtils.sendPlayerError(playerSender, "Please add the name of the player !");
                 return true;
             }
 
             final Player target = Bukkit.getPlayerExact(args[0]);
             if (target == null) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, "Player not found or isn't logged in.");
+                ChatUtils.sendPlayerError(playerSender, "Player not found or isn't logged in.");
                 return true;
             }
 

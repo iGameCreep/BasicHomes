@@ -6,6 +6,7 @@ import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
+import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,12 +17,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class DeleteHomeOf {
-    private final BasicHomes plugin;
     private final Permission permission;
     private final PositionDataHandler handler;
 
-    public DeleteHomeOf(BasicHomes plugin) {
-        this.plugin = plugin;
+    public DeleteHomeOf(@NonNull final BasicHomes plugin) {
         this.permission = Permission.MANAGE_HOME;
         this.handler = plugin.getPositionDataHandler();
     }
@@ -30,18 +29,18 @@ public class DeleteHomeOf {
         if (commandSender instanceof Player playerSender) {
 
             if (!playerSender.hasPermission(this.permission.getName())) {
-                this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
+                ChatUtils.sendNoPermission(playerSender, this.permission);
                 return true;
             }
 
             if (args.length < 2) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, "Please add the name of the player and of the home to delete !");
+                ChatUtils.sendPlayerError(playerSender, "Please add the name of the player and of the home to delete !");
                 return false;
             }
 
             Player target = Bukkit.getPlayer(args[0]);
             if (target == null) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, "Player not found or isn't logged in.");
+                ChatUtils.sendPlayerError(playerSender, "Player not found or isn't logged in.");
                 return true;
             }
 
@@ -49,13 +48,13 @@ public class DeleteHomeOf {
             SavedPosition pos = this.handler.getByName(PositionType.HOME, target, name);
 
             if (pos == null) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, "No home exists with that name !");
+                ChatUtils.sendPlayerError(playerSender, "No home exists with that name !");
                 return true;
             }
 
             this.handler.delete(pos);
 
-            this.plugin.getChatUtils().sendPlayerInfo(playerSender, String.format(
+            ChatUtils.sendPlayerInfo(playerSender, String.format(
                     "The home %s%s%s of %s%s%s has been removed !",
                     Constants.SPECIAL_COLOR,
                     name,
@@ -73,7 +72,7 @@ public class DeleteHomeOf {
 
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull String[] args) {
         if (commandSender instanceof Player) {
-            List<String> list = new ArrayList<>();
+            final List<String> list = new ArrayList<>();
 
             if (args.length == 1) {
                 for (Player player : Bukkit.getOnlinePlayers()) {

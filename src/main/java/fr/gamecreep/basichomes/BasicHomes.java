@@ -10,7 +10,6 @@ import fr.gamecreep.basichomes.files.PositionDataHandler;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
 import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
 import fr.gamecreep.basichomes.events.TeleportEvents;
-import fr.gamecreep.basichomes.utils.ChatUtils;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
 import fr.gamecreep.basichomes.utils.TeleportUtils;
 import lombok.Getter;
@@ -22,7 +21,6 @@ import java.util.*;
 @Getter
 public final class BasicHomes extends JavaPlugin {
     private final LoggerUtils pluginLogger = new LoggerUtils(String.format("[%s]", this.getDescription().getPrefix()));
-    private final ChatUtils chatUtils = new ChatUtils();
     private final PositionDataHandler positionDataHandler = new PositionDataHandler(this, "data.json");
     private final PluginConfig pluginConfig = new PluginConfig();
     private final HomeMenuFactory homeMenuFactory = new HomeMenuFactory();

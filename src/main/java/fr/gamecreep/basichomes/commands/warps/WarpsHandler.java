@@ -23,7 +23,7 @@ public class WarpsHandler implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
         if (!((boolean) this.plugin.getPluginConfig().getConfig().get(ConfigElement.WARPS_ENABLED))) {
-            return new DisabledCommand(this.plugin, PositionType.WARP).onCommand(commandSender);
+            return new DisabledCommand(PositionType.WARP).onCommand(commandSender);
         }
 
         return switch (command.getName()) {
@@ -38,7 +38,7 @@ public class WarpsHandler implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
         return switch (command.getName()) {
-            case "setwarp" -> new CreateWarp(this.plugin).onTabComplete();
+            case "setwarp" -> new CreateWarp(this.plugin).onTabComplete(commandSender, args);
             case "delwarp" -> new DeleteWarp(this.plugin).onTabComplete(commandSender, args);
             case "warp" -> new TeleportWarp(this.plugin).onTabComplete(commandSender, args);
             default -> Collections.emptyList();
