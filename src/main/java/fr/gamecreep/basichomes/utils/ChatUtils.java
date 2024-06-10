@@ -10,7 +10,8 @@ import org.bukkit.entity.Player;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChatUtils {
-    private static final String PREFIX = String.format("%s[%sBH%s] ", ChatColor.GRAY, Constants.PLUGIN_COLOR, ChatColor.GRAY);
+
+    public static final String PREFIX = String.format("%s[%sBH%s] ", ChatColor.GRAY, Constants.PLUGIN_COLOR, ChatColor.GRAY);
 
     public static void sendPlayerError(@NonNull final Player player, final String message) {
         player.sendMessage(PREFIX + Constants.WARNING_COLOR + message);

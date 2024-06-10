@@ -20,7 +20,6 @@ import java.util.*;
 
 @Getter
 public final class BasicHomes extends JavaPlugin {
-    private final LoggerUtils pluginLogger = new LoggerUtils(String.format("[%s]", this.getDescription().getPrefix()));
     private final PositionDataHandler positionDataHandler = new PositionDataHandler(this, "data.json");
     private final PluginConfig pluginConfig = new PluginConfig();
     private final HomeMenuFactory homeMenuFactory = new HomeMenuFactory();
@@ -35,12 +34,12 @@ public final class BasicHomes extends JavaPlugin {
         loadCommands();
         loadEvents();
 
-        this.pluginLogger.logInfo("Plugin successfully loaded !");
+        LoggerUtils.logInfo("Plugin successfully loaded !");
     }
 
     @Override
     public void onDisable() {
-        this.pluginLogger.logInfo("Plugin successfully stopped !");
+        LoggerUtils.logInfo("Plugin successfully stopped !");
     }
 
     private void loadCommands() {
@@ -56,7 +55,7 @@ public final class BasicHomes extends JavaPlugin {
             Objects.requireNonNull(super.getCommand(cmd)).setExecutor(new WarpsHandler(this));
         }
 
-        this.pluginLogger.logInfo("Commands loaded !");
+        LoggerUtils.logInfo("Commands loaded !");
     }
 
     private void loadEvents() {
@@ -64,7 +63,7 @@ public final class BasicHomes extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(this.homeMenuFactory, this);
         this.getServer().getPluginManager().registerEvents(this.warpMenuFactory, this);
 
-        this.pluginLogger.logInfo("Events loaded !");
+        LoggerUtils.logInfo("Events loaded !");
     }
 
     private void loadConfig() {

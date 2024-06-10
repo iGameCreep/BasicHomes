@@ -2,6 +2,7 @@ package fr.gamecreep.basichomes.files;
 
 import com.google.gson.Gson;
 import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.utils.LoggerUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -30,18 +31,18 @@ public class DataStore<T> {
             final File parentDir = file.getParentFile();
 
             if (!parentDir.exists() && !parentDir.mkdirs()) {
-                this.plugin.getPluginLogger().logWarning("Could not create the parent directory.");
+                LoggerUtils.logWarning("Could not create the parent directory.");
                 return;
             }
             if (!file.exists()) {
                 if (!file.createNewFile()) {
-                    this.plugin.getPluginLogger().logWarning(errorMessage);
+                    LoggerUtils.logWarning(errorMessage);
                     return;
                 }
                 this.saveData(this.defaultData);
             }
         } catch (IOException e) {
-            this.plugin.getPluginLogger().logWarning(errorMessage);
+            LoggerUtils.logWarning(errorMessage);
         }
     }
 
@@ -54,7 +55,7 @@ public class DataStore<T> {
             writer.flush();
             writer.close();
         } catch (IOException e) {
-            plugin.getPluginLogger().logWarning(String.format("Could not save data to file %s", this.fileName));
+            LoggerUtils.logWarning(String.format("Could not save data to file %s", this.fileName));
         }
     }
 
@@ -62,7 +63,7 @@ public class DataStore<T> {
         try {
             return gson.fromJson(new FileReader(this.fileName), type);
         } catch (IOException e) {
-            plugin.getPluginLogger().logWarning(String.format("Could not load data from file %s", this.fileName));
+            LoggerUtils.logWarning(String.format("Could not load data from file %s", this.fileName));
             return null;
         }
     }
