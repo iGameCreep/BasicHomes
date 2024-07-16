@@ -66,10 +66,9 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
 
     /**
      * Moves homes.json and warps.json to data.json
+     * Files will be removed on server stop
      */
     private boolean v2() {
-        LoggerUtils.logInfo("Running migration V2...");
-
         final PositionDataHandler positionDataHandler = super.plugin.getPositionDataHandler();
         final PositionDataHandler homeHandler = new PositionDataHandler(super.plugin, HOMES_FILE_NAME);
         final PositionDataHandler warpHandler = new PositionDataHandler(super.plugin, WARPS_FILE_NAME);

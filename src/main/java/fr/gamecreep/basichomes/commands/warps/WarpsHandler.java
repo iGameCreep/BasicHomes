@@ -15,9 +15,19 @@ import java.util.List;
 
 public class WarpsHandler implements CommandExecutor, TabCompleter {
     private final BasicHomes plugin;
+    private final CreateWarp createWarp;
+    private final DeleteWarp deleteWarp;
+    private final EditWarp editWarp;
+    private final GetWarps getWarps;
+    private final TeleportWarp teleportWarp;
 
     public WarpsHandler(BasicHomes plugin) {
         this.plugin = plugin;
+        this.createWarp = new CreateWarp(plugin);
+        this.deleteWarp = new DeleteWarp(plugin);
+        this.editWarp = new EditWarp(plugin);
+        this.getWarps = new GetWarps(plugin);
+        this.teleportWarp = new TeleportWarp(plugin);
     }
 
     @Override
@@ -27,10 +37,11 @@ public class WarpsHandler implements CommandExecutor, TabCompleter {
         }
 
         return switch (command.getName()) {
-            case "setwarp" -> new CreateWarp(this.plugin).onCommand(commandSender, args);
-            case "delwarp" -> new DeleteWarp(this.plugin).onCommand(commandSender, args);
-            case "warps" -> new GetWarps(this.plugin).onCommand(commandSender);
-            case "warp" -> new TeleportWarp(this.plugin).onCommand(commandSender, args);
+            case "setwarp" -> this.createWarp.onCommand(commandSender, args);
+            case "delwarp" -> this.deleteWarp.onCommand(commandSender, args);
+            case "editwarp" -> this.editWarp.onCommand(commandSender, args);
+            case "warps" -> this.getWarps.onCommand(commandSender);
+            case "warp" -> this.teleportWarp.onCommand(commandSender, args);
             default -> false;
         };
     }
@@ -38,9 +49,10 @@ public class WarpsHandler implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String label, @NonNull String[] args) {
         return switch (command.getName()) {
-            case "setwarp" -> new CreateWarp(this.plugin).onTabComplete(commandSender, args);
-            case "delwarp" -> new DeleteWarp(this.plugin).onTabComplete(commandSender, args);
-            case "warp" -> new TeleportWarp(this.plugin).onTabComplete(commandSender, args);
+            case "setwarp" -> this.createWarp.onTabComplete(commandSender, args);
+            case "delwarp" -> this.deleteWarp.onTabComplete(commandSender, args);
+            case "editwarp" -> this.editWarp.onTabComplete(commandSender, args);
+            case "warp" -> this.teleportWarp.onTabComplete(commandSender, args);
             default -> Collections.emptyList();
         };
     }

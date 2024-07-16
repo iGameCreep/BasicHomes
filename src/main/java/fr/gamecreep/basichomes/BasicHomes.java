@@ -45,8 +45,8 @@ public final class BasicHomes extends JavaPlugin {
     private void loadCommands() {
         Objects.requireNonNull(super.getCommand("config")).setExecutor(new ConfigCommand(this));
 
-        final List<String> homeCommands = List.of("homes", "sethome", "delhome", "home", "delhomeof", "homesof");
-        final List<String> warpCommands = List.of("warps", "setwarp", "delwarp", "warp");
+        final List<String> homeCommands = List.of("homes", "sethome", "delhome", "edithome", "home", "delhomeof", "homesof");
+        final List<String> warpCommands = List.of("warps", "setwarp", "delwarp", "editwarp", "warp");
 
         for (final String cmd : homeCommands) {
             Objects.requireNonNull(super.getCommand(cmd)).setExecutor(new HomesHandler(this));
