@@ -6,7 +6,7 @@
 
     <groupId>fr.gamecreep</groupId>
     <artifactId>BasicHomes</artifactId>
-    <version>1.9-BETA</version>
+    <version>1.9-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>BasicHomes</name>
