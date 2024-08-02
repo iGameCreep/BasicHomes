@@ -5,6 +5,7 @@ import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.config.enums.ConfigElement;
 import fr.gamecreep.basichomes.config.enums.DataType;
 import fr.gamecreep.basichomes.entities.enums.Permission;
+import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.NonNull;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -29,7 +30,7 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
         }
 
         if (!playerSender.hasPermission(Permission.CONFIG.getName())) {
-            this.plugin.getChatUtils().sendNoPermission(playerSender, Permission.CONFIG);
+            ChatUtils.sendNoPermission(playerSender, Permission.CONFIG);
             return true;
         }
 
@@ -58,7 +59,7 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
 
     private void handleGetCommand(@NonNull final Player player, @NonNull final ConfigElement selectedElement) {
         final Object value = this.plugin.getPluginConfig().getConfig().get(selectedElement);
-        this.plugin.getChatUtils().sendPlayerInfo(player, String.format(
+        ChatUtils.sendPlayerInfo(player, String.format(
                 "Current value for %s%s%s is %s%s%s.",
                 Constants.SPECIAL_COLOR,
                 selectedElement.name(),
@@ -74,13 +75,13 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
         final Object value = selectedElement.parseValue(newValue);
         if (value == null) {
             final String errMsg = "New value must be a number or a boolean (true|false) according to it's name. Check documentation for more information on this command.";
-            this.plugin.getChatUtils().sendPlayerError(player, errMsg);
+            ChatUtils.sendPlayerError(player, errMsg);
             return;
         }
 
         this.plugin.updateConfig(selectedElement, value);
 
-        this.plugin.getChatUtils().sendPlayerInfo(player, String.format(
+        ChatUtils.sendPlayerInfo(player, String.format(
                 "Successfully changed %s%s%s from %s%s%s to %s%s%s !",
                 Constants.SPECIAL_COLOR,
                 selectedElement.name(),

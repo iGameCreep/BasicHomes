@@ -5,11 +5,10 @@ import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.exceptions.BasicHomesException;
+import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -85,8 +84,8 @@ public abstract class PaginatedMenu {
             }
         } catch (BasicHomesException e) {
             this.player.closeInventory();
-            this.plugin.getChatUtils().sendPlayerError(this.player, "An error has occurred while loading the menu. Please try again. If this error occurs again, please contact an administrator and mention this error:");
-            this.plugin.getChatUtils().sendPlayerError(this.player, e.getMessage());
+            ChatUtils.sendPlayerError(this.player, "An error has occurred while loading the menu. Please try again. If this error occurs again, please contact an administrator and mention this error:");
+            ChatUtils.sendPlayerError(this.player, e.getMessage());
         }
     }
 
@@ -126,7 +125,7 @@ public abstract class PaginatedMenu {
     }
 
     public ItemStack createItem(@NonNull final SavedPosition pos) throws BasicHomesException {
-        final ItemStack item = generateItem(pos);
+        final ItemStack item = new ItemStack(pos.getBlock());
         final List<String> lore = new ArrayList<>();
         final ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) throw new BasicHomesException("Could not generate the item: item meta is null.");
@@ -138,20 +137,6 @@ public abstract class PaginatedMenu {
         item.setItemMeta(itemMeta);
 
         return item;
-    }
-
-    private static ItemStack generateItem(@NonNull final SavedPosition pos) throws BasicHomesException {
-        final World world = pos.getLocation().getWorld();
-        if (world == null) throw new BasicHomesException("Could not generate the item: world is null.");
-
-        final Material material = switch (world.getEnvironment()) {
-            case NORMAL -> Constants.HOME_OVERWORLD_ITEM;
-            case NETHER -> Constants.HOME_NETHER_ITEM;
-            case THE_END -> Constants.HOME_END_ITEM;
-            default -> Constants.DEFAULT_HOME_ITEM;
-        };
-
-        return new ItemStack(material);
     }
 
     public ItemStack createDeleteItem(@NonNull final SavedPosition pos) throws BasicHomesException {

@@ -35,6 +35,12 @@ commands:
       - deletehome
       - removehome
 
+  edithome:
+    description: 'Change a home block in homes menu !'
+    usage: /edithome [home] [item]
+    aliases:
+      - updatehome
+
   delhomeof:
     description: 'Delete the home of someone !'
     usage: /delhome <player> [name]
@@ -70,6 +76,12 @@ commands:
     aliases:
       - deletewarp
       - removewarp
+
+  editwarp:
+    description: 'Change a warp block in warps menu !'
+    usage: /editwarp [warp] [item]
+    aliases:
+      - updatewarp
 
   warp:
     description: 'Teleport to a warp !'
@@ -111,6 +123,10 @@ permissions:
 
   basichomes.warp.delete:
     description: 'Allows to delete a warp (OP)'
+    default: op
+
+  basichomes.warp.update:
+    description: 'Allows to update warps (OP)'
     default: op
 
   basichomes.warp.use:

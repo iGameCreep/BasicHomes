@@ -5,6 +5,7 @@ import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
+import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,12 +30,12 @@ public abstract class TeleportCommand {
     public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
         if (commandSender instanceof final Player playerSender) {
             if (!playerSender.hasPermission(this.permission.getName())) {
-                this.plugin.getChatUtils().sendNoPermission(playerSender, this.permission);
+                ChatUtils.sendNoPermission(playerSender, this.permission);
                 return true;
             }
 
             if (args.length < 1) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("Please add the name of the %s to teleport to !", this.type.getDisplayName()));
+                ChatUtils.sendPlayerError(playerSender, String.format("Please add the name of the %s to teleport to !", this.type.getDisplayName()));
                 return true;
             }
 
@@ -42,7 +43,7 @@ public abstract class TeleportCommand {
             final SavedPosition pos = this.handler.getByName(this.type, playerSender, name);
 
             if (pos == null) {
-                this.plugin.getChatUtils().sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
+                ChatUtils.sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
                 return true;
             }
 

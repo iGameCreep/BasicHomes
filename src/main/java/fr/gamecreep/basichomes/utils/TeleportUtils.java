@@ -41,7 +41,7 @@ public class TeleportUtils {
     public void add(@NonNull final Player player, @NonNull final SavedPosition destination) {
         final PositionType type = destination.getType();
         if (type == null) {
-            this.plugin.getChatUtils().sendPlayerError(player, "Internal error: could not retrieve the position type. Please try again later or contact an administrator/developer.");
+            ChatUtils.sendPlayerError(player, "Internal error: could not retrieve the position type. Please try again later or contact an administrator/developer.");
             return;
         }
 
@@ -53,7 +53,7 @@ public class TeleportUtils {
         }
 
         if (isQueued(player)) {
-            this.plugin.getChatUtils().sendPlayerError(player, "You are already teleporting somewhere !");
+            ChatUtils.sendPlayerError(player, "You are already teleporting somewhere !");
             return;
         }
 
@@ -73,7 +73,7 @@ public class TeleportUtils {
             message += " Stand still !";
         }
 
-        this.plugin.getChatUtils().sendPlayerInfo(player, message);
+        ChatUtils.sendPlayerInfo(player, message);
     }
 
     public boolean isQueued(@NonNull final Player player) {
@@ -89,7 +89,7 @@ public class TeleportUtils {
         if (!isQueued(player)) return;
 
         if (this.standStill) {
-            this.plugin.getChatUtils().sendPlayerError(player, "Teleport has been canceled because you moved.");
+            ChatUtils.sendPlayerError(player, "Teleport has been canceled because you moved.");
 
             this.tpQueue.remove(player.getUniqueId());
 
@@ -119,7 +119,7 @@ public class TeleportUtils {
         this.tpQueue.remove(player.getUniqueId());
         this.internalQueue.remove(player.getUniqueId());
 
-        this.plugin.getChatUtils().sendPlayerInfo(player, String.format("Successfully teleported you to %s%s%s !",
+        ChatUtils.sendPlayerInfo(player, String.format("Successfully teleported you to %s%s%s !",
                 Constants.SPECIAL_COLOR,
                 pos.getName(),
                 Constants.SUCCESS_COLOR

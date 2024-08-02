@@ -10,7 +10,6 @@ import fr.gamecreep.basichomes.files.PositionDataHandler;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
 import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
 import fr.gamecreep.basichomes.events.TeleportEvents;
-import fr.gamecreep.basichomes.utils.ChatUtils;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
 import fr.gamecreep.basichomes.utils.TeleportUtils;
 import lombok.Getter;
@@ -21,8 +20,6 @@ import java.util.*;
 
 @Getter
 public final class BasicHomes extends JavaPlugin {
-    private final LoggerUtils pluginLogger = new LoggerUtils(String.format("[%s]", this.getDescription().getPrefix()));
-    private final ChatUtils chatUtils = new ChatUtils();
     private final PositionDataHandler positionDataHandler = new PositionDataHandler(this, "data.json");
     private final PluginConfig pluginConfig = new PluginConfig();
     private final HomeMenuFactory homeMenuFactory = new HomeMenuFactory();
@@ -37,19 +34,19 @@ public final class BasicHomes extends JavaPlugin {
         loadCommands();
         loadEvents();
 
-        this.pluginLogger.logInfo("Plugin successfully loaded !");
+        LoggerUtils.logInfo("Plugin successfully loaded !");
     }
 
     @Override
     public void onDisable() {
-        this.pluginLogger.logInfo("Plugin successfully stopped !");
+        LoggerUtils.logInfo("Plugin successfully stopped !");
     }
 
     private void loadCommands() {
         Objects.requireNonNull(super.getCommand("config")).setExecutor(new ConfigCommand(this));
 
-        final List<String> homeCommands = List.of("homes", "sethome", "delhome", "home", "delhomeof", "homesof");
-        final List<String> warpCommands = List.of("warps", "setwarp", "delwarp", "warp");
+        final List<String> homeCommands = List.of("homes", "sethome", "delhome", "edithome", "home", "delhomeof", "homesof");
+        final List<String> warpCommands = List.of("warps", "setwarp", "delwarp", "editwarp", "warp");
 
         for (final String cmd : homeCommands) {
             Objects.requireNonNull(super.getCommand(cmd)).setExecutor(new HomesHandler(this));
@@ -58,7 +55,7 @@ public final class BasicHomes extends JavaPlugin {
             Objects.requireNonNull(super.getCommand(cmd)).setExecutor(new WarpsHandler(this));
         }
 
-        this.pluginLogger.logInfo("Commands loaded !");
+        LoggerUtils.logInfo("Commands loaded !");
     }
 
     private void loadEvents() {
@@ -66,7 +63,7 @@ public final class BasicHomes extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(this.homeMenuFactory, this);
         this.getServer().getPluginManager().registerEvents(this.warpMenuFactory, this);
 
-        this.pluginLogger.logInfo("Events loaded !");
+        LoggerUtils.logInfo("Events loaded !");
     }
 
     private void loadConfig() {

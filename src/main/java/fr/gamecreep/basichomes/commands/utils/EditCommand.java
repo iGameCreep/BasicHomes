@@ -8,6 +8,7 @@ import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.NonNull;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,12 +16,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class DeleteCommand {
+public abstract class EditCommand {
     private final PositionType type;
     private final Permission permission;
     private final PositionDataHandler handler;
 
-    protected DeleteCommand(@NonNull final BasicHomes plugin, final PositionType type, final Permission permission) {
+    protected EditCommand(@NonNull final BasicHomes plugin, final PositionType type, final Permission permission) {
         this.type = type;
         this.permission = permission;
         this.handler = plugin.getPositionDataHandler();
@@ -33,23 +34,35 @@ public abstract class DeleteCommand {
                 return true;
             }
 
-            if (args.length < 1) {
-                ChatUtils.sendPlayerError(playerSender, String.format("Please add the name of the %s to delete !", this.type.getDisplayName()));
-                return false;
+            if (args.length < 2) {
+                ChatUtils.sendPlayerError(playerSender, String.format("This command requires a %s and an item !", this.type.getDisplayName()));
+                return true;
             }
 
             final String name = args[0];
+            final String materialName = args[1];
             final SavedPosition pos = this.handler.getByName(this.type, playerSender, name);
 
             if (pos == null) {
-                ChatUtils.sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
+                ChatUtils.sendPlayerError(playerSender, String.format("No %s with the name '%s' exists.", this.type.getDisplayName(), name));
+                return true;
+            }
+
+            Material material;
+
+            try {
+                material = Material.valueOf(materialName.toUpperCase());
+            } catch (final IllegalArgumentException e) {
+                ChatUtils.sendPlayerError(playerSender, String.format("Item '%s' doesn't exist.", materialName));
                 return true;
             }
 
             this.handler.delete(pos);
+            pos.setBlock(material);
+            this.handler.create(pos);
 
             ChatUtils.sendPlayerInfo(playerSender, String.format(
-                    "The %s %s%s%s has been removed !",
+                    "The %s %s%s%s has been updated successfully !",
                     this.type.getDisplayName(),
                     Constants.SPECIAL_COLOR,
                     name,
@@ -63,22 +76,23 @@ public abstract class DeleteCommand {
     }
 
     public List<String> onTabComplete(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
-        if (commandSender instanceof final Player playerSender) {
-            final List<String> nameList = new ArrayList<>();
-
+        if (commandSender instanceof final Player player) {
             if (args.length == 1) {
-                final List<SavedPosition> list = this.handler.getAllByPlayer(this.type, playerSender);
+                List<SavedPosition> all = this.handler.getAllByPlayer(this.type, player);
 
-                for (final SavedPosition pos : list) {
-                    if (pos.getName().contains(args[0])) {
-                        nameList.add(pos.getName());
-                    }
-                }
+                return all.stream()
+                        .map(SavedPosition::getName)
+                        .toList();
             }
-
-            return nameList;
+            if (args.length == 2) {
+                final List<String> tabComplete = new ArrayList<>();
+                for (final Material material : Material.values()) {
+                    final String materialName = material.name().toLowerCase();
+                    if (materialName.contains(args[1])) tabComplete.add(materialName);
+                }
+                return tabComplete;
+            }
         }
-
         return Collections.emptyList();
     }
 }

@@ -1,17 +1,15 @@
 package fr.gamecreep.basichomes.commands.utils;
 
-import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
+import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class DisabledCommand {
-    private final BasicHomes plugin;
     private final PositionType type;
 
-    public DisabledCommand(final BasicHomes plugin, final PositionType type) {
-        this.plugin = plugin;
+    public DisabledCommand(final PositionType type) {
         this.type = type;
     }
 
@@ -19,7 +17,7 @@ public class DisabledCommand {
         if (commandSender instanceof final Player playerSender) {
             final String message = String.format("The %ss are disabled on this server !", this.type.getDisplayName());
 
-            this.plugin.getChatUtils().sendPlayerError(playerSender, message);
+            ChatUtils.sendPlayerError(playerSender, message);
             return true;
         }
 

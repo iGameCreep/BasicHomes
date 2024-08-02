@@ -10,6 +10,7 @@ public enum Permission {
 
     CREATE_WARP("basichomes.warp.create"),
     DELETE_WARP("basichomes.warp.delete"),
+    UPDATE_WARP("basichomes.warp.update"),
     USE_WARP("basichomes.warp.use"),
 
     USE_HOME("basichomes.home.use"),
