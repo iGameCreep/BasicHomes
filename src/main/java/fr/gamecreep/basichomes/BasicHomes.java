@@ -5,6 +5,7 @@ import fr.gamecreep.basichomes.commands.homes.*;
 import fr.gamecreep.basichomes.commands.warps.*;
 import fr.gamecreep.basichomes.config.PluginConfig;
 import fr.gamecreep.basichomes.config.enums.ConfigElement;
+import fr.gamecreep.basichomes.exceptions.BasicHomesException;
 import fr.gamecreep.basichomes.files.MigrationsVerifier;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
@@ -12,6 +13,7 @@ import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
 import fr.gamecreep.basichomes.events.TeleportEvents;
 import fr.gamecreep.basichomes.utils.LoggerUtils;
 import fr.gamecreep.basichomes.utils.TeleportUtils;
+import fr.gamecreep.basichomes.utils.Updater;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +22,9 @@ import java.util.*;
 
 @Getter
 public final class BasicHomes extends JavaPlugin {
+
+    public static final String PLUGIN_VERSION = "1.9.1";
+
     private final PositionDataHandler positionDataHandler = new PositionDataHandler(this, "data.json");
     private final PluginConfig pluginConfig = new PluginConfig();
     private final HomeMenuFactory homeMenuFactory = new HomeMenuFactory();
@@ -30,9 +35,10 @@ public final class BasicHomes extends JavaPlugin {
     @Override
     public void onEnable() {
         this.migrationsVerifier.verifyMigrations();
-        loadConfig();
-        loadCommands();
-        loadEvents();
+        this.loadConfig();
+        this.loadCommands();
+        this.loadEvents();
+        this.checkForUpdates();
 
         LoggerUtils.logInfo("Plugin successfully loaded !");
     }
@@ -81,6 +87,22 @@ public final class BasicHomes extends JavaPlugin {
 
         this.pluginConfig.setConfig(config);
         saveConfig();
+    }
+
+    private void checkForUpdates() {
+        LoggerUtils.logInfo("Checking for updates...");
+        try {
+            final Updater updater = new Updater();
+            final Updater.UpdateData data = updater.checkForUpdates();
+
+            if (data == null) {
+                LoggerUtils.logInfo("Plugin is up to date.");
+            } else {
+                LoggerUtils.logWarning(String.format("An update is available: %s. Download it at %s", data.getLatestVersion(), data.getDownloadUrl()));
+            }
+        } catch (BasicHomesException e) {
+            LoggerUtils.logWarning("Unable to check for latest versions: " + e.getMessage());
+        }
     }
 
     public void updateConfig(final ConfigElement element, final Object newValue) {
