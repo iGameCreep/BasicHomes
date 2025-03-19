@@ -23,7 +23,7 @@ import java.util.*;
 @Getter
 public final class BasicHomes extends JavaPlugin {
 
-    public static final String PLUGIN_VERSION = "1.9.1";
+    public static final String PLUGIN_VERSION = "1.9.2";
 
     private final PositionDataHandler positionDataHandler = new PositionDataHandler(this, "data.json");
     private final PluginConfig pluginConfig = new PluginConfig();
