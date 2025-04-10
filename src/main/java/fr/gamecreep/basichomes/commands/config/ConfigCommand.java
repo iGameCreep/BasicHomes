@@ -79,6 +79,11 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
+        if (value instanceof final Integer x && x < 0) {
+            ChatUtils.sendPlayerError(player, "The value must be greater than 0.");
+            return;
+        }
+
         this.plugin.updateConfig(selectedElement, value);
 
         ChatUtils.sendPlayerInfo(player, String.format(

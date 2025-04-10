@@ -36,7 +36,10 @@ public abstract class PaginatedMenuFactory<MENU extends PaginatedMenu> {
     protected void onInventoryClick(@NonNull final InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
-        final MENU menu = this.getMenuFromInventory(event.getClickedInventory());
+        final Inventory clickedInventory = event.getClickedInventory();
+        if (clickedInventory == null) return;
+
+        final MENU menu = this.getMenuFromInventory(clickedInventory);
         if (menu == null) return;
 
         event.setCancelled(true);
