@@ -15,6 +15,8 @@ import fr.gamecreep.basichomes.utils.LoggerUtils;
 import fr.gamecreep.basichomes.utils.TeleportUtils;
 import fr.gamecreep.basichomes.utils.Updater;
 import lombok.Getter;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,8 +24,6 @@ import java.util.*;
 
 @Getter
 public final class BasicHomes extends JavaPlugin {
-
-    public static final String PLUGIN_VERSION = "1.9.2";
 
     private final PositionDataHandler positionDataHandler = new PositionDataHandler(this, "data.json");
     private final PluginConfig pluginConfig = new PluginConfig();
@@ -38,6 +38,7 @@ public final class BasicHomes extends JavaPlugin {
         this.loadConfig();
         this.loadCommands();
         this.loadEvents();
+        this.loadMetrics();
         this.checkForUpdates();
 
         LoggerUtils.logInfo("Plugin successfully loaded !");
@@ -87,6 +88,20 @@ public final class BasicHomes extends JavaPlugin {
 
         this.pluginConfig.setConfig(config);
         saveConfig();
+    }
+
+    private void loadMetrics() {
+        try {
+            final Metrics metrics = new Metrics(this, Constants.BSTATS_PLUGIN_ID);
+
+            metrics.addCustomChart(new SimplePie("using_warps",
+                    () -> Boolean.toString((Boolean) this.pluginConfig.getConfig().getOrDefault(ConfigElement.WARPS_ENABLED, false))
+            ));
+
+            this.getLogger().info("Metrics (bStats) successfully loaded !");
+        } catch (Exception e) {
+            this.getLogger().warning("Failed to register plugin metrics: " + e.getMessage());
+        }
     }
 
     private void checkForUpdates() {

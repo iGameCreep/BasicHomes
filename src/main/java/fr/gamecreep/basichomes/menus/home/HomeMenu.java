@@ -8,6 +8,7 @@ import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.menus.tools.PaginatedMenu;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.NonNull;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +25,8 @@ public class HomeMenu extends PaginatedMenu {
     private final Player target;
     private final PositionType type;
 
+    private final NamespacedKey paginatedMenuItemsNamespacedKey;
+
     public HomeMenu(@NonNull final BasicHomes plugin,
                     @NonNull final Player player,
                     @NonNull final Player target,
@@ -38,6 +41,7 @@ public class HomeMenu extends PaginatedMenu {
         this.plugin = plugin;
         this.target = target;
         this.type = type;
+        this.paginatedMenuItemsNamespacedKey = new NamespacedKey(plugin, Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS);
     }
 
     public HomeMenu(@NonNull final BasicHomes plugin,
@@ -53,6 +57,7 @@ public class HomeMenu extends PaginatedMenu {
         this.plugin = plugin;
         this.target = player;
         this.type = type;
+        this.paginatedMenuItemsNamespacedKey = new NamespacedKey(plugin, Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS);
     }
 
     @Override
@@ -85,7 +90,8 @@ public class HomeMenu extends PaginatedMenu {
 
     @Nullable
     private SavedPosition getPosByPersistentData(final PersistentDataContainer dataContainer) {
-        final String savedHomeId = dataContainer.get(Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS, PersistentDataType.STRING);
+
+        final String savedHomeId = dataContainer.get(this.paginatedMenuItemsNamespacedKey, PersistentDataType.STRING);
         if (savedHomeId == null) return null;
 
         final UUID homeId = UUID.fromString(savedHomeId);
