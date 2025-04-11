@@ -2,7 +2,7 @@ package fr.gamecreep.basichomes.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.exceptions.BasicHomesException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,9 +32,8 @@ public class Updater {
 
             final String downloadUrl = response.get("download_url").getAsString();
             final String latestVersion = response.get("latest_version").getAsString();
-            final String currentVersion = BasicHomes.PLUGIN_VERSION;
 
-            if (!currentVersion.equals(latestVersion)) {
+            if (!latestVersion.equals(Constants.PLUGIN_VERSION)) {
                 return new UpdateData(latestVersion, downloadUrl);
             } else {
                 return null;
