@@ -9,6 +9,7 @@ import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -28,6 +29,8 @@ public abstract class PaginatedMenu {
     private final Permission permissionToDelete;
     private List<SavedPosition> data = Collections.emptyList();
 
+    private final NamespacedKey paginatedMenuItemsNamespacedKey;
+
     protected PaginatedMenu(@NonNull final BasicHomes plugin,
                             @NonNull final Player player,
                             @NonNull final Player target,
@@ -37,6 +40,7 @@ public abstract class PaginatedMenu {
         this.menu = Bukkit.createInventory(target, 54, menuName);
         this.player = player;
         this.permissionToDelete = permissionToDelete;
+        this.paginatedMenuItemsNamespacedKey = new NamespacedKey(plugin, Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS);
     }
 
     protected abstract void onMenuClickEvent(@NonNull final InventoryClickEvent inventoryClickEvent);
@@ -133,7 +137,7 @@ public abstract class PaginatedMenu {
         itemMeta.setDisplayName(pos.getName());
         lore.add("Click to teleport!");
         itemMeta.setLore(lore);
-        itemMeta.getPersistentDataContainer().set(Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS, PersistentDataType.STRING, pos.getId().toString());
+        itemMeta.getPersistentDataContainer().set(this.paginatedMenuItemsNamespacedKey, PersistentDataType.STRING, pos.getId().toString());
         item.setItemMeta(itemMeta);
 
         return item;
@@ -145,7 +149,7 @@ public abstract class PaginatedMenu {
         if (itemMeta == null) throw new BasicHomesException("Could not generate the delete item: item meta is null.");
 
         itemMeta.setDisplayName(String.format(Constants.DELETE_ITEM_NAME, pos.getType().getDisplayName()));
-        itemMeta.getPersistentDataContainer().set(Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS, PersistentDataType.STRING, pos.getId().toString());
+        itemMeta.getPersistentDataContainer().set(this.paginatedMenuItemsNamespacedKey, PersistentDataType.STRING, pos.getId().toString());
         item.setItemMeta(itemMeta);
 
         return item;
