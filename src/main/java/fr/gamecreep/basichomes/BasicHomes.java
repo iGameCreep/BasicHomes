@@ -98,9 +98,9 @@ public final class BasicHomes extends JavaPlugin {
                     () -> Boolean.toString((Boolean) this.pluginConfig.getConfig().getOrDefault(ConfigElement.WARPS_ENABLED, false))
             ));
 
-            this.getLogger().info("Metrics (bStats) successfully loaded !");
+            LoggerUtils.logInfo("Metrics (bStats) successfully loaded !");
         } catch (Exception e) {
-            this.getLogger().warning("Failed to register plugin metrics: " + e.getMessage());
+            LoggerUtils.logWarning("Failed to register plugin metrics: " + e.getMessage());
         }
     }
 
