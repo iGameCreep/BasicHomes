@@ -8,6 +8,7 @@ import fr.gamecreep.basichomes.entities.enums.PositionType;
 import fr.gamecreep.basichomes.menus.tools.PaginatedMenu;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.NonNull;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +23,8 @@ public class WarpMenu extends PaginatedMenu {
 
     private final BasicHomes plugin;
 
+    private final NamespacedKey paginatedMenuItemsNamespacedKey;
+
     public WarpMenu(@NonNull final BasicHomes plugin,
                     @NonNull final Player player) {
         super(
@@ -32,6 +35,7 @@ public class WarpMenu extends PaginatedMenu {
                 Permission.DELETE_WARP
         );
         this.plugin = plugin;
+        this.paginatedMenuItemsNamespacedKey = new NamespacedKey(plugin, Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS);
     }
 
     @Override
@@ -64,7 +68,7 @@ public class WarpMenu extends PaginatedMenu {
 
     @Nullable
     private SavedPosition getPosByPersistentData(final PersistentDataContainer dataContainer) {
-        final String savedWarpId = dataContainer.get(Constants.NAMESPACED_KEY_PAGINATED_MENU_ITEMS, PersistentDataType.STRING);
+        final String savedWarpId = dataContainer.get(this.paginatedMenuItemsNamespacedKey, PersistentDataType.STRING);
         if (savedWarpId == null) return null;
 
         final UUID warpId = UUID.fromString(savedWarpId);
