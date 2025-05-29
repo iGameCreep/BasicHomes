@@ -4,15 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Collections;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter
 public class PermissionFile {
-    private final PermissionEntryList<PlayerPermissions> playerPermissions;
-    private final PermissionEntryList<DefaultPermissions> defaultPermissions;
+    private final List<PlayerPermissions> playerPermissions;
+    private final List<DefaultPermissions> defaultPermissions;
 
     public PermissionFile() {
-        this.playerPermissions = new PermissionEntryList<>(Collections.emptyList());
-        this.defaultPermissions = new PermissionEntryList<>(Collections.emptyList());
+        this.playerPermissions = Collections.emptyList();
+        this.defaultPermissions = Collections.emptyList();
     }
 }

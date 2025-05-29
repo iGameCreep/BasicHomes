@@ -10,19 +10,20 @@ import fr.gamecreep.basichomes.utils.PositionUtils;
 import org.bukkit.Material;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class MigrationsVerifier extends DataStore<MigrationsData> {
     private static final int LATEST_MIGRATION = 3;
-    private static final Type TYPE = new TypeToken<MigrationsData>(){}.getType();
     private static final String HOMES_FILE_NAME = "homes.json";
     private static final String WARPS_FILE_NAME = "warps.json";
 
+    private final BasicHomes plugin;
+
     public MigrationsVerifier(final BasicHomes plugin) {
-        super(plugin, "migrations.json", new MigrationsData(0));
+        super("migrations.json", new MigrationsData(0), new TypeToken<MigrationsData>(){}.getType());
+        this.plugin = plugin;
     }
 
     public void verifyMigrations() {
@@ -35,15 +36,15 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
     }
 
     private int getLastMigrationDone() {
-        return this.loadData(TYPE).getLatestMigrationNumberDone();
+        return super.getData().getLatestMigrationNumberDone();
     }
 
     /**
      * Adds PositionType to saved positions directly in files.
      */
     private boolean v1() {
-        final PositionDataHandler homeHandler = new PositionDataHandler(super.plugin, HOMES_FILE_NAME);
-        final PositionDataHandler warpHandler = new PositionDataHandler(super.plugin, WARPS_FILE_NAME);
+        final PositionDataHandler homeHandler = new PositionDataHandler(HOMES_FILE_NAME);
+        final PositionDataHandler warpHandler = new PositionDataHandler(WARPS_FILE_NAME);
 
         final List<SavedPosition> homeList = homeHandler.getAll(PositionType.HOME);
         final List<SavedPosition> warpList = warpHandler.getAll(PositionType.WARP);
@@ -69,9 +70,9 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
      * Files will be removed on server stop
      */
     private boolean v2() {
-        final PositionDataHandler positionDataHandler = super.plugin.getPositionDataHandler();
-        final PositionDataHandler homeHandler = new PositionDataHandler(super.plugin, HOMES_FILE_NAME);
-        final PositionDataHandler warpHandler = new PositionDataHandler(super.plugin, WARPS_FILE_NAME);
+        final PositionDataHandler positionDataHandler = this.plugin.getPositionDataHandler();
+        final PositionDataHandler homeHandler = new PositionDataHandler(HOMES_FILE_NAME);
+        final PositionDataHandler warpHandler = new PositionDataHandler(WARPS_FILE_NAME);
 
         final List<SavedPosition> homeList = homeHandler.getAll(PositionType.HOME);
         final List<SavedPosition> warpList = warpHandler.getAll(PositionType.WARP);
@@ -126,7 +127,7 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
     private void saveLatestMigration(final int migrationNumber) {
         final MigrationsData data = new MigrationsData();
         data.setLatestMigrationNumberDone(migrationNumber);
-        this.saveData(data);
+        super.save();
     }
 
     private void callMigrationFunction(final int migrationNumber) {
