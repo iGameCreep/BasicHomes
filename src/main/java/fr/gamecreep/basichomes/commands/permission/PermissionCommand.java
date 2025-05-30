@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,15 +17,15 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Command to handle plugin permission
  * Usage:
  *   /permissions set <player|group> <target> <permission> <true|false>
  *   /permissions remove <player|group> <target> <permission>
+ *   /permissions list <player/group> <target>
  */
 public class PermissionCommand implements CommandExecutor, TabCompleter {
 
@@ -40,7 +41,7 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
                              @NonNull final String label,
                              @NonNull final String @NonNull[] args
     ) {
-        if (args.length < 4) return false;
+        if (args.length < 3) return false;
 
         if (!sender.hasPermission(Permission.PERMISSIONS.getName())) {
             ChatUtils.sendNoPermission(sender, Permission.PERMISSIONS);
@@ -51,7 +52,13 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
         final boolean isSet = action.equals(ActionType.SET.getStringValue());
         final boolean isRemove = action.equals(ActionType.REMOVE.getStringValue());
 
+        if (action.equals(ActionType.LIST.getStringValue())) {
+            this.handleListPermission(sender, args);
+            return true;
+        }
+
         if (!isSet && !isRemove) return false;
+        if (args.length < 4) return false;
         if (isSet && args.length < 5) return false;
 
         final String targetType = args[1].toLowerCase();
@@ -140,6 +147,77 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
         }
     }
 
+    private void handleListPermission(@NonNull final CommandSender sender, @NonNull final String @NonNull[] args) {
+        final String targetType = args[1].toLowerCase();
+        final String targetName = args[2];
+
+        Map<String, Boolean> permissions;
+
+        if (targetType.equalsIgnoreCase(TargetType.PLAYER.getStringValue())) {
+            final Player target = Bukkit.getPlayer(targetName);
+            if (target == null) {
+                ChatUtils.sendPlayerError(sender, "Player not found: " + targetName);
+                return;
+            }
+
+            permissions = this.permissionDataHandler.getPlayerPermissions().stream()
+                    .filter(p -> p.getPlayerId().equals(target.getUniqueId()))
+                    .flatMap(p -> p.getPermissions().entrySet().stream())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (v1, v2) -> v1 // in case of duplicate keys, keep the first
+                    ));
+        } else {
+            DefaultPermissions.GroupPermission group;
+            try {
+                group = DefaultPermissions.GroupPermission.valueOf(targetName.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                ChatUtils.sendPlayerError(sender, "Invalid group. Use 'all' or 'op'.");
+                return;
+            }
+
+            permissions = this.permissionDataHandler.getDefaultPermissions().stream()
+                    .filter(p -> p.getGroup().equals(group))
+                    .flatMap(p -> p.getPermissions().entrySet().stream())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (v1, v2) -> v1
+                    ));
+        }
+
+        if (permissions.isEmpty()) {
+            ChatUtils.sendPlayerInfo(
+                    sender,
+                    ChatColor.RED + "No custom permissions found for "
+                            + targetType + " "
+                            + ChatColor.YELLOW + targetName
+                            + ChatColor.RED + "."
+            );
+        } else {
+            ChatUtils.sendPlayerInfo(
+                    sender,
+                    ChatColor.GREEN + "Custom permissions of "
+                            + targetType + " "
+                            + ChatColor.YELLOW + targetName
+                            + ChatColor.GREEN + ":"
+            );
+            permissions.entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .forEach(entry -> {
+                        final ChatColor valueColor = Boolean.TRUE.equals(entry.getValue()) ? ChatColor.GREEN : ChatColor.RED;
+                        ChatUtils.sendPlayerInfo(
+                                sender,
+                                ChatColor.GRAY + "- "
+                                        + ChatColor.WHITE + entry.getKey()
+                                        + ChatColor.GRAY + ": "
+                                        + valueColor + entry.getValue());
+                    });
+        }
+    }
+
+
     @Nullable
     private Boolean parseBooleanSafe(final @Nullable String input) {
         if (input == null) return null;
@@ -181,7 +259,8 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             return filterContains(List.of(
                     ActionType.SET.getStringValue(),
-                    ActionType.REMOVE.getStringValue()
+                    ActionType.REMOVE.getStringValue(),
+                    ActionType.LIST.getStringValue()
             ), input);
         } else if (args.length == 2) {
             return filterContains(List.of(
@@ -202,7 +281,7 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
                         DefaultPermissions.GroupPermission.OP.getValueString()
                 ), input);
             }
-        } else if (args.length == 4) {
+        } else if (args.length == 4 && !args[0].equals(ActionType.LIST.getStringValue())) {
             return filterContains(
                     Arrays.stream(Permission.values())
                             .map(Permission::getName)
@@ -226,7 +305,8 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
     @RequiredArgsConstructor
     private enum ActionType {
         SET("set"),
-        REMOVE("remove");
+        REMOVE("remove"),
+        LIST("list");
 
         private final String stringValue;
     }
