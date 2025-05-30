@@ -13,79 +13,74 @@ commands:
     usage: /config <action> [key] (value)
     aliases:
       - cfg
-
+  permissions:
+    description: Manage BasicHomes custom permissions
+    usage: '/permissions <set|remove> <player|group> <permission> <true|false>'
+    aliases:
+      - perms
+      - bhperms
+      - bhpermissions
   homes:
     description: 'Show all of your homes !'
-    usage: /homes
+    usage: '/homes'
     aliases:
       - listhomes
       - allhomes
-
   sethome:
     description: 'Create a home at your position !'
-    usage: /sethome [name]
+    usage: '/sethome <name>'
     aliases:
       - createhome
       - addhome
-
   delhome:
     description: 'Delete a home by it name !'
-    usage: /delhome [name]
+    usage: '/delhome <name>'
     aliases:
       - deletehome
       - removehome
-
   edithome:
     description: 'Change a home block in homes menu !'
-    usage: /edithome [home] [item]
+    usage: '/edithome <home> <item>'
     aliases:
       - updatehome
-
   delhomeof:
     description: 'Delete the home of someone !'
-    usage: /delhome <player> [name]
+    usage: '/delhome <player> <name>'
     aliases:
       - deletehomeof
-
   homesof:
     description: 'Get the homes of someone !'
-    usage: /homes <player>
-
+    usage: '/homes <player>'
   home:
     description: 'Teleport to one of your homes !'
-    usage: /home [name]
+    usage: '/home <name>'
     aliases:
       - tphome
-
   warps:
     description: 'Show all of the warps !'
-    usage: /warps
+    usage: '/warps'
     aliases:
       - listwarps
-
   setwarp:
     description: 'Create a warp at your position !'
-    usage: /setwarp [name]
+    usage: '/setwarp <name>'
     aliases:
       - createwarp
       - addwarp
-
   delwarp:
     description: "Delete a warp by it's name !"
-    usage: /delwarp [name]
+    usage: '/delwarp <name>'
     aliases:
       - deletewarp
       - removewarp
-
   editwarp:
     description: 'Change a warp block in warps menu !'
-    usage: /editwarp [warp] [item]
+    usage: '/editwarp <warp> <item>'
     aliases:
       - updatewarp
-
   warp:
     description: 'Teleport to a warp !'
-    usage: /warp [name]
+    usage: '/warp <name>'
     aliases:
       - tpwarp
 
@@ -95,48 +90,44 @@ permissions:
     default: op
     children:
       basichomes.config: true
+      basichomes.permissions: true
       basichomes.home.*: true
       basichomes.warp.*: true
-
   basichomes.config:
     description: 'Allows to use config command (OP)'
     default: op
-
+  basichomes.permissions:
+    description: 'Allows to edit permissions via the /permissions command (OP)'
+    default: op
   basichomes.home.*:
     description: 'Wildcard permission, allows to use any home-related command'
     default: op
     children:
       basichomes.home.use: true
       basichomes.home.manage: true
-
   basichomes.warp.*:
     description: 'Wildcard permission, allows to use any warp-related command'
     default: op
     children:
       basichomes.warp.create: true
       basichomes.warp.delete: true
+      basichomes.warp.update: true
       basichomes.warp.use: true
-
   basichomes.warp.create:
     description: 'Allows to create a warp (OP)'
     default: op
-
   basichomes.warp.delete:
     description: 'Allows to delete a warp (OP)'
     default: op
-
   basichomes.warp.update:
     description: 'Allows to update warps (OP)'
     default: op
-
   basichomes.warp.use:
     description: 'Allows to teleport to a warp (default)'
     default: true
-
   basichomes.home.use:
     description: 'Allows to create, delete and use homes (default)'
     default: true
-
   basichomes.home.manage:
     description: 'Allows to manage player homes (OP)'
     default: op
