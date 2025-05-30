@@ -28,6 +28,7 @@ public class PermissionDataHandler {
         final PlayerPermissions entry = getOrCreatePlayerEntry(playerId);
         entry.getPermissions().put(permissionNode, value);
         this.dataStore.save();
+        this.applyPermissions(playerId);
     }
 
     public void setDefaultPermission(@NonNull final DefaultPermissions.GroupPermission group,
@@ -36,12 +37,14 @@ public class PermissionDataHandler {
         final DefaultPermissions entry = getOrCreateDefaultEntry(group);
         entry.getPermissions().put(permissionNode, value);
         this.dataStore.save();
+        this.applyDefaultPermissions();
     }
 
     public void removePermission(@NonNull final UUID playerId, @NonNull final String permissionNode) {
         final PlayerPermissions entry = getOrCreatePlayerEntry(playerId);
         entry.getPermissions().remove(permissionNode);
         this.dataStore.save();
+        this.applyPermissions(playerId);
     }
 
     public void removeDefaultPermission(@NonNull final DefaultPermissions.GroupPermission group,
@@ -49,6 +52,7 @@ public class PermissionDataHandler {
         final DefaultPermissions entry = getOrCreateDefaultEntry(group);
         entry.getPermissions().remove(permissionNode);
         this.dataStore.save();
+        this.applyDefaultPermissions();
     }
 
     private PlayerPermissions getOrCreatePlayerEntry(@NonNull final UUID playerId) {
@@ -104,5 +108,19 @@ public class PermissionDataHandler {
                 .ifPresent(entry -> entry.getPermissions().forEach(permissionAttachment::setPermission));
 
         this.plugin.getPermissionAttachments().put(playerId, permissionAttachment);
+    }
+
+    public void applyPermissions(@NonNull final UUID playerId) {
+        for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
+            if (player.getUniqueId().equals(playerId)) {
+                this.applyPermissions(player);
+            }
+        }
+    }
+
+    private void applyDefaultPermissions() {
+        for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
+            this.applyPermissions(player);
+        }
     }
 }

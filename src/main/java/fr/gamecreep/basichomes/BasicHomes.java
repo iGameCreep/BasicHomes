@@ -2,11 +2,14 @@ package fr.gamecreep.basichomes;
 
 import fr.gamecreep.basichomes.commands.config.ConfigCommand;
 import fr.gamecreep.basichomes.commands.homes.*;
+import fr.gamecreep.basichomes.commands.permission.PermissionCommand;
 import fr.gamecreep.basichomes.commands.warps.*;
 import fr.gamecreep.basichomes.config.PluginConfig;
 import fr.gamecreep.basichomes.config.enums.ConfigElement;
+import fr.gamecreep.basichomes.events.PermissionEvents;
 import fr.gamecreep.basichomes.exceptions.BasicHomesException;
 import fr.gamecreep.basichomes.files.MigrationsVerifier;
+import fr.gamecreep.basichomes.files.PermissionDataHandler;
 import fr.gamecreep.basichomes.files.PositionDataHandler;
 import fr.gamecreep.basichomes.menus.home.HomeMenuFactory;
 import fr.gamecreep.basichomes.menus.warp.WarpMenuFactory;
@@ -18,6 +21,8 @@ import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
@@ -25,12 +30,14 @@ import java.util.*;
 @Getter
 public final class BasicHomes extends JavaPlugin {
 
-    private final PositionDataHandler positionDataHandler = new PositionDataHandler(this, "data.json");
+    private final PositionDataHandler positionDataHandler = new PositionDataHandler("data.json");
     private final PluginConfig pluginConfig = new PluginConfig();
     private final HomeMenuFactory homeMenuFactory = new HomeMenuFactory();
     private final WarpMenuFactory warpMenuFactory = new WarpMenuFactory();
     private final MigrationsVerifier migrationsVerifier = new MigrationsVerifier(this);
     private final TeleportUtils teleportUtils = new TeleportUtils(this);
+    private final PermissionDataHandler permissionDataHandler = new PermissionDataHandler(this);
+    private final Map<UUID, PermissionAttachment> permissionAttachments = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -51,6 +58,7 @@ public final class BasicHomes extends JavaPlugin {
 
     private void loadCommands() {
         Objects.requireNonNull(super.getCommand("config")).setExecutor(new ConfigCommand(this));
+        Objects.requireNonNull(super.getCommand("permissions")).setExecutor(new PermissionCommand(this));
 
         final List<String> homeCommands = List.of("homes", "sethome", "delhome", "edithome", "home", "delhomeof", "homesof");
         final List<String> warpCommands = List.of("warps", "setwarp", "delwarp", "editwarp", "warp");
@@ -66,9 +74,11 @@ public final class BasicHomes extends JavaPlugin {
     }
 
     private void loadEvents() {
-        super.getServer().getPluginManager().registerEvents(new TeleportEvents(this), this);
-        this.getServer().getPluginManager().registerEvents(this.homeMenuFactory, this);
-        this.getServer().getPluginManager().registerEvents(this.warpMenuFactory, this);
+        final PluginManager pluginManager = super.getServer().getPluginManager();
+        pluginManager.registerEvents(new TeleportEvents(this), this);
+        pluginManager.registerEvents(new PermissionEvents(this), this);
+        pluginManager.registerEvents(this.homeMenuFactory, this);
+        pluginManager.registerEvents(this.warpMenuFactory, this);
 
         LoggerUtils.logInfo("Events loaded !");
     }
