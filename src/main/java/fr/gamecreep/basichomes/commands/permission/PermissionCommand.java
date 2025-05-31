@@ -1,8 +1,10 @@
 package fr.gamecreep.basichomes.commands.permission;
 
 import fr.gamecreep.basichomes.BasicHomes;
+import fr.gamecreep.basichomes.Constants;
 import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.permissions.DefaultPermissions;
+import fr.gamecreep.basichomes.entities.permissions.PlayerPermissions;
 import fr.gamecreep.basichomes.files.PermissionDataHandler;
 import fr.gamecreep.basichomes.utils.ChatUtils;
 import lombok.Getter;
@@ -18,7 +20,6 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Command to handle plugin permission
@@ -151,7 +152,7 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
         final String targetType = args[1].toLowerCase();
         final String targetName = args[2];
 
-        Map<String, Boolean> permissions;
+        Map<String, Boolean> permissions = new HashMap<>();
 
         if (targetType.equalsIgnoreCase(TargetType.PLAYER.getStringValue())) {
             final Player target = Bukkit.getPlayer(targetName);
@@ -160,14 +161,11 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            permissions = this.permissionDataHandler.getPlayerPermissions().stream()
-                    .filter(p -> p.getPlayerId().equals(target.getUniqueId()))
-                    .flatMap(p -> p.getPermissions().entrySet().stream())
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue,
-                            (v1, v2) -> v1 // in case of duplicate keys, keep the first
-                    ));
+            for (final PlayerPermissions playerPermissions : this.permissionDataHandler.getPlayerPermissions()) {
+                if (playerPermissions.getPlayerId().equals(target.getUniqueId())) {
+                    permissions.putAll(playerPermissions.getPermissions());
+                }
+            }
         } else {
             DefaultPermissions.GroupPermission group;
             try {
@@ -177,31 +175,28 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            permissions = this.permissionDataHandler.getDefaultPermissions().stream()
-                    .filter(p -> p.getGroup().equals(group))
-                    .flatMap(p -> p.getPermissions().entrySet().stream())
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue,
-                            (v1, v2) -> v1
-                    ));
+            for (final DefaultPermissions defaultPermissions : this.permissionDataHandler.getDefaultPermissions()) {
+                if (defaultPermissions.getGroup().equals(group)) {
+                    permissions.putAll(defaultPermissions.getPermissions());
+                }
+            }
         }
 
         if (permissions.isEmpty()) {
             ChatUtils.sendPlayerInfo(
                     sender,
-                    ChatColor.RED + "No custom permissions found for "
+                    "No custom permissions found for "
                             + targetType + " "
-                            + ChatColor.YELLOW + targetName
-                            + ChatColor.RED + "."
+                            + Constants.SPECIAL_COLOR + targetName
+                            + Constants.SUCCESS_COLOR + "."
             );
         } else {
             ChatUtils.sendPlayerInfo(
                     sender,
-                    ChatColor.GREEN + "Custom permissions of "
+                    "Custom permissions of "
                             + targetType + " "
-                            + ChatColor.YELLOW + targetName
-                            + ChatColor.GREEN + ":"
+                            + Constants.SPECIAL_COLOR + targetName
+                            + Constants.SUCCESS_COLOR + ":"
             );
             permissions.entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
