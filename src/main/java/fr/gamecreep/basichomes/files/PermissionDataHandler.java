@@ -93,17 +93,17 @@ public class PermissionDataHandler {
 
         permissionAttachment.getPermissions().clear();
 
-        this.getPlayerPermissions().stream()
-                .filter(p -> p.getPlayerId().equals(playerId))
-                .findFirst()
-                .ifPresent(entry -> entry.getPermissions().forEach(permissionAttachment::setPermission));
-
         final DefaultPermissions.GroupPermission group = player.isOp()
                 ? DefaultPermissions.GroupPermission.OP
                 : DefaultPermissions.GroupPermission.ALL;
 
         this.getDefaultPermissions().stream()
                 .filter(d -> d.getGroup().equals(group))
+                .findFirst()
+                .ifPresent(entry -> entry.getPermissions().forEach(permissionAttachment::setPermission));
+
+        this.getPlayerPermissions().stream()
+                .filter(p -> p.getPlayerId().equals(playerId))
                 .findFirst()
                 .ifPresent(entry -> entry.getPermissions().forEach(permissionAttachment::setPermission));
 
