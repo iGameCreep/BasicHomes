@@ -3,6 +3,9 @@ package fr.gamecreep.basichomes.entities.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Getter
 @RequiredArgsConstructor
 public enum Permission {
@@ -18,4 +21,10 @@ public enum Permission {
     MANAGE_HOME("basichomes.home.manage");
 
     private final String name;
+
+    public static List<String> getAll() {
+        return Arrays.stream(Permission.values())
+                .map(Permission::getName)
+                .toList();
+    }
 }

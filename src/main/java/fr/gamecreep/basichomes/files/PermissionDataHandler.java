@@ -9,8 +9,7 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PermissionDataHandler {
 
@@ -77,12 +76,62 @@ public class PermissionDataHandler {
                 });
     }
 
-    public List<PlayerPermissions> getPlayerPermissions() {
+    public List<PlayerPermissions> getAllPlayerPermissions() {
         return this.permissionFile.getPlayerPermissions();
     }
 
-    public List<DefaultPermissions> getDefaultPermissions() {
+    public Map<String, Boolean> getPlayerPermissions(@NonNull final UUID playerId) {
+        for (final PlayerPermissions playerPermissions : this.getAllPlayerPermissions()) {
+            if (playerPermissions.getPlayerId().equals(playerId)) {
+                return playerPermissions.getPermissions();
+            }
+        }
+        return Collections.emptyMap();
+    }
+
+    public List<String> getPlayerEnabledPermissions(@NonNull final UUID playerId) {
+        final List<String> permissions = new ArrayList<>();
+        final Map<String, Boolean> playerPermissions = this.getPlayerPermissions(playerId);
+
+        for (final Map.Entry<String, Boolean> permEntry : playerPermissions.entrySet()) {
+            if (Boolean.TRUE.equals(permEntry.getValue())) {
+                permissions.add(permEntry.getKey());
+            }
+        }
+
+        return permissions;
+    }
+
+    public List<DefaultPermissions> getAllDefaultPermissions() {
         return this.permissionFile.getDefaultPermissions();
+    }
+
+    public Map<String, Boolean> getDefaultPermissions(@NonNull final DefaultPermissions.GroupPermission group) {
+        for (final DefaultPermissions defaultPermissions : this.getAllDefaultPermissions()) {
+            if (defaultPermissions.getGroup().equals(group)) {
+                return defaultPermissions.getPermissions();
+            }
+        }
+        return Collections.emptyMap();
+    }
+
+    public List<String> getDefaultEnabledPermissions(@NonNull final DefaultPermissions.GroupPermission group) {
+        final List<String> permissions = new ArrayList<>();
+        final Map<String, Boolean> groupPermissions = this.getDefaultPermissions(group);
+
+        for (final Map.Entry<String, Boolean> permEntry : groupPermissions.entrySet()) {
+            if (Boolean.TRUE.equals(permEntry.getValue())) {
+                permissions.add(permEntry.getKey());
+            }
+        }
+
+        return permissions;
+    }
+
+    public DefaultPermissions.GroupPermission getPlayerGroup(@NonNull final Player player) {
+        return player.isOp()
+                ? DefaultPermissions.GroupPermission.OP
+                : DefaultPermissions.GroupPermission.ALL;
     }
 
     public void applyPermissions(@NonNull final Player player) {
@@ -93,19 +142,10 @@ public class PermissionDataHandler {
 
         permissionAttachment.getPermissions().clear();
 
-        final DefaultPermissions.GroupPermission group = player.isOp()
-                ? DefaultPermissions.GroupPermission.OP
-                : DefaultPermissions.GroupPermission.ALL;
+        final DefaultPermissions.GroupPermission group = this.getPlayerGroup(player);
 
-        this.getDefaultPermissions().stream()
-                .filter(d -> d.getGroup().equals(group))
-                .findFirst()
-                .ifPresent(entry -> entry.getPermissions().forEach(permissionAttachment::setPermission));
-
-        this.getPlayerPermissions().stream()
-                .filter(p -> p.getPlayerId().equals(playerId))
-                .findFirst()
-                .ifPresent(entry -> entry.getPermissions().forEach(permissionAttachment::setPermission));
+        this.getDefaultPermissions(group).forEach(permissionAttachment::setPermission);
+        this.getPlayerPermissions(playerId).forEach(permissionAttachment::setPermission);
 
         this.plugin.getPermissionAttachments().put(playerId, permissionAttachment);
     }
