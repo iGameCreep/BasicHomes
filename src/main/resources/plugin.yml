@@ -15,7 +15,7 @@ commands:
       - cfg
   permissions:
     description: Manage BasicHomes custom permissions
-    usage: '/permissions <set|remove> <player|group> <permission> <true|false>'
+    usage: '/permissions <set|remove|list> <player|group> <name> <permission> <true|false>'
     aliases:
       - perms
       - bhperms
@@ -97,7 +97,7 @@ permissions:
     description: 'Allows to use config command (OP)'
     default: op
   basichomes.permissions:
-    description: 'Allows to edit permissions via the /permissions command (OP)'
+    description: 'Allows use the /permissions command (OP)'
     default: op
   basichomes.home.*:
     description: 'Wildcard permission, allows to use any home-related command'
