@@ -30,7 +30,7 @@ _You can use the command `/permissions` to edit these (see **Permissions** secti
 ## 🔐 Permissions
 
 The command `/permissions` allows to grant/revoke access to a certain player, all players or OP players.
-Syntax: `/permissions <set|remove|list> <player|group> <permission> <true|false>`
+Syntax: `/permissions <set|remove|list> <player|group> <name> <permission> <true|false>`
 Usages:
 - `/permissions set player Notch basichomes.warp.use false` (disallow player `Notch` from using warps)
 - `/permissions set group op basichomes.* true` (allow all OP players to have all permissions with the plugin)
