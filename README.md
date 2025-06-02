@@ -27,6 +27,29 @@
 _\* Requires permission not granted by default. OP players have access to all commands._
 _You can use the command `/permissions` to edit these (see **Permissions** section below)._
 
+## 🔐 Permissions
+
+The command `/permissions` allows to grant/revoke access to a certain player, all players or OP players.
+Syntax: `/permissions <set|remove|list> <player|group> <permission> <true|false>`
+Usages:
+- `/permissions set player Notch basichomes.warp.use false` (disallow player `Notch` from using warps)
+- `/permissions set group op basichomes.* true` (allow all OP players to have all permissions with the plugin)
+- `/permissions remove player Notch basichomes.warp.use` (back to default settings: `Notch` has no longer the permission to false)
+- `/permissions list Notch` (list all custom permissions given to `Notch`)
+
+### Available permissions :
+
+- `basichomes.config` | Access to the **/config** command (OP)
+- `basichomes.permissions` | Access to the **/permissions** command (OP)
+- `basichomes.home.use` | Access to **/home**, **/sethome**, **/delhome**, **/homes** (default)
+- `basichomes.home.manage` | Access to **/delhomeof**, **/homesof** (OP)
+- `basichomes.warp.use` | Access to **/warp**, **/warps** (default)
+- `basichomes.warp.create` | Access to **/setwarp** (OP)
+- `basichomes.warp.delete` | Access to **/delwarp** (OP)
+- `basichomes.home.*` | All home-related commands (**use**, **manage**) (OP)
+- `basichomes.warp.*` | All warp-related commands (**use**, **create**, **delete**) (OP)
+- `basichomes.*` | Full plugin access (OP)
+
 ## ⚙️ Configuration
 
 Here is the default `config.yml`:
@@ -56,28 +79,6 @@ max-homes: 1
 *   `max-homes`: Maximum number of homes a player can have. Use `0` for no limit.
 *   `op-bypass-home-limit`: Allow OPs to bypass the home limit.
 
-## 🔐 Permissions
-
-The command `/permissions` allows to grant/revoke access to a certain player, all players or OP players.
-Syntax: `/permissions <set|remove|list> <player|group> <permission> <true|false>`
-Usages:
-- `/permissions set player Notch basichomes.warp.use false` (disallow player `Notch` from using warps)
-- `/permissions set group op basichomes.* true` (allow all OP players to have all permissions with the plugin)
-- `/permissions remove player Notch basichomes.warp.use` (back to default settings: `Notch` has no longer the permission to false)
-- `/permissions list Notch` (list all custom permissions given to `Notch`)
-
-### Available permissions :
-
-- `basichomes.config` | Access to the **/config** command (OP)
-- `basichomes.permissions` | Access to the **/permissions** command (OP)
-- `basichomes.home.use` | Access to **/home**, **/sethome**, **/delhome**, **/homes** (default)
-- `basichomes.home.manage` | Access to **/delhomeof**, **/homesof** (OP)
-- `basichomes.warp.use` | Access to **/warp**, **/warps** (default)
-- `basichomes.warp.create` | Access to **/setwarp** (OP)
-- `basichomes.warp.delete` | Access to **/delwarp** (OP)
-- `basichomes.home.*` | All home-related commands (**use**, **manage**) (OP)
-- `basichomes.warp.*` | All warp-related commands (**use**, **create**, **delete**) (OP)
-- `basichomes.*` | Full plugin access (OP)
 
 ## 🐛 Found a Bug?
 
