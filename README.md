@@ -1,46 +1,61 @@
 # BasicHomes
-## A basic plugin to manage your homes AND warps in your Minecraft server !
 
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+**BasicHomes is an open-source plugin for managing homes and warps on your Minecraft server.**
 
-## Requirements
-- **Java** and **Maven** to build the .jar file
+***
 
-## Installing
+### ✅ Compatible with Minecraft `1.21.X` (1.21, 1.21.1, ..., 1.21.5)
 
-- Clone the repository
-- Compile the project with `mvn package` command and the **.jar** file of the plugin will appear in the **target** folder !
+## 📜 Commands
 
-## Commands
+#### Available commands :
 
-Here are all the commands available at the moment ! (v1.7 or newer)
+- `/config (get/set) (key) (value)` | Get or modify a config entry*
+- `/home (name)` | Teleport to a home
+- `/homes` | View all your homes in a GUI
+- `/sethome (name)` | Create a home
+- `/delhome (name)` | Delete a home
+- `/edithome (name)` | Change the item of a home
+- `/delhomeof (player) (name)` | Delete someone's home*
+- `/homesof (player)` | Show someone's homes in a GUI*
+- `/warp (name)` | Teleport to a warp
+- `/warps` | View all warps in a GUI
+- `/setwarp` | Create a warp*
+- `/delwarp` | Delete a warp*
+- `/editwarp` | Change the item of a warp* 
 
-| Command    | Usage                           | Description                                   |
-|------------|---------------------------------|-----------------------------------------------|
-| /config    | /config <get/set> [key] (value) | Get or set and element of the config !*       |
-| /home      | /home (name)                    | Teleport to a home by it's name !             |
-| /homes     | /homes                          | Get all of your homes in an inventory !       |
-| /sethome   | /sethome (name)                 | Create a home and give it a name !            |
-| /delhome   | /delhome (name)                 | Delete a home by it's name !                  |
-| /delhomeof | /delhomeof <player> (name)      | Delete the home of someone !*                 |
-| /homesof   | /homesof <player> (name)        | Access the homes of a player !*               |
-| /warp      | /warp (name)                    | Teleport to a warp by it's name !             |
-| /warps     | /warps                          | Get all of the server warps in an inventory ! |
-| /setwarp   | /setwarp (name)                 | Create a warp and give it a name !*           |
-| /delwarp   | /delwarp (name)                 | Delete a warp by it's name !                  |
+_\* Requires permission not granted by default. OP players have access to all commands._
+_You can use the command `/permissions` to edit these (see **Permissions** section below)._
 
-*Requires a permission not given by default (all permissions are granted to OP players)
+## 🔐 Permissions
 
-## Config file
+The command `/permissions` allows to grant/revoke access to a certain player, all players or OP players.
+Syntax: `/permissions <set|remove|list> <player|group> <name> <permission> <true|false>`
+Usages:
+- `/permissions set player Notch basichomes.warp.use false` (disallow player `Notch` from using warps)
+- `/permissions set group op basichomes.* true` (allow all OP players to have all permissions with the plugin)
+- `/permissions remove player Notch basichomes.warp.use` (back to default settings: `Notch` has no longer the permission to false)
+- `/permissions list Notch` (list all custom permissions given to `Notch`)
 
-Here is the default config file:
+### Available permissions :
+
+- `basichomes.config` | Access to the **/config** command (OP)
+- `basichomes.permissions` | Access to the **/permissions** command (OP)
+- `basichomes.home.use` | Access to **/home**, **/sethome**, **/delhome**, **/homes** (default)
+- `basichomes.home.manage` | Access to **/delhomeof**, **/homesof** (OP)
+- `basichomes.warp.use` | Access to **/warp**, **/warps** (default)
+- `basichomes.warp.create` | Access to **/setwarp** (OP)
+- `basichomes.warp.delete` | Access to **/delwarp** (OP)
+- `basichomes.home.*` | All home-related commands (**use**, **manage**) (OP)
+- `basichomes.warp.*` | All warp-related commands (**use**, **create**, **delete**) (OP)
+- `basichomes.*` | Full plugin access (OP)
+
+## ⚙️ Configuration
+
+Here is the default `config.yml`:
+
 ```
-# Config file for BasicHomes.
-# To enable/disable homes/warps, set the enabled value to true or false.
-# To wait before teleporting to a home/warp, set the delay value to
-# the number of seconds to wait or 0 to teleport directly.
-# To require the player to stand still while the plugin
-# is teleporting them, set the standStill value to true, else false.
+# BasicHomes configuration file
 
 homes:
   enabled: true
@@ -52,32 +67,23 @@ warps:
   delay: 0
   standStill: true
 
-# Config of max homes.
-# Set max-homes to the max number of homes a player can have
-# Set the value to 0 to remove limit
-# Set op-bypass-home-limit to true if you want OP players to have no home limit
-
 op-bypass-home-limit: false
 max-homes: 1
 ```
-You can change the values from `true` to `false` to enable/disable the homes and warps in your server or enable/disable standing still while waiting to be teleported.
-Setting the `delay` value to `0` will by default disable it and disable the `standStill` option too. 
-Set the max-homes value to 0 to disable max-homes.
 
-## Permissions
+**Tips:**
 
-Here are all the permission available at the moment ! (v1.7 or newer)
-To give specific permissions to players, you will need a plugin like [LuckPerms](https://luckperms.net/download) or [Vault](https://dev.bukkit.org/projects/vault).
-With one, you can grant the permissions needed to players to give them access to commands ! Use the spreadsheet to find the permission you want.
+*   `enabled`: Set to `false` to disable homes or warps.
+*   `delay`: Time (in seconds) before teleportation. `0` disables delay and `standStill`.
+*   `standStill`: Require players to remain still during teleportation.
+*   `max-homes`: Maximum number of homes a player can have. Use `0` for no limit.
+*   `op-bypass-home-limit`: Allow OPs to bypass the home limit.
 
-| Permission             | Usage                             | Default |
-|------------------------|-----------------------------------|---------|
-| basichomes.config      | Allows to use /config command     | OP      |
-| basichomes.home.use    | /home, /sethome, /delhome, /homes | true    |
-| basichomes.home.manage | /delhomeof, /homesof              | OP      |
-| basichomes.warp.use    | /warp, /homes                     | true    |
-| basichomes.warp.create | /setwarp                          | OP      |
-| basichomes.warp.delete | /delwarp                          | OP      |
-| basichomes.home.*      | All home commands (user+admin)    | OP      |
-| basichomes.warp.*      | All warp commands (user+admin)    | OP      |
-| basichomes.*           | All of the above                  | OP      |
+
+## 🐛 Found a Bug?
+
+If you discover a bug or issue, please report it on our Discord server.
+
+## 🔗 Join the Community
+
+**Discord:** [https://discord.gg/VNXV4PDhfK](https://discord.gg/VNXV4PDhfK)
