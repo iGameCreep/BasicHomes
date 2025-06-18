@@ -8,7 +8,7 @@ import org.bukkit.Material;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constants {
 
-    public static final String PLUGIN_VERSION = "1.9.3";
+    public static final String PLUGIN_VERSION = "1.9.4";
     public static final int BSTATS_PLUGIN_ID = 25429;
 
     public static final ChatColor INFO_COLOR = ChatColor.DARK_AQUA;
