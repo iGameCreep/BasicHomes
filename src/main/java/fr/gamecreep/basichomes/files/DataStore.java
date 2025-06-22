@@ -22,16 +22,16 @@ public class DataStore<T> {
         this.file = new File("plugins" + File.separator + "BasicHomes", fileName);
         this.defaultData = defaultData;
         this.type = type;
-        this.data = loadOrCreate();
+        this.data = this.loadOrCreate();
     }
 
     private T loadOrCreate() {
         if (!this.file.exists()) {
-            saveData(this.defaultData);
+            this.saveData(this.defaultData);
             return this.defaultData;
         }
 
-        try (final FileReader reader = new FileReader(file)) {
+        try (final FileReader reader = new FileReader(this.file)) {
             return this.gson.fromJson(reader, this.type);
         } catch (IOException e) {
             LoggerUtils.logWarning("Failed to load data from " + this.file.getName());
@@ -44,6 +44,12 @@ public class DataStore<T> {
     }
 
     private void saveData(final T data) {
+        final File parent = this.file.getParentFile();
+        if (!parent.exists() && !parent.mkdirs()) {
+            LoggerUtils.logWarning("Failed to create directories for " + parent.getPath());
+            return;
+        }
+
         try (final FileWriter writer = new FileWriter(this.file)) {
             this.gson.toJson(data, writer);
         } catch (IOException e) {

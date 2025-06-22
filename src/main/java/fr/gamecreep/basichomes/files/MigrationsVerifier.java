@@ -14,15 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MigrationsVerifier extends DataStore<MigrationsData> {
+public class MigrationsVerifier {
     private static final int LATEST_MIGRATION = 3;
     private static final String HOMES_FILE_NAME = "homes.json";
     private static final String WARPS_FILE_NAME = "warps.json";
 
+    private final DataStore<MigrationsData> dataStore;
     private final BasicHomes plugin;
 
     public MigrationsVerifier(final BasicHomes plugin) {
-        super("migrations.json", new MigrationsData(0), new TypeToken<MigrationsData>(){}.getType());
+        this.dataStore = new DataStore<>(
+                "migrations.json",
+                new MigrationsData(0),
+                new TypeToken<MigrationsData>(){}.getType()
+        );
         this.plugin = plugin;
     }
 
@@ -36,7 +41,7 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
     }
 
     private int getLastMigrationDone() {
-        return super.getData().getLatestMigrationNumberDone();
+        return this.dataStore.getData().getLatestMigrationNumberDone();
     }
 
     /**
@@ -125,9 +130,8 @@ public class MigrationsVerifier extends DataStore<MigrationsData> {
     }
 
     private void saveLatestMigration(final int migrationNumber) {
-        final MigrationsData data = new MigrationsData();
-        data.setLatestMigrationNumberDone(migrationNumber);
-        super.save();
+        this.dataStore.getData().setLatestMigrationNumberDone(migrationNumber);
+        this.dataStore.save();
     }
 
     private void callMigrationFunction(final int migrationNumber) {

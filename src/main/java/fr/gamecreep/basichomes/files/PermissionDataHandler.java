@@ -128,10 +128,14 @@ public class PermissionDataHandler {
         return permissions;
     }
 
-    public DefaultPermissions.GroupPermission getPlayerGroup(@NonNull final Player player) {
-        return player.isOp()
-                ? DefaultPermissions.GroupPermission.OP
-                : DefaultPermissions.GroupPermission.ALL;
+    public List<DefaultPermissions.GroupPermission> getPlayerGroups(@NonNull final Player player) {
+        final List<DefaultPermissions.GroupPermission> groups = new ArrayList<>();
+        groups.add(DefaultPermissions.GroupPermission.ALL);
+        if (player.isOp()) {
+            groups.add(DefaultPermissions.GroupPermission.OP);
+        }
+
+        return groups;
     }
 
     public void applyPermissions(@NonNull final Player player) {
@@ -142,9 +146,11 @@ public class PermissionDataHandler {
 
         permissionAttachment.getPermissions().clear();
 
-        final DefaultPermissions.GroupPermission group = this.getPlayerGroup(player);
+        final List<DefaultPermissions.GroupPermission> groups = this.getPlayerGroups(player);
 
-        this.getDefaultPermissions(group).forEach(permissionAttachment::setPermission);
+        for (final DefaultPermissions.GroupPermission group : groups) {
+            this.getDefaultPermissions(group).forEach(permissionAttachment::setPermission);
+        }
         this.getPlayerPermissions(playerId).forEach(permissionAttachment::setPermission);
 
         this.plugin.getPermissionAttachments().put(playerId, permissionAttachment);

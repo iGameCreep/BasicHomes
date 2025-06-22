@@ -161,9 +161,11 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            final DefaultPermissions.GroupPermission group = this.permissionDataHandler.getPlayerGroup(target);
+            final List<DefaultPermissions.GroupPermission> groups = this.permissionDataHandler.getPlayerGroups(target);
+            for (final DefaultPermissions.GroupPermission group : groups) {
+                inheritedPermissions.putAll(this.permissionDataHandler.getDefaultPermissions(group));
+            }
 
-            inheritedPermissions.putAll(this.permissionDataHandler.getDefaultPermissions(group));
             customPermissions.putAll(this.permissionDataHandler.getPlayerPermissions(target.getUniqueId()));
         } else {
             DefaultPermissions.GroupPermission group;
@@ -264,6 +266,9 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
                                       @NonNull final Command command,
                                       @NonNull final String label,
                                       @NonNull final String @NonNull[] args) {
+        if (!sender.hasPermission(Permission.PERMISSIONS.getName())) {
+            return Collections.emptyList();
+        }
         final String input = args[args.length - 1].toLowerCase();
         final String action = args[0];
 
