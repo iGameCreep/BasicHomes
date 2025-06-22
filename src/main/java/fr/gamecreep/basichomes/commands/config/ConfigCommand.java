@@ -11,9 +11,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ConfigCommand implements CommandExecutor, TabCompleter {
@@ -24,13 +24,13 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final Command command, @NonNull final String label, @NonNull final String[] args) {
-        if (!(commandSender instanceof final Player playerSender)) {
-            return false;
-        }
-
-        if (!playerSender.hasPermission(Permission.CONFIG.getName())) {
-            ChatUtils.sendNoPermission(playerSender, Permission.CONFIG);
+    public boolean onCommand(@NonNull final CommandSender commandSender,
+                             @NonNull final Command command,
+                             @NonNull final String label,
+                             @NonNull final String @NonNull[] args
+    ) {
+        if (!commandSender.hasPermission(Permission.CONFIG.getName())) {
+            ChatUtils.sendNoPermission(commandSender, Permission.CONFIG);
             return true;
         }
 
@@ -49,17 +49,17 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
         if (selectedElement == null) return false;
 
         if (args[0].equalsIgnoreCase("get") && args.length == 2) {
-            handleGetCommand(playerSender, selectedElement);
+            handleGetCommand(commandSender, selectedElement);
         } else if (args[0].equalsIgnoreCase("set") && args.length == 3) {
-            handleSetCommand(playerSender, selectedElement, args[2]);
+            handleSetCommand(commandSender, selectedElement, args[2]);
         }
 
         return true;
     }
 
-    private void handleGetCommand(@NonNull final Player player, @NonNull final ConfigElement selectedElement) {
+    private void handleGetCommand(@NonNull final CommandSender sender, @NonNull final ConfigElement selectedElement) {
         final Object value = this.plugin.getPluginConfig().getConfig().get(selectedElement);
-        ChatUtils.sendPlayerInfo(player, String.format(
+        ChatUtils.sendPlayerInfo(sender, String.format(
                 "Current value for %s%s%s is %s%s%s.",
                 Constants.SPECIAL_COLOR,
                 selectedElement.name(),
@@ -70,23 +70,26 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
         ));
     }
 
-    private void handleSetCommand(@NonNull final Player player, @NonNull final ConfigElement selectedElement, final String newValue) {
+    private void handleSetCommand(@NonNull final CommandSender sender,
+                                  @NonNull final ConfigElement selectedElement,
+                                  final String newValue
+    ) {
         final Object currentValue = this.plugin.getPluginConfig().getConfig().get(selectedElement);
         final Object value = selectedElement.parseValue(newValue);
         if (value == null) {
             final String errMsg = "New value must be a number or a boolean (true|false) according to it's name. Check documentation for more information on this command.";
-            ChatUtils.sendPlayerError(player, errMsg);
+            ChatUtils.sendPlayerError(sender, errMsg);
             return;
         }
 
         if (value instanceof final Integer x && x < 0) {
-            ChatUtils.sendPlayerError(player, "The value must be greater than 0.");
+            ChatUtils.sendPlayerError(sender, "The value must be greater than 0.");
             return;
         }
 
         this.plugin.updateConfig(selectedElement, value);
 
-        ChatUtils.sendPlayerInfo(player, String.format(
+        ChatUtils.sendPlayerInfo(sender, String.format(
                 "Successfully changed %s%s%s from %s%s%s to %s%s%s !",
                 Constants.SPECIAL_COLOR,
                 selectedElement.name(),
@@ -101,7 +104,14 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(@NonNull final CommandSender commandSender, @NonNull final Command command, @NonNull final String label, @NonNull final String[] args) {
+    public List<String> onTabComplete(@NonNull final CommandSender commandSender,
+                                      @NonNull final Command command,
+                                      @NonNull final String label,
+                                      @NonNull final String @NonNull[] args
+    ) {
+        if (!commandSender.hasPermission(Permission.CONFIG.getName())) {
+            return Collections.emptyList();
+        }
         final List<String> options = new ArrayList<>();
 
         if (args.length == 1) {

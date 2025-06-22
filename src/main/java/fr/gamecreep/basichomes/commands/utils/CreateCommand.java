@@ -73,8 +73,11 @@ public abstract class CreateCommand {
             }
 
             SavedPosition toCreate;
-            if (material != null) toCreate = new SavedPosition(name, playerSender.getUniqueId().toString(), material, playerPos, this.type);
-            else toCreate = new SavedPosition(name, playerSender.getUniqueId().toString(), playerPos, this.type);
+            if (material != null) {
+                toCreate = new SavedPosition(name, playerSender.getUniqueId().toString(), material, playerPos, this.type);
+            } else {
+                toCreate = new SavedPosition(name, playerSender.getUniqueId().toString(), playerPos, this.type);
+            }
 
             this.handler.create(toCreate);
             ChatUtils.sendPlayerInfo(playerSender, String.format(
