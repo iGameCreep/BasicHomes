@@ -51,22 +51,34 @@ public class MigrationsVerifier {
         final PositionDataHandler homeHandler = new PositionDataHandler(HOMES_FILE_NAME);
         final PositionDataHandler warpHandler = new PositionDataHandler(WARPS_FILE_NAME);
 
-        final List<SavedPosition> homeList = homeHandler.getAll(PositionType.HOME);
-        final List<SavedPosition> warpList = warpHandler.getAll(PositionType.WARP);
+        final List<SavedPosition> homeList = homeHandler.getAllUnfiltered();
+        final List<SavedPosition> warpList = warpHandler.getAllUnfiltered();
+
+        final List<SavedPosition> updatedHomes = new ArrayList<>();
+        final List<SavedPosition> updatedWarps = new ArrayList<>();
 
         for (final SavedPosition savedPosition : homeList) {
-            homeHandler.delete(savedPosition);
+            if (savedPosition == null) continue;
             savedPosition.setType(PositionType.HOME);
-            homeHandler.create(savedPosition);
+            updatedHomes.add(savedPosition);
         }
 
         for (final SavedPosition savedPosition : warpList) {
-            warpHandler.delete(savedPosition);
+            if (savedPosition == null) continue;
             savedPosition.setType(PositionType.WARP);
-            warpHandler.create(savedPosition);
+            updatedWarps.add(savedPosition);
         }
 
-        this.saveLatestMigration(1);
+        // Overwrite old data directly
+        homeHandler.getDataStore().getData().clear();
+        homeHandler.getDataStore().getData().addAll(updatedHomes);
+        homeHandler.getDataStore().save();
+
+        warpHandler.getDataStore().getData().clear();
+        warpHandler.getDataStore().getData().addAll(updatedWarps);
+        warpHandler.getDataStore().save();
+
+        saveLatestMigration(1);
         return true;
     }
 
