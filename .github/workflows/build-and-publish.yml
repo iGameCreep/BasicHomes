@@ -84,20 +84,25 @@ jobs:
           name: plugin-jar
           path: ./target
 
+      - name: Extract version string
+        id: version
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          CLEAN_VERSION=$(echo "$TAG_NAME" | grep -oE '[0-9]+(\.[0-9]+)*(-[A-Za-z0-9]+)?')
+          echo "version=$CLEAN_VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Upload to Modrinth
         uses: cloudnode-pro/modrinth-publish@v2.1.2
         with:
           token: ${{ secrets.MODRINTH_TOKEN }}
           project: ${{ env.MODRINTH_PROJECT_ID }}
-          name: BasicHomes ${{ github.ref_name }}
-          channel: ${{ needs.generate-changelog.outputs.release_type }}
-          version: ${{ github.ref_name }}
+          name: BasicHomes ${{ steps.version.outputs.version }}
+          version: ${{ steps.version.outputs.version }}
           changelog: ${{ needs.generate-changelog.outputs.changelog }}
           files: ${{ needs.build.outputs.jar-path }}
           game-versions: '[ "1.21" ]'
           loaders: '[ "bukkit", "spigot" ]'
-          featured: true
-          status: listed
+          status: draft
 
       - name: Upload to CurseForge
         uses: itsmeow/curseforge-upload@v3
