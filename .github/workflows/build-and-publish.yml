@@ -6,6 +6,10 @@ on:
       - 'v*'  # adjust to your tagging pattern
   workflow_dispatch:
 
+env:
+  CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
+  MODRINTH_PROJECT_ID:  ${{ vars.MODRINTH_PROJECT_ID }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,7 +34,7 @@ jobs:
         id: jar
         run: |
           JAR_NAME=$(ls target/*.jar | grep -v 'original' | head -n 1)
-          echo "jar-path=$JAR_NAME" >> $GITHUB_STATE
+          echo "jar-path=$JAR_NAME" >> $GITHUB_OUTPUT
 
   generate-changelog:
     runs-on: ubuntu-latest
@@ -57,9 +61,9 @@ jobs:
           TAG_NAME=${GITHUB_REF#refs/tags/}
           echo "Tag is: $TAG_NAME"
           if echo "$TAG_NAME" | grep -iq "release"; then
-            echo "release_type=release" >> $GITHUB_STATE
+            echo "release_type=release" >> $GITHUB_OUTPUT
           else
-            echo "release_type=beta" >> $GITHUB_STATE
+            echo "release_type=beta" >> $GITHUB_OUTPUT
           fi
 
   publish:
