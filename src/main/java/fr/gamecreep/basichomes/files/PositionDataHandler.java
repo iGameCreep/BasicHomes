@@ -3,6 +3,7 @@ package fr.gamecreep.basichomes.files;
 import com.google.gson.reflect.TypeToken;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 public class PositionDataHandler {
 
+    @Getter
     private final DataStore<List<SavedPosition>> dataStore;
 
     public PositionDataHandler(@NonNull final String fileName) {
@@ -32,6 +34,10 @@ public class PositionDataHandler {
         list.removeIf(savedPos -> savedPos.getId().equals(pos.getId()));
 
         this.dataStore.save();
+    }
+
+    public List<SavedPosition> getAllUnfiltered() {
+        return this.dataStore.getData();
     }
 
     public List<SavedPosition> getAll(@NonNull final PositionType type) {
