@@ -30,7 +30,7 @@ jobs:
         id: jar
         run: |
           JAR_NAME=$(ls target/*.jar | grep -v 'original' | head -n 1)
-          echo "::set-output name=jar-path::$JAR_NAME"
+          echo "jar-path=$JAR_NAME" >> $GITHUB_STATE
 
   generate-changelog:
     runs-on: ubuntu-latest
@@ -57,9 +57,9 @@ jobs:
           TAG_NAME=${GITHUB_REF#refs/tags/}
           echo "Tag is: $TAG_NAME"
           if echo "$TAG_NAME" | grep -iq "release"; then
-            echo "::set-output name=release_type::release"
+            echo "release_type=release" >> $GITHUB_STATE
           else
-            echo "::set-output name=release_type::beta"
+            echo "release_type=beta" >> $GITHUB_STATE
           fi
 
   publish:
@@ -79,7 +79,7 @@ jobs:
           release_type: ${{ needs.generate-changelog.outputs.release_type }}
 
       - name: Upload to Modrinth
-        uses: cloudnode-pro/modrinth-publish@v1
+        uses: cloudnode-pro/modrinth-publish@v2.1.2
         with:
           token: ${{ secrets.MODRINTH_TOKEN }}
           project_id: ${{ env.MODRINTH_PROJECT_ID }}
