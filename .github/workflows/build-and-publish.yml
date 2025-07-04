@@ -84,6 +84,21 @@ jobs:
           name: plugin-jar
           path: ./target
 
+      - name: Upload to Modrinth
+        uses: cloudnode-pro/modrinth-publish@v2.1.2
+        with:
+          token: ${{ secrets.MODRINTH_TOKEN }}
+          project: ${{ env.MODRINTH_PROJECT_ID }}
+          name: BasicHomes ${{ github.ref_name }}
+          channel: ${{ needs.generate-changelog.outputs.release_type }}
+          version: ${{ github.ref_name }}
+          changelog: ${{ needs.generate-changelog.outputs.changelog }}
+          files: ${{ needs.build.outputs.jar-path }}
+          game-versions: '[ "1.21" ]'
+          loaders: '[ "bukkit", "spigot" ]'
+          featured: true
+          status: listed
+
       - name: Upload to CurseForge
         uses: itsmeow/curseforge-upload@v3
         with:
@@ -94,13 +109,3 @@ jobs:
           changelog: ${{ needs.generate-changelog.outputs.changelog }}
           changelog_type: markdown
           release_type: ${{ needs.generate-changelog.outputs.release_type }}
-
-      - name: Upload to Modrinth
-        uses: cloudnode-pro/modrinth-publish@v2.1.2
-        with:
-          token: ${{ secrets.MODRINTH_TOKEN }}
-          project_id: ${{ env.MODRINTH_PROJECT_ID }}
-          file: ${{ needs.build.outputs.jar-path }}
-          version_number: ${{ github.ref_name }}
-          changelog: ${{ needs.generate-changelog.outputs.changelog }}
-          version_type: ${{ needs.generate-changelog.outputs.release_type }}
