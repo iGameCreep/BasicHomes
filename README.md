@@ -2,6 +2,9 @@
 
 **BasicHomes is an open-source plugin for managing homes and warps on your Minecraft server.**
 
+Download it on:
+- [CurseForge](https://www.curseforge.com/minecraft/bukkit-plugins/basichomes)
+- [Modrinth](https://modrinth.com/plugin/basichomes/)
 ***
 
 ### ✅ Compatible with Minecraft `1.21.X` (1.21, 1.21.1, ..., 1.21.5)
