@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataStore<T> {
     private final File file;
@@ -25,14 +27,23 @@ public class DataStore<T> {
         this.data = this.loadOrCreate();
     }
 
+    @SuppressWarnings("unchecked")
+    private T wrapMutable(T data) {
+        if (data instanceof List) {
+            return (T) new ArrayList<>((List<?>) data);
+        }
+        return data;
+    }
+
     private T loadOrCreate() {
         if (!this.file.exists()) {
             this.saveData(this.defaultData);
-            return this.defaultData;
+            return this.wrapMutable(this.defaultData);
         }
 
         try (final FileReader reader = new FileReader(this.file)) {
-            return this.gson.fromJson(reader, this.type);
+            T loadedData = this.gson.fromJson(reader, this.type);
+            return this.wrapMutable(loadedData);
         } catch (IOException e) {
             LoggerUtils.logWarning("Failed to load data from " + this.file.getName());
             return this.defaultData;

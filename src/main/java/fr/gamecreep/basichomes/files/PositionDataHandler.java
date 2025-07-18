@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +18,7 @@ public class PositionDataHandler {
     private final DataStore<List<SavedPosition>> dataStore;
 
     public PositionDataHandler(@NonNull final String fileName) {
-        this.dataStore = new DataStore<>(fileName, Collections.emptyList(), new TypeToken<List<SavedPosition>>(){}.getType());
+        this.dataStore = new DataStore<>(fileName, new ArrayList<>(), new TypeToken<List<SavedPosition>>(){}.getType());
     }
 
     public void create(@NonNull final SavedPosition pos) {
