@@ -3,7 +3,7 @@ package fr.gamecreep.basichomes.entities.permissions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -13,7 +13,7 @@ public class PermissionFile {
     private final List<DefaultPermissions> defaultPermissions;
 
     public PermissionFile() {
-        this.playerPermissions = Collections.emptyList();
-        this.defaultPermissions = Collections.emptyList();
+        this.playerPermissions = new ArrayList<>();
+        this.defaultPermissions = new ArrayList<>();
     }
 }
