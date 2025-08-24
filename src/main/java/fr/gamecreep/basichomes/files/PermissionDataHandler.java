@@ -141,26 +141,27 @@ public class PermissionDataHandler {
     public void applyPermissions(@NonNull final Player player) {
         final UUID playerId = player.getUniqueId();
 
-        final PermissionAttachment permissionAttachment =
-                this.plugin.getPermissionAttachments().getOrDefault(playerId, player.addAttachment(this.plugin));
+        final PermissionAttachment oldAttachment = this.plugin.getPermissionAttachments().remove(playerId);
+        if (oldAttachment != null) {
+            player.removeAttachment(oldAttachment);
+        }
 
-        permissionAttachment.getPermissions().clear();
+        final PermissionAttachment newAttachment = player.addAttachment(this.plugin);
 
         final List<DefaultPermissions.GroupPermission> groups = this.getPlayerGroups(player);
-
         for (final DefaultPermissions.GroupPermission group : groups) {
-            this.getDefaultPermissions(group).forEach(permissionAttachment::setPermission);
+            this.getDefaultPermissions(group).forEach(newAttachment::setPermission);
         }
-        this.getPlayerPermissions(playerId).forEach(permissionAttachment::setPermission);
 
-        this.plugin.getPermissionAttachments().put(playerId, permissionAttachment);
+        this.getPlayerPermissions(playerId).forEach(newAttachment::setPermission);
+
+        this.plugin.getPermissionAttachments().put(playerId, newAttachment);
     }
 
     public void applyPermissions(@NonNull final UUID playerId) {
-        for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
-            if (player.getUniqueId().equals(playerId)) {
-                this.applyPermissions(player);
-            }
+        final Player player = this.plugin.getServer().getPlayer(playerId);
+        if (player != null && player.isOnline()) {
+            this.applyPermissions(player);
         }
     }
 
