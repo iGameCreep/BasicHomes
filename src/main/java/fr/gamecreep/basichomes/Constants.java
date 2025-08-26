@@ -8,14 +8,25 @@ import org.bukkit.Material;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constants {
 
-    public static final String PLUGIN_VERSION = "1.9.6";
+    public static final String PLUGIN_VERSION = "1.9.7";
     public static final int BSTATS_PLUGIN_ID = 25429;
 
     public static final ChatColor INFO_COLOR = ChatColor.DARK_AQUA;
     public static final ChatColor SUCCESS_COLOR = ChatColor.GREEN;
     public static final ChatColor WARNING_COLOR = ChatColor.RED;
     public static final ChatColor SPECIAL_COLOR = ChatColor.GOLD;
-    public static final net.md_5.bungee.api.ChatColor PLUGIN_COLOR = net.md_5.bungee.api.ChatColor.of("#2596be");
+
+    public static final String PLUGIN_COLOR;
+    static {
+        String colorTemp;
+        try {
+            colorTemp = net.md_5.bungee.api.ChatColor.of("#2596be").toString();
+        } catch (Throwable t) {
+            colorTemp = ChatColor.DARK_AQUA.toString();
+        }
+        PLUGIN_COLOR = colorTemp;
+    }
+
 
     public static final String MY_HOMES_MENU_NAME = SPECIAL_COLOR + "My Homes";
     public static final String HOMES_OF_START_MENU_NAME = SPECIAL_COLOR + "Homes of" + INFO_COLOR + " ";

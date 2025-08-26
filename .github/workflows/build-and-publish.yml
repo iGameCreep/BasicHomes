@@ -46,20 +46,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     outputs:
-      changelog: ${{ steps.changelog.outputs.release-notes }}
+      changelog: ${{ steps.read-changelog.outputs.changelog }}
       release_type: ${{ steps.release-type.outputs.release_type }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Generate Changelog from commits
-        id: changelog
-        uses: johnyherangi/create-release-notes@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          format: "- {{subject}}"
+      - name: Read CHANGELOG.md
+        id: read-changelog
+        run: |
+          # Read file, escape % and newlines for GitHub Actions
+          CONTENT=$(cat CHANGELOG.md | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
+          echo "changelog=$CONTENT" >> $GITHUB_OUTPUT
 
       - name: Determine release type
         id: release-type
