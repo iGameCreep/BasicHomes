@@ -1,8 +1,9 @@
-## V1.9.7 RELEASE - Minecraft 1.21.8
+## V1.9.7 RELEASE - Minecraft 1.21.10
 
 ---
 
 ### Changelog:
+- Compatibility for 1.21.10
 - Potentially fixed permission 
 - Fixed compatibility with CraftBukkit
 
