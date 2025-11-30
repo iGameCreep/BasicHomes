@@ -1,10 +1,11 @@
 package fr.gamecreep.basichomes.events;
 
 import fr.gamecreep.basichomes.BasicHomes;
-import lombok.NonNull;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PermissionEvents implements Listener {
 
@@ -14,8 +15,13 @@ public class PermissionEvents implements Listener {
         this.plugin = plugin;
     }
 
+    @EventHandler(priority = EventPriority.LOWEST)
+    private void onPlayerJoin(PlayerJoinEvent event) {
+        this.plugin.getPermissionDataHandler().handlePlayerJoin(event.getPlayer());
+    }
+
     @EventHandler
-    private void onPlayerJoin(@NonNull final PlayerJoinEvent event) {
-        this.plugin.getPermissionDataHandler().applyPermissions(event.getPlayer());
+    private void onPlayerQuit(PlayerQuitEvent event) {
+        this.plugin.getPermissionDataHandler().handlePlayerQuit(event.getPlayer());
     }
 }

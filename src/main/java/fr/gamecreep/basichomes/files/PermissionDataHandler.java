@@ -5,6 +5,7 @@ import fr.gamecreep.basichomes.BasicHomes;
 import fr.gamecreep.basichomes.entities.permissions.DefaultPermissions;
 import fr.gamecreep.basichomes.entities.permissions.PermissionFile;
 import fr.gamecreep.basichomes.entities.permissions.PlayerPermissions;
+import fr.gamecreep.basichomes.utils.LoggerUtils;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
@@ -27,7 +28,11 @@ public class PermissionDataHandler {
         final PlayerPermissions entry = getOrCreatePlayerEntry(playerId);
         entry.getPermissions().put(permissionNode, value);
         this.dataStore.save();
-        this.applyPermissions(playerId);
+
+        Player player = this.plugin.getServer().getPlayer(playerId);
+        if (player != null) {
+            this.refreshPermissions(player);
+        }
     }
 
     public void setDefaultPermission(@NonNull final DefaultPermissions.GroupPermission group,
@@ -43,7 +48,11 @@ public class PermissionDataHandler {
         final PlayerPermissions entry = getOrCreatePlayerEntry(playerId);
         entry.getPermissions().remove(permissionNode);
         this.dataStore.save();
-        this.applyPermissions(playerId);
+
+        Player player = this.plugin.getServer().getPlayer(playerId);
+        if (player != null) {
+            this.refreshPermissions(player);
+        }
     }
 
     public void removeDefaultPermission(@NonNull final DefaultPermissions.GroupPermission group,
@@ -138,36 +147,52 @@ public class PermissionDataHandler {
         return groups;
     }
 
-    public void applyPermissions(@NonNull final Player player) {
-        final UUID playerId = player.getUniqueId();
-
-        final PermissionAttachment oldAttachment = this.plugin.getPermissionAttachments().remove(playerId);
-        if (oldAttachment != null) {
-            player.removeAttachment(oldAttachment);
-        }
-
-        final PermissionAttachment newAttachment = player.addAttachment(this.plugin);
-
-        final List<DefaultPermissions.GroupPermission> groups = this.getPlayerGroups(player);
-        for (final DefaultPermissions.GroupPermission group : groups) {
-            this.getDefaultPermissions(group).forEach(newAttachment::setPermission);
-        }
-
-        this.getPlayerPermissions(playerId).forEach(newAttachment::setPermission);
-
-        this.plugin.getPermissionAttachments().put(playerId, newAttachment);
-    }
-
-    public void applyPermissions(@NonNull final UUID playerId) {
-        final Player player = this.plugin.getServer().getPlayer(playerId);
-        if (player != null && player.isOnline()) {
-            this.applyPermissions(player);
-        }
-    }
-
     private void applyDefaultPermissions() {
         for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
-            this.applyPermissions(player);
+            this.refreshPermissions(player);
         }
     }
+
+    public void refreshPermissions(@NonNull Player player) {
+        UUID uuid = player.getUniqueId();
+        PermissionAttachment attachment = this.plugin.getPermissionAttachments().get(uuid);
+
+        if (attachment == null) {
+            // Fallback: create a new attachment
+            attachment = player.addAttachment(this.plugin);
+            this.plugin.getPermissionAttachments().put(uuid, attachment);
+            LoggerUtils.logInfo("Recreating permission attachment for player " + uuid);
+        }
+
+        for (String key : new HashSet<>(attachment.getPermissions().keySet())) {
+            attachment.unsetPermission(key);
+        }
+
+        for (DefaultPermissions.GroupPermission group : getPlayerGroups(player)) {
+            getDefaultPermissions(group).forEach(attachment::setPermission);
+        }
+
+        getPlayerPermissions(uuid).forEach(attachment::setPermission);
+    }
+
+    public void handlePlayerJoin(Player player) {
+        PermissionAttachment attachment = player.addAttachment(this.plugin);
+        this.plugin.getPermissionAttachments().put(player.getUniqueId(), attachment);
+
+        this.refreshPermissions(player);
+    }
+
+    public void handlePlayerQuit(Player player) {
+        UUID uuid = player.getUniqueId();
+        PermissionAttachment att = this.plugin.getPermissionAttachments().remove(uuid);
+
+        if (att != null) {
+            try {
+                player.removeAttachment(att);
+            } catch (IllegalArgumentException ignored) {
+                LoggerUtils.logWarning("Unable to remove permission attachment for player " + uuid);
+            }
+        }
+    }
+
 }

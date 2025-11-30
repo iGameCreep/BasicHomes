@@ -21,6 +21,7 @@ import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,6 +44,7 @@ public final class BasicHomes extends JavaPlugin {
     public void onEnable() {
         this.migrationsVerifier.verifyMigrations();
         this.loadConfig();
+        this.loadPlayerPermissions();
         this.loadCommands();
         this.loadEvents();
         this.loadMetrics();
@@ -54,6 +56,12 @@ public final class BasicHomes extends JavaPlugin {
     @Override
     public void onDisable() {
         LoggerUtils.logInfo("Plugin successfully stopped !");
+    }
+
+    private void loadPlayerPermissions() {
+        for (Player player : getServer().getOnlinePlayers()) {
+            this.permissionDataHandler.handlePlayerJoin(player);
+        }
     }
 
     private void loadCommands() {
