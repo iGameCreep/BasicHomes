@@ -40,4 +40,6 @@ The command `/permissions` allows to grant/revoke access to a certain player, al
 If you discover a bug or issue, please report it on our Discord server.
 [https://discord.gg/VNXV4PDhfK](https://discord.gg/VNXV4PDhfK)
 
-![ServerWave partnership](./.github/assets/serverwave_banner.png)
+## 🌊 Looking to host Minecraft server? Create a server with ServerWave and support my development
+
+[![ServerWave partnership](./.github/assets/serverwave_banner.png)](https://serverwave.com/p/gamecreep35)
