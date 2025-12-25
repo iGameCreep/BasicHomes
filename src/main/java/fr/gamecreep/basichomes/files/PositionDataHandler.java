@@ -3,11 +3,11 @@ package fr.gamecreep.basichomes.files;
 import com.google.gson.reflect.TypeToken;
 import fr.gamecreep.basichomes.entities.SavedPosition;
 import fr.gamecreep.basichomes.entities.enums.PositionType;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

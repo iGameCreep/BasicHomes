@@ -6,6 +6,7 @@ import fr.gamecreep.basichomes.entities.enums.Permission;
 import fr.gamecreep.basichomes.entities.permissions.DefaultPermissions;
 import fr.gamecreep.basichomes.files.PermissionDataHandler;
 import fr.gamecreep.basichomes.utils.ChatUtils;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 /**
