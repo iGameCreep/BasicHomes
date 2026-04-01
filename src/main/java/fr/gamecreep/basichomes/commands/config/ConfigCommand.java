@@ -123,12 +123,16 @@ public class ConfigCommand implements CommandExecutor, TabCompleter {
                 }
             }
         } else if (args.length == 3 && args[0].equals("set")) {
-            final ConfigElement element = ConfigElement.valueOf(args[1].toUpperCase());
+            try {
+                final ConfigElement element = ConfigElement.valueOf(args[1].toUpperCase());
 
-            if (element.getType().equals(DataType.BOOLEAN)) {
-                options.addAll(List.of("true", "false"));
-            } else if (element.getType().equals(DataType.INTEGER)) {
-                options.add("[number]");
+                if (element.getType().equals(DataType.BOOLEAN)) {
+                    options.addAll(List.of("true", "false"));
+                } else if (element.getType().equals(DataType.INTEGER)) {
+                    options.add("[number]");
+                }
+            } catch (Exception ignored) {
+                // Avoids throwing errors to players
             }
         }
 
