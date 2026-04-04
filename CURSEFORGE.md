@@ -4,7 +4,7 @@
 
 ***
 
-### ✅ Compatible with Minecraft versions up to `26.1`
+### ✅ Compatible with Minecraft versions up to `26.1.1`
 
 ## 📜 Commands
 
