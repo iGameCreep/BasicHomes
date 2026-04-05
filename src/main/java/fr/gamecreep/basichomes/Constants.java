@@ -10,6 +10,7 @@ public class Constants {
 
     public static final String PLUGIN_VERSION = "1.9.8";
     public static final int BSTATS_PLUGIN_ID = 25429;
+    public static final String FASTSTATS_TOKEN = "c958237076bde0583471cdd8e83cae05";
 
     public static final ChatColor INFO_COLOR = ChatColor.DARK_AQUA;
     public static final ChatColor SUCCESS_COLOR = ChatColor.GREEN;
@@ -21,7 +22,7 @@ public class Constants {
         String colorTemp;
         try {
             colorTemp = net.md_5.bungee.api.ChatColor.of("#2596be").toString();
-        } catch (Throwable t) {
+        } catch (Exception e) {
             colorTemp = ChatColor.DARK_AQUA.toString();
         }
         PLUGIN_COLOR = colorTemp;
