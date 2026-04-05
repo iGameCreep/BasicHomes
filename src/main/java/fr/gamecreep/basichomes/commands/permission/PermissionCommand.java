@@ -41,12 +41,12 @@ public class PermissionCommand implements CommandExecutor, TabCompleter {
                              @NonNull final String label,
                              @NonNull final String @NonNull[] args
     ) {
-        if (args.length < 3) return false;
-
         if (!sender.hasPermission(Permission.PERMISSIONS.getName())) {
             ChatUtils.sendNoPermission(sender, Permission.PERMISSIONS);
             return true;
         }
+
+        if (args.length < 3) return false;
 
         final String action = args[0].toLowerCase();
         final boolean isSet = action.equals(ActionType.SET.getStringValue());

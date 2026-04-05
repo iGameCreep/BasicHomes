@@ -18,8 +18,6 @@ import fr.gamecreep.basichomes.utils.LoggerUtils;
 import fr.gamecreep.basichomes.utils.TeleportUtils;
 import fr.gamecreep.basichomes.utils.Updater;
 import lombok.Getter;
-import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SimplePie;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
@@ -110,13 +108,13 @@ public final class BasicHomes extends JavaPlugin {
 
     private void loadMetrics() {
         try {
-            final Metrics metrics = new Metrics(this, Constants.BSTATS_PLUGIN_ID);
+            MetricsLoader loader = new MetricsLoader(this);
 
-            metrics.addCustomChart(new SimplePie("using_warps",
-                    () -> Boolean.toString((Boolean) this.pluginConfig.getConfig().getOrDefault(ConfigElement.WARPS_ENABLED, false))
-            ));
-
+            loader.loadbStats();
             LoggerUtils.logInfo("Metrics (bStats) successfully loaded !");
+
+            loader.loadFastStats();
+            LoggerUtils.logInfo("Metrics (FastStats) successfully loaded !");
         } catch (Exception e) {
             LoggerUtils.logWarning("Failed to register plugin metrics: " + e.getMessage());
         }
