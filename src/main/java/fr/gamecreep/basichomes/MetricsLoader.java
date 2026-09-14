@@ -1,8 +1,8 @@
 package fr.gamecreep.basichomes;
 
-import dev.faststats.bukkit.BukkitMetrics;
-import dev.faststats.core.ErrorTracker;
-import dev.faststats.core.chart.Chart;
+import dev.faststats.ErrorTracker;
+import dev.faststats.bukkit.BukkitContext;
+import dev.faststats.data.Metric;
 import fr.gamecreep.basichomes.config.enums.ConfigElement;
 import org.bstats.charts.SimplePie;
 
@@ -25,13 +25,16 @@ public class MetricsLoader {
     }
 
     public void loadFastStats() {
-        Chart<Boolean> warpsChart = Chart.bool("using_warps", this::getWarpMetricValue);
+        BukkitContext context = new BukkitContext.Factory(this.plugin, Constants.FASTSTATS_TOKEN)
+                .errorTrackerService(ERROR_TRACKER)
+        .metrics(factory ->
+                factory
+                .addMetric(Metric.bool("using_warps", this::getWarpMetricValue))
+                .create()
+        )
+        .create();
 
-        BukkitMetrics.factory()
-                .token(Constants.FASTSTATS_TOKEN)
-                .errorTracker(ERROR_TRACKER)
-                .addChart(warpsChart)
-                .create(plugin);
+        context.ready();
     }
 
     private boolean getWarpMetricValue() {
