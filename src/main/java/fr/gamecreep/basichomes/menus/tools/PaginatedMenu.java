@@ -80,7 +80,10 @@ public abstract class PaginatedMenu {
                 final int homeItemSlot = 10 + ((i - startIndex) * 9);
                 this.menu.setItem(homeItemSlot, item);
 
-                if (player.hasPermission(this.permissionToDelete.getName())) {
+                if (
+                        player.hasPermission(this.permissionToDelete.getName())
+                        || pos.getOwnerUuid().equals(player.getUniqueId().toString())
+                ) {
                     final ItemStack delItem = createDeleteItem(pos);
                     final int delItemSlot = 16 + ((i - startIndex) * 9);
                     this.menu.setItem(delItemSlot, delItem);

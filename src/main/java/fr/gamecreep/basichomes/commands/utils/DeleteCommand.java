@@ -28,11 +28,6 @@ public abstract class DeleteCommand {
 
     public boolean onCommand(@NonNull final CommandSender commandSender, @NonNull final String[] args) {
         if (commandSender instanceof final Player playerSender) {
-            if (!playerSender.hasPermission(this.permission.getName())) {
-                ChatUtils.sendNoPermission(playerSender, this.permission);
-                return true;
-            }
-
             if (args.length < 1) {
                 ChatUtils.sendPlayerError(playerSender, String.format("Please add the name of the %s to delete !", this.type.getDisplayName()));
                 return false;
@@ -43,6 +38,13 @@ public abstract class DeleteCommand {
 
             if (pos == null) {
                 ChatUtils.sendPlayerError(playerSender, String.format("No %s exists with that name !", this.type.getDisplayName()));
+                return true;
+            }
+
+            if (!playerSender.hasPermission(this.permission.getName())
+                    && !pos.getOwnerUuid().equals(playerSender.getUniqueId().toString())
+            ) {
+                ChatUtils.sendNoPermission(playerSender, this.permission);
                 return true;
             }
 
